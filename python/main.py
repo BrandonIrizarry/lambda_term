@@ -117,4 +117,9 @@ def tokenize(s):
     
 tokens = tokenize(input)
 print(tokens)
-print(parseTerm(tokens, 0, []))
+
+import pprint
+
+pp = pprint.PrettyPrinter(depth=10)
+
+pp.pprint(parseTerm(tokens, 0, []))
