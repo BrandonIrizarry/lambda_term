@@ -79,7 +79,7 @@ def parseAbstraction(tokens, i, env):
 def parseName(tokens, i, env):
     print("Parsing name at:", i, tokens[i])
     
-    name = new_name(len(env) - env.index(tokens[i]))
+    name = new_name(len(env) - env.index(tokens[i]) - 1)
     i += 1
 
     return name, i
