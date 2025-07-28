@@ -1,4 +1,5 @@
-import sys, enum, re
+import sys, enum, re, pprint
+
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
 
@@ -117,8 +118,6 @@ def tokenize(s):
     
 tokens = tokenize(input)
 print(tokens)
-
-import pprint
 
 pp = pprint.PrettyPrinter(depth=10)
 
