@@ -1,7 +1,5 @@
-import sys
 import enum
 import re
-import pprint
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
