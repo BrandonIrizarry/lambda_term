@@ -89,14 +89,3 @@ def beta_reduce(ast):
     dec(replaced_body, 0)
 
     return beta_reduce(replaced_body)
-
-
-if __name__ == "__main__":
-    identity = F(N(0))
-    self_apply = F(A(N(0), N(0)))
-
-    ast = A(identity, self_apply)
-
-    new_ast = beta_reduce(ast)
-
-    print(new_ast)
