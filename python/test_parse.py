@@ -105,3 +105,11 @@ class TestIllegalTerms(unittest.TestCase):
 
         with self.assertRaises(UnboundNameError):
             parse(raw_term)
+
+    def test_extra_dots(self):
+        raw_term = "\\x..x"
+
+        with self.assertRaises(StrayTokenError) as cm:
+            parse(raw_term)
+
+        self.assertEqual(cm.exception.token, ".")

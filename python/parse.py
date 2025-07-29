@@ -32,6 +32,16 @@ class UnboundNameError(Exception):
             .format(self.name, self.position)
 
 
+class StrayTokenError(Exception):
+    def __init__(self, position, token):
+        self.position = position
+        self.token = token
+
+    def __str__(self):
+        return "Stray token '{}' at token-position {}"\
+            .format(self.token, self.position)
+
+
 class AbstractionNoDotError(Exception):
     def __init__(self, position):
         self.position = position
@@ -131,7 +141,7 @@ def parse_term(tokens, i, env):
     elif re.fullmatch(IDENT, tokens[i]):
         return parse_name(tokens, i, env[:])
     else:
-        print("Wrong", i, tokens[i])
+        raise StrayTokenError(i, tokens[i])
 
 
 def tokenize(raw_term):
