@@ -114,4 +114,8 @@ def parse(raw_term):
 
     tokens = tokenize(raw_term)
 
-    return parse_term(tokens, 0, [])
+    try:
+        return parse_term(tokens, 0, [])
+    except IndexError:
+        print("Incomplete lambda expression")
+        return {}, -1
