@@ -7,23 +7,39 @@ F = new_abstraction
 N = new_name
 
 
+class TestShorthand(unittest.TestCase):
+    def test(self):
+        ast = A(A(F(F(A(N(0),
+                        N(1)))),
+                  F(F(N(1)))),
+                F(N(0)))
+
+        ast_longhand = {'kind': 'application',
+                        'left': {'kind': 'application',
+                                 'left': {'body': {'body': {'kind': 'application',
+                                                            'left': {'index': 0, 'kind': 'name'},
+                                                            'right': {'index': 1, 'kind': 'name'}},
+                                                   'kind': 'abstraction'},
+                                          'kind': 'abstraction'},
+                                 'right': {'body': {'body': {'index': 1, 'kind': 'name'},
+                                                    'kind': 'abstraction'},
+                                           'kind': 'abstraction'}},
+                        'right': {'body': {'index': 0, 'kind': 'name'}, 'kind': 'abstraction'}}
+
+        self.assertEqual(ast, ast_longhand)
+
+
 class TestLegalTerms(unittest.TestCase):
     def test_2_2_a(self):
         raw_term = "   ((\\input.\\func.(  func input  ) \\first.\\second.first) \\sole.sole)"
         parsed, num_tokens = parse(raw_term)
 
-        self.assertEqual(parsed, {'kind': 'application',
-                                  'left': {'kind': 'application',
-                                           'left': {'body': {'body': {'kind': 'application',
-                                                                      'left': {'index': 0, 'kind': 'name'},
-                                                                      'right': {'index': 1, 'kind': 'name'}},
-                                                             'kind': 'abstraction'},
-                                                    'kind': 'abstraction'},
-                                           'right': {'body': {'body': {'index': 1, 'kind': 'name'},
-                                                              'kind': 'abstraction'},
-                                                     'kind': 'abstraction'}},
-                                  'right': {'body': {'index': 0, 'kind': 'name'}, 'kind': 'abstraction'}})
+        ast = A(A(F(F(A(N(0),
+                        N(1)))),
+                  F(F(N(1)))),
+                F(N(0)))
 
+        self.assertEqual(parsed, ast)
         self.assertEqual(num_tokens, 25)
 
     def test_2_2_b(self):
