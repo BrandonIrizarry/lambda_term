@@ -1,6 +1,6 @@
 import unittest
 import pprint
-from main import *
+from parse import *
 
 A = new_application
 F = new_abstraction
