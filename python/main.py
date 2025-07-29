@@ -41,7 +41,7 @@ def new_application(left, right):
     }
 
 
-def parseApplication(tokens, i, env):
+def parse_application(tokens, i, env):
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
@@ -50,8 +50,8 @@ def parseApplication(tokens, i, env):
     # Skip the left parenthesis.
     i += 1
 
-    left, i = parseTerm(tokens, i, env[:])
-    right, i = parseTerm(tokens, i, env[:])
+    left, i = parse_term(tokens, i, env[:])
+    right, i = parse_term(tokens, i, env[:])
 
     # Skip the closing parenthesis.
     i += 1
@@ -59,7 +59,7 @@ def parseApplication(tokens, i, env):
     return new_application(left, right), i
 
 
-def parseAbstraction(tokens, i, env):
+def parse_abstraction(tokens, i, env):
     print("Parsing abstraction at:", i, tokens[i])
     # Skip the lambda symbol.
     i += 1
@@ -73,12 +73,12 @@ def parseAbstraction(tokens, i, env):
 
     print("Looking at term:", i, tokens[i])
 
-    body, i = parseTerm(tokens, i, env[:])
+    body, i = parse_term(tokens, i, env[:])
 
     return new_abstraction(body), i
 
 
-def parseName(tokens, i, env):
+def parse_name(tokens, i, env):
     print("Parsing name at:", i, tokens[i])
 
     name = new_name(len(env) - env.index(tokens[i]) - 1)
@@ -87,16 +87,16 @@ def parseName(tokens, i, env):
     return name, i
 
 
-def parseTerm(tokens, i, env):
+def parse_term(tokens, i, env):
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 
     if tokens[i] == "(":
-        return parseApplication(tokens, i, env[:])
+        return parse_application(tokens, i, env[:])
     elif tokens[i] == "\\":
-        return parseAbstraction(tokens, i, env[:])
+        return parse_abstraction(tokens, i, env[:])
     elif re.fullmatch(IDENT, tokens[i]):
-        return parseName(tokens, i, env[:])
+        return parse_name(tokens, i, env[:])
     else:
         print("Wrong", i, tokens[i])
 
@@ -111,4 +111,4 @@ if __name__ == "__main__":
     tokens = tokenize(raw_term)
 
     pp = pprint.PrettyPrinter(depth=10)
-    pp.pprint(parseTerm(tokens, 0, []))
+    pp.pprint(parse_term(tokens, 0, []))
