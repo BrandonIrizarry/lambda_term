@@ -77,8 +77,6 @@ def parse_abstraction(tokens, i, env):
     # Move past the dot.
     i += 2
 
-    print("Looking at term:", i, tokens[i])
-
     body, i = parse_term(tokens, i, env[:])
 
     return new_abstraction(body), i
