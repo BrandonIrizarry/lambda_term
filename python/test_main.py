@@ -65,6 +65,11 @@ class TestIllegalTerms(unittest.TestCase):
         with self.assertRaises(IncompleteTermError):
             parse(raw_term)
 
+        raw_term = "\\xylophone.(xylophone"
+
+        with self.assertRaises(IncompleteTermError):
+            parse(raw_term)
+
     def test_abstraction_missing_dot(self):
         raw_term = "\\xy(x y)"
 
