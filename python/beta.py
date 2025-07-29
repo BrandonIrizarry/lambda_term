@@ -64,20 +64,31 @@ def replace(ast, argument, target_index):
 
 
 def beta_reduce(ast):
-    """Perform beta reduction across AST.
+    """Evaluate AST using normal order beta reduction.
 
-    Return the reduced AST."""
+    Return the reduced AST.
 
-    while ast["kind"] == Term.APPLICATION:
-        fn = ast["left"]
-        arg = ast["right"]
-        body = fn["body"]
+    """
 
-        inc(arg, 0)
-        ast = replace(body, arg, 0)
-        dec(ast, 0)
+    if ast["kind"] != Term.APPLICATION:
+        return ast
 
-    return ast
+    beta_left = beta_reduce(ast["left"])
+
+    if beta_left["kind"] != Term.ABSTRACTION:
+        beta_right = beta_reduce(ast["right"])
+
+        return new_application(beta_left, beta_right)
+
+    fn = beta_left
+    arg = ast["right"]
+
+    # Actual beta redux algorithm.
+    inc(arg, 0)
+    replaced_body = replace(fn["body"], arg, 0)
+    dec(replaced_body, 0)
+
+    return beta_reduce(replaced_body)
 
 
 if __name__ == "__main__":
