@@ -59,7 +59,7 @@ class TestLegalTerms(unittest.TestCase):
 
 
 class TestIllegalTerms(unittest.TestCase):
-    def test_abstraction_no_body(self):
+    def test_term_incomplete(self):
         raw_term = "\\xy"
 
         with self.assertRaises(IncompleteTermError):
