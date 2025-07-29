@@ -7,7 +7,7 @@ F = new_abstraction
 N = new_name
 
 
-class TestParseTerm(unittest.TestCase):
+class TestLegalTerms(unittest.TestCase):
     def test_2_2_a(self):
         raw_term = "   ((\\input.\\func.(  func input  ) \\first.\\second.first) \\sole.sole)"
         parsed, num_tokens = parse(raw_term)
@@ -56,3 +56,9 @@ class TestParseTerm(unittest.TestCase):
 
         self.assertEqual(parsed, ast)
         self.assertEqual(num_tokens, 28)
+
+
+class TestIllegalTerms(unittest.TestCase):
+    def test_abstraction_no_body(self):
+        raw_term = "\\xy"
+        parsed, num_tokens = parse(raw_term)
