@@ -1,4 +1,7 @@
-import sys, enum, re, pprint
+import sys
+import enum
+import re
+import pprint
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
@@ -11,6 +14,7 @@ class Term(enum.StrEnum):
 
     def __repr__(self):
         return self
+
 
 def new_name(index):
     """Construct and return a name with the given INDEX."""
