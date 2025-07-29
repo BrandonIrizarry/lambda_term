@@ -108,11 +108,3 @@ def parse_term(tokens, i, env):
 def tokenize(raw_term):
     token_pattern = r"[A-Za-z_][A-Za-z0-9_]*|[\\().]"
     return re.findall(token_pattern, raw_term)
-
-
-if __name__ == "__main__":
-    raw_term = "   ((\\input.\\func.(  func input  ) \\first.\\second.first) \\sole.sole)"
-    tokens = tokenize(raw_term)
-
-    pp = pprint.PrettyPrinter(depth=10)
-    pp.pprint(parse_term(tokens, 0, []))
