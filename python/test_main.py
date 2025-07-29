@@ -61,4 +61,6 @@ class TestLegalTerms(unittest.TestCase):
 class TestIllegalTerms(unittest.TestCase):
     def test_abstraction_no_body(self):
         raw_term = "\\xy"
-        parsed, num_tokens = parse(raw_term)
+
+        with self.assertRaises(IncompleteTermError):
+            parse(raw_term)

@@ -14,6 +14,10 @@ class Term(enum.StrEnum):
         return self
 
 
+class IncompleteTermError(Exception):
+    pass
+
+
 def new_name(index):
     """Construct and return a name with the given INDEX."""
 
@@ -117,5 +121,4 @@ def parse(raw_term):
     try:
         return parse_term(tokens, 0, [])
     except IndexError:
-        print("Incomplete lambda expression")
-        return {}, -1
+        raise IncompleteTermError
