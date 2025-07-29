@@ -68,18 +68,16 @@ def beta_reduce(ast):
 
     Return the reduced AST."""
 
-    if ast["kind"] != Term.APPLICATION:
-        return ast
+    while ast["kind"] == Term.APPLICATION:
+        fn = ast["left"]
+        arg = ast["right"]
+        body = fn["body"]
 
-    fn = ast["left"]
-    arg = ast["right"]
-    body = fn["body"]
+        inc(arg, 0)
+        ast = replace(body, arg, 0)
+        dec(ast, 0)
 
-    inc(arg, 0)
-    new_body = replace(body, arg, 0)
-    dec(new_body, 0)
-
-    return new_body
+    return ast
 
 
 if __name__ == "__main__":
