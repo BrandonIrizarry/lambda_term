@@ -106,3 +106,12 @@ def parse_term(tokens, i, env):
 def tokenize(raw_term):
     token_pattern = r"[A-Za-z_][A-Za-z0-9_]*|[\\().]"
     return re.findall(token_pattern, raw_term)
+
+
+def parse(raw_term):
+    """Create and return a parse tree given RAW_TERM, a string
+    representing a lambda expression."""
+
+    tokens = tokenize(raw_term)
+
+    return parse_term(tokens, 0, [])
