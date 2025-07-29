@@ -77,3 +77,15 @@ class TestIllegalTerms(unittest.TestCase):
             parse(raw_term)
 
         self.assertEqual(cm.exception.position, 2)
+
+    def test_application_no_opening_paren(self):
+        raw_term = "\\x.\\y.x y)"
+
+        with self.assertRaises(TrailingGarbageError):
+            parse(raw_term)
+
+    def test_abstraction_missing_keyword(self):
+        raw_term = "x.x"
+
+        with self.assertRaises(UnboundNameError):
+            parse(raw_term)

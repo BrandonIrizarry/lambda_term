@@ -18,6 +18,20 @@ class IncompleteTermError(Exception):
     pass
 
 
+class TrailingGarbageError(Exception):
+    pass
+
+
+class UnboundNameError(Exception):
+    def __init__(self, position, name):
+        self.position = position
+        self.name = name
+
+    def __str__(self):
+        return "Name '{}' at token-position {} is unbound"\
+            .format(self.name, self.position)
+
+
 class AbstractionNoDotError(Exception):
     def __init__(self, position):
         self.position = position
@@ -97,10 +111,13 @@ def parse_abstraction(tokens, i, env):
 def parse_name(tokens, i, env):
     print("Parsing name at:", i, tokens[i])
 
-    name = new_name(len(env) - env.index(tokens[i]) - 1)
-    i += 1
+    try:
+        name = new_name(len(env) - env.index(tokens[i]) - 1)
+        i += 1
 
-    return name, i
+        return name, i
+    except ValueError:
+        raise UnboundNameError(i, tokens[i])
 
 
 def parse_term(tokens, i, env):
@@ -129,6 +146,11 @@ def parse(raw_term):
     tokens = tokenize(raw_term)
 
     try:
-        return parse_term(tokens, 0, [])
+        ast, num_tokens_parsed = parse_term(tokens, 0, [])
+
+        if num_tokens_parsed < len(tokens):
+            raise TrailingGarbageError
+
+        return ast, num_tokens_parsed
     except IndexError:
         raise IncompleteTermError
