@@ -64,3 +64,11 @@ class TestIllegalTerms(unittest.TestCase):
 
         with self.assertRaises(IncompleteTermError):
             parse(raw_term)
+
+    def test_abstraction_missing_dot(self):
+        raw_term = "\\xy(x y)"
+
+        with self.assertRaises(AbstractionNoDotError) as cm:
+            parse(raw_term)
+
+        self.assertEqual(cm.exception.position, 2)

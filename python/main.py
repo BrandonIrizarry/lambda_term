@@ -18,6 +18,15 @@ class IncompleteTermError(Exception):
     pass
 
 
+class AbstractionNoDotError(Exception):
+    def __init__(self, position):
+        self.position = position
+
+    def __str__(self):
+        return "Missing dot-separator at token-position {}"\
+            .format(self.position)
+
+
 def new_name(index):
     """Construct and return a name with the given INDEX."""
 
@@ -73,6 +82,9 @@ def parse_abstraction(tokens, i, env):
     # Record the formal parameter inside env.
     print("Appending to env:", i, tokens[i], env)
     env.append(tokens[i])
+
+    if tokens[i + 1] != ".":
+        raise AbstractionNoDotError(i + 1)
 
     # Move past the dot.
     i += 2
