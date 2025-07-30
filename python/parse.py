@@ -84,8 +84,6 @@ def parse_application(tokens, i, env):
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
-    print("Parsing application at:", i, tokens[i])
-
     # Skip the left parenthesis.
     i += 1
 
@@ -99,12 +97,10 @@ def parse_application(tokens, i, env):
 
 
 def parse_abstraction(tokens, i, env):
-    print("Parsing abstraction at:", i, tokens[i])
     # Skip the lambda symbol.
     i += 1
 
     # Record the formal parameter inside env.
-    print("Appending to env:", i, tokens[i], env)
     env.append(tokens[i])
 
     if tokens[i + 1] != ".":
@@ -119,8 +115,6 @@ def parse_abstraction(tokens, i, env):
 
 
 def parse_name(tokens, i, env):
-    print("Parsing name at:", i, tokens[i])
-
     try:
         name = new_name(len(env) - env.index(tokens[i]) - 1)
         i += 1
