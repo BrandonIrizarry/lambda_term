@@ -150,8 +150,11 @@ def tokenize(raw_term):
 
 
 def parse(raw_term):
-    """Create and return a parse tree given RAW_TERM, a string
-    representing a lambda expression."""
+    """Given RAW_TERM, construct an AST.
+
+    Return AST along with the number of tokens parsed.
+
+    """
 
     tokens = tokenize(raw_term)
 
