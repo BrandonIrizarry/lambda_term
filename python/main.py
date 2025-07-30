@@ -1,5 +1,21 @@
+import readline
+import os
+import atexit
+
 from beta import beta_reduce
 from parse import parse
+
+
+histfile = os.path.join(os.getcwd(), ".repl_history")
+
+try:
+    readline.read_history_file(histfile)
+    readline.set_history_length(1000)
+except FileNotFoundError:
+    pass
+
+atexit.register(readline.write_history_file, histfile)
+
 
 print("""
 Welcome to the lambda REPL.
@@ -21,6 +37,8 @@ be \\x.(x x), not \\x.x x.
 while True:
     try:
         raw_term = input("> ")
+        readline.add_history(raw_term)
+
         ast, _ = parse(raw_term)
 
         value = beta_reduce(ast)
