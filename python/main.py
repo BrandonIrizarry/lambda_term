@@ -25,7 +25,9 @@ You can enter an lambda term at the prompt to see its result under
 normal order beta reduction.
 
 This works for all lambda terms, though the result is interesting
-normally only for application terms.
+normally only for application terms. Upon evaluation, fresh names are
+generated for local values, since the original ones are discarded due
+to the use of DeBruijn indices to avoid name-clashes.
 
 Use backslash (\\) for the lambda symbol.
 
