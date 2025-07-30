@@ -1,9 +1,10 @@
 import readline
 import os
 import atexit
+from wonderwords import RandomWord
 
 from beta import beta_reduce
-from parse import parse
+from parse import parse, Term
 
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
@@ -34,6 +35,40 @@ For example, for the self-application function, the correct form would
 be \\x.(x x), not \\x.x x.
 """)
 
+# Use this to generate ad-hoc local variable names (see docstring of
+# 'pretty_print_term_ast'.)
+rword = RandomWord()
+
+
+def pretty_print_term_ast(ast, env):
+    """Pretty print AST as a human-readable lambda expression.
+
+    Since the AST is constructed using DeBruijn indices, the original
+    local variable names are discarded, and so original names are used
+    for the reconstructed human-readable expression.
+
+    """
+
+    if ast["kind"] == Term.NAME:
+        # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
+        # Ex: index = 0 -> -1, index = 1 -> -2, etc.
+        depth = -(ast["index"] + 1)
+
+        print(env[depth], end="")
+    elif ast["kind"] == Term.ABSTRACTION:
+        # Generate a random word to use as the function parameter.
+        param = rword.word()
+        env.append(param)
+
+        print("\\{}.".format(param), end="")
+        pretty_print_term_ast(ast["body"], env[:])
+    elif ast["kind"] == Term.APPLICATION:
+        left = pretty_print_term_ast(ast["left"], env[:])
+        right = pretty_print_term_ast(ast["right"], env[:])
+
+        print("({} {})".format(left, right))
+
+
 while True:
     try:
         raw_term = input("> ")
@@ -44,6 +79,7 @@ while True:
         value = beta_reduce(ast)
 
         print()
-        print(value)
+        pretty_print_term_ast(value, [])
+        print()
     except EOFError:
         break
