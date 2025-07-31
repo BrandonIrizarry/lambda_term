@@ -1,35 +1,32 @@
-class IncompleteTermError(Exception):
-    pass
-
-
-class TrailingGarbageError(Exception):
-    pass
-
-
-class UnboundNameError(Exception):
-    def __init__(self, position, name):
+class ParseError(Exception):
+    def __init__(self, position, token):
         self.position = position
-        self.name = name
+        self.token = token
 
+
+class IncompleteTermError(ParseError):
+    def __str__(self):
+        return "Incomplete term"
+
+
+class TrailingGarbageError(ParseError):
+    def __str__(self):
+        return "Trailing garbage"
+
+
+class UnboundNameError(ParseError):
     def __str__(self):
         return "Name '{}' at token-position {} is unbound"\
             .format(self.name, self.position)
 
 
-class StrayTokenError(Exception):
-    def __init__(self, position, token):
-        self.position = position
-        self.token = token
-
+class StrayTokenError(ParseError):
     def __str__(self):
         return "Stray token '{}' at token-position {}"\
             .format(self.token, self.position)
 
 
-class AbstractionNoDotError(Exception):
-    def __init__(self, position):
-        self.position = position
-
+class AbstractionNoDotError(ParseError):
     def __str__(self):
         return "Missing dot-separator at token-position {}"\
             .format(self.position)

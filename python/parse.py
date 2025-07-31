@@ -67,7 +67,7 @@ def parse_abstraction(tokens, i, env):
     env.append(tokens[i])
 
     if tokens[i + 1] != ".":
-        raise err.AbstractionNoDotError(i + 1)
+        raise err.AbstractionNoDotError(i + 1, tokens)
 
     # Move past the dot.
     i += 2
@@ -119,8 +119,8 @@ def parse(raw_term):
         ast, num_tokens_parsed = parse_term(tokens, 0, [])
 
         if num_tokens_parsed < len(tokens):
-            raise err.TrailingGarbageError
+            raise err.TrailingGarbageError(i, tokens)
 
         return ast, num_tokens_parsed
     except IndexError:
-        raise err.IncompleteTermError
+        raise err.IncompleteTermError(len(tokens), tokens)
