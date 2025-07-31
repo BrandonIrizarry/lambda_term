@@ -65,10 +65,11 @@ def pretty_print_term_ast(ast, env):
         print("\\{}.".format(param), end="")
         pretty_print_term_ast(ast["body"], env[:])
     elif ast["kind"] == Term.APPLICATION:
-        left = pretty_print_term_ast(ast["left"], env[:])
-        right = pretty_print_term_ast(ast["right"], env[:])
-
-        print("({} {})".format(left, right))
+        print("(", end="")
+        pretty_print_term_ast(ast["left"], env[:])
+        print(" ", end="")
+        pretty_print_term_ast(ast["right"], env[:])
+        print(")")
 
 
 while True:
