@@ -114,6 +114,7 @@ def parse(raw_term):
     """
 
     tokens = tokenize(raw_term)
+    err.ParseError.set_tokens(tokens)
 
     try:
         ast, num_tokens_parsed = parse_term(tokens, 0, [])

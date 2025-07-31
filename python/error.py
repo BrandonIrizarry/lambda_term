@@ -2,6 +2,22 @@ class ParseError(Exception):
     def __init__(self, position, token):
         self.position = position
         self.token = token
+        self.diagnostic = self.generate_diagnostic()
+        print(self.diagnostic)
+
+    @classmethod
+    def set_tokens(cls, tokens):
+        cls.tokens = tokens
+
+    def generate_diagnostic(self):
+        """Signify where in the user's expression a syntax error
+        occurred.
+
+        """
+
+        current_tokens = self.tokens
+        current_tokens.insert(self.position, "*")
+        return "".join(current_tokens)
 
 
 class IncompleteTermError(ParseError):
