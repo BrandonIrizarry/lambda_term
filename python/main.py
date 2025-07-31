@@ -81,19 +81,7 @@ while True:
 
         try:
             ast, _ = parse(raw_term)
-        except err.AbstractionNoDotError as e:
-            print(e)
-            continue
-        except err.IncompleteTermError as e:
-            print(e)
-            continue
-        except err.StrayTokenError as e:
-            print(e)
-            continue
-        except err.TrailingGarbageError as e:
-            print(e)
-            continue
-        except err.UnboundNameError as e:
+        except err.ParseError as e:
             print(e)
             continue
 
