@@ -5,7 +5,7 @@ from wonderwords import RandomWord
 
 from beta import beta_reduce
 from parse import parse, Term
-
+import error as err
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -77,7 +77,25 @@ while True:
         raw_term = input("> ")
         readline.add_history(raw_term)
 
-        ast, _ = parse(raw_term)
+        ast = None
+
+        try:
+            ast, _ = parse(raw_term)
+        except err.AbstractionNoDotError as e:
+            print(e)
+            continue
+        except err.IncompleteTermError as e:
+            print(e)
+            continue
+        except err.StrayTokenError as e:
+            print(e)
+            continue
+        except err.TrailingGarbageError as e:
+            print(e)
+            continue
+        except err.UnboundNameError as e:
+            print(e)
+            continue
 
         value = beta_reduce(ast)
 
