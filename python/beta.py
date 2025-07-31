@@ -3,10 +3,6 @@ from parse import new_name
 from parse import new_abstraction
 from parse import new_application
 
-N = new_name
-F = new_abstraction
-A = new_application
-
 
 def shift(ast, amount, minimum):
     """Shift names of at least MINIMUM value inside AST by AMOUNT.
