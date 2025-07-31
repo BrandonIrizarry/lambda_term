@@ -16,17 +16,15 @@ class TrailingGarbageError(ParseError):
 
 class UnboundNameError(ParseError):
     def __str__(self):
-        return "Name '{}' at token-position {} is unbound"\
-            .format(self.token, self.position)
+        return f"Name '{self.token}' at token-position {self.position}\
+        is unbound"
 
 
 class StrayTokenError(ParseError):
     def __str__(self):
-        return "Stray token '{}' at token-position {}"\
-            .format(self.token, self.position)
+        return f"Stray token {self.token} at token-position {self.position}"
 
 
 class AbstractionNoDotError(ParseError):
     def __str__(self):
-        return "Missing dot-separator at token-position {}"\
-            .format(self.position)
+        return f"Missing dot-separator at token-position {self.position}"
