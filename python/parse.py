@@ -121,7 +121,7 @@ def parse(raw_term):
         ast, num_tokens_parsed = parse_term(tokens, 0, [])
 
         if num_tokens_parsed < len(tokens):
-            raise err.TrailingGarbageError(len(tokens), tokens)
+            raise err.TrailingGarbageError(num_tokens_parsed, tokens)
 
         return ast, num_tokens_parsed
     except IndexError:
