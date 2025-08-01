@@ -41,6 +41,22 @@ class StrayTokenError(ParseError):
         return f"Stray token {self.token} at token-position {self.position}"
 
 
+class IllegalTokenError(Exception):
+    """Catch errors at the tokenizing stage.
+
+    Since these always occur before the parsing stage, we can't
+    inherit from ParseError.
+
+    """
+
+    def __init__(self, position, token):
+        self.position = position
+        self.token = token
+
+    def __str__(self):
+        return f"Illegal token {self.token} at token-position {self.position}"
+
+
 class AbstractionNoDotError(ParseError):
     def __str__(self):
         return f"Missing dot-separator at token-position {self.position}"

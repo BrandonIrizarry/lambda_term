@@ -81,7 +81,7 @@ while True:
 
         try:
             ast, _ = parse(raw_term)
-        except err.ParseError as e:
+        except (err.IllegalTokenError, err.ParseError) as e:
             print(e)
             continue
 
