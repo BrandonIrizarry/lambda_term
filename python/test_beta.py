@@ -1,10 +1,9 @@
 import unittest
+import beta
 
-from beta import *
-
-A = new_application
-F = new_abstraction
-N = new_name
+A = beta.new_application
+F = beta.new_abstraction
+N = beta.new_name
 
 identity = F(N(0))
 self_apply = F(A(N(0), N(0)))
@@ -24,7 +23,7 @@ class TestBetaReduction(unittest.TestCase):
     def test_identity(self):
         term = A(identity, self_apply)
 
-        reduced_term = beta_reduce(term)
+        reduced_term = beta.beta_reduce(term)
 
         self.assertEqual(reduced_term, self_apply)
 
@@ -32,16 +31,16 @@ class TestBetaReduction(unittest.TestCase):
         term = A(F(A(N(0), identity)),
                  self_apply)
 
-        reduced_term = beta_reduce(term)
+        reduced_term = beta.beta_reduce(term)
 
         self.assertEqual(reduced_term, identity)
 
     def test_pairing(self):
-        pair_identity = beta_reduce(A(make_pair, identity))
-        pair_identity_applyfn = beta_reduce(A(pair_identity, applyfn))
+        pair_identity = beta.beta_reduce(A(make_pair, identity))
+        pair_identity_applyfn = beta.beta_reduce(A(pair_identity, applyfn))
 
-        first = beta_reduce(A(pair_identity_applyfn, select_first))
+        first = beta.beta_reduce(A(pair_identity_applyfn, select_first))
         self.assertEqual(first, identity)
 
-        second = beta_reduce(A(pair_identity_applyfn, select_second))
+        second = beta.beta_reduce(A(pair_identity_applyfn, select_second))
         self.assertEqual(second, applyfn)
