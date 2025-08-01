@@ -1,5 +1,6 @@
 import unittest
-import pprint
+
+import error as err
 from parse import *
 
 A = new_application
@@ -78,18 +79,18 @@ class TestIllegalTerms(unittest.TestCase):
     def test_term_incomplete(self):
         raw_term = "\\xy"
 
-        with self.assertRaises(IncompleteTermError):
+        with self.assertRaises(err.IncompleteTermError):
             parse(raw_term)
 
         raw_term = "\\xylophone.(xylophone"
 
-        with self.assertRaises(IncompleteTermError):
+        with self.assertRaises(err.IncompleteTermError):
             parse(raw_term)
 
     def test_abstraction_missing_dot(self):
         raw_term = "\\xy(x y)"
 
-        with self.assertRaises(AbstractionNoDotError) as cm:
+        with self.assertRaises(err.AbstractionNoDotError) as cm:
             parse(raw_term)
 
         self.assertEqual(cm.exception.position, 2)
@@ -97,19 +98,19 @@ class TestIllegalTerms(unittest.TestCase):
     def test_application_no_opening_paren(self):
         raw_term = "\\x.\\y.x y)"
 
-        with self.assertRaises(TrailingGarbageError):
+        with self.assertRaises(err.TrailingGarbageError):
             parse(raw_term)
 
     def test_abstraction_missing_keyword(self):
         raw_term = "x.x"
 
-        with self.assertRaises(UnboundNameError):
+        with self.assertRaises(err.UnboundNameError):
             parse(raw_term)
 
     def test_extra_dots(self):
         raw_term = "\\x..x"
 
-        with self.assertRaises(StrayTokenError) as cm:
+        with self.assertRaises(err.StrayTokenError) as cm:
             parse(raw_term)
 
         self.assertEqual(cm.exception.token, ".")
