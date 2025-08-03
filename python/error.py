@@ -17,7 +17,7 @@ class ParseError(Exception):
 
         current_tokens = self.tokens
         current_tokens.insert(self.position, "*")
-        return "".join(current_tokens)
+        return " ".join(current_tokens)
 
 
 class IncompleteTermError(ParseError):
