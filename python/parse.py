@@ -195,8 +195,6 @@ def parse(raw_term):
         if label is not None:
             global_env.append((label, ast))
 
-        print(global_env)
-
         return ast, num_tokens_parsed
     except IndexError:
         raise err.IncompleteTermError(len(tokens), tokens)
