@@ -99,7 +99,7 @@ def parse_abstraction(tokens, i, env):
 
 
 def parse_name(tokens, i, env):
-    for (name, ast) in global_env:
+    for (name, ast) in reversed(global_env):
         if name == tokens[i]:
             return ast, i + 1
 
