@@ -1,4 +1,5 @@
 import enum
+import itertools
 import re
 
 import error as err
@@ -159,6 +160,18 @@ def parse(raw_term):
 
     tokens = tokenize(raw_term)
     err.ParseError.set_tokens(tokens)
+
+    if tokens[0] == "def":
+        label = tokens[1]
+        mid = tokens.index(":=")
+
+        params = tokens[2:mid]
+        body = tokens[mid+1:]
+        fn_prefix = list(itertools.chain.from_iterable(
+            [["\\", f"{p}", "."] for p in params]))
+
+        tokens = fn_prefix + body
+        print(tokens)
 
     try:
         ast, num_tokens_parsed = parse_term(tokens, 0, [])
