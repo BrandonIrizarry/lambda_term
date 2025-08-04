@@ -62,13 +62,19 @@ def parse_application(tokens, i, env):
     # Skip the left parenthesis.
     i += 1
 
-    left, i = parse_term(tokens, i, env[:])
-    right, i = parse_term(tokens, i, env[:])
+    # Bootstrap the left-fold.
+    first_term, i = parse_term(tokens, i, env[:])
+    second_term, i = parse_term(tokens, i, env[:])
+    partial = new_application(first_term, second_term)
+
+    while tokens[i] != ")":
+        next_term, i = parse_term(tokens, i, env[:])
+        partial = new_application(partial, next_term)
 
     # Skip the closing parenthesis.
     i += 1
 
-    return new_application(left, right), i
+    return partial, i
 
 
 def parse_abstraction(tokens, i, env):
