@@ -43,7 +43,7 @@ def new_application(left, right):
         "right": right,
     }
 
-# What follow are a series of parse functions for a recursive-descent
+# What follows is a series of parse functions for a recursive-descent
 # apparatus. As a rule, they accept the tokenized expression (given as
 # a list of tokens), along with an index value pointing to the first
 # token comprising the expression to be parsed, and finally the
