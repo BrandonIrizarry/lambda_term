@@ -6,6 +6,8 @@ import error as err
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
 
+global_env = []
+
 
 class Term(enum.StrEnum):
     NAME = "name"
@@ -97,6 +99,10 @@ def parse_abstraction(tokens, i, env):
 
 
 def parse_name(tokens, i, env):
+    for (name, ast) in global_env:
+        if name == tokens[i]:
+            return ast, i + 1
+
     try:
         name = new_name(len(env) - env.index(tokens[i]) - 1)
         i += 1
@@ -149,9 +155,6 @@ def tokenize(raw_term):
         i += 1
 
     return tokens
-
-
-global_env = []
 
 
 def parse(raw_term):
