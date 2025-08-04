@@ -1,4 +1,5 @@
 import unittest
+
 import beta
 
 A = beta.new_application
