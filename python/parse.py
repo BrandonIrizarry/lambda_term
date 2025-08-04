@@ -151,6 +151,9 @@ def tokenize(raw_term):
     return tokens
 
 
+global_env = []
+
+
 def parse(raw_term):
     """Given RAW_TERM, construct an AST.
 
@@ -161,8 +164,16 @@ def parse(raw_term):
     tokens = tokenize(raw_term)
     err.ParseError.set_tokens(tokens)
 
+    label = None
+
     if tokens[0] == "def":
+        # Record the name to be added to the global environment.  Note
+        # that we do this before we alter tokens so that the parser
+        # sees our augmented result.
         label = tokens[1]
+
+        # Move the left-side params to the right side as lambda
+        # binders.
         mid = tokens.index(":=")
 
         params = tokens[2:mid]
@@ -171,13 +182,17 @@ def parse(raw_term):
             [["\\", f"{p}", "."] for p in params]))
 
         tokens = fn_prefix + body
-        print(tokens)
 
     try:
         ast, num_tokens_parsed = parse_term(tokens, 0, [])
 
         if num_tokens_parsed < len(tokens):
             raise err.TrailingGarbageError(num_tokens_parsed, tokens)
+
+        if label is not None:
+            global_env.append((label, ast))
+
+        print(global_env)
 
         return ast, num_tokens_parsed
     except IndexError:
