@@ -121,6 +121,7 @@ def parse_term(tokens, i, env):
 
 def tokenize(raw_term):
     spec = [
+        ("assign", ":="),
         ("name", IDENT),
         ("other", r"[\\().]"),
         ("space", r"[\t ]"),
