@@ -114,3 +114,31 @@ class TestIllegalTerms(unittest.TestCase):
             parse(raw_term)
 
         self.assertEqual(cm.exception.token, ".")
+
+
+class TestSugaredApplications(unittest.TestCase):
+    def test_xyz(self):
+        raw_term = "\\x.\\y.\\z.(x y z)"
+
+        parsed, _ = parse(raw_term)
+
+        # Note how the generated AST includes the desugared extra
+        # application.
+        ast = F(F(F(A(A(N(2),
+                        N(1)),
+                      N(0)))))
+
+        self.assertEqual(parsed, ast)
+
+    def test_complex(self):
+        raw_term = "\\false.\\iszero.\\n.((iszero n) n (n false))"
+
+        parsed, _ = parse(raw_term)
+
+        ast = F(F(F(A(A(A(N(1),
+                          N(0)),
+                        N(0)),
+                      A(N(0),
+                        N(2))))))
+
+        self.assertEqual(parsed, ast)
