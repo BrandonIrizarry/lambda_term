@@ -1,6 +1,7 @@
 import unittest
 
 import beta
+import error as err
 import parse
 
 A = beta.new_application
@@ -48,5 +49,5 @@ class TestPersistentPrograms(unittest.TestCase):
     def test_missing_definition(self):
         raw_term = "(select_first identity apply)"
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(err.UnboundNameError):
             evaluate(raw_term)
