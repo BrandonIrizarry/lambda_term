@@ -1,11 +1,12 @@
-import readline
-import os
 import atexit
+import os
+import readline
+
 from wonderwords import RandomWord
 
-from beta import beta_reduce
-from parse import parse, Term
 import error as err
+from beta import beta_reduce
+from parse import Term, parse
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
