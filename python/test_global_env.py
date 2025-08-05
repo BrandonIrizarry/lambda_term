@@ -61,3 +61,20 @@ class TestPersistentPrograms(unittest.TestCase):
 
         with self.assertRaises(err.UnboundNameError):
             evaluate(raw_term)
+
+    def test_env_substitution(self):
+        prelude = [
+            "def id x := x",
+            "def apply fn arg := (fn arg)",
+
+            # The 'id' should be locally bound, effectively shadowing
+            # the global definition.
+            "def select_first id y := id"
+        ]
+
+        evaluate_prelude(prelude)
+
+        raw_term = "(select_first apply id)"
+        value = evaluate(raw_term)
+
+        self.assertEqual(value, applyfn)
