@@ -103,13 +103,26 @@ def parse_name(tokens, i, env):
         if name == tokens[i]:
             return ast, i + 1
 
-    try:
-        name = new_name(list(reversed(env)).index(tokens[i]))
-        i += 1
+    # Search for the current name across the local env, starting from
+    # the back (using a LIFO discipline, since we're implementing
+    # layered function scopes.)
+    is_local = False
+    index = 0
 
-        return name, i
-    except ValueError:
+    for local_name in reversed(env):
+        if local_name == tokens[i]:
+            is_local = True
+            break
+
+        index += 1
+
+    if not is_local:
         raise err.UnboundNameError(i, tokens[i])
+
+    name = new_name(index)
+    i += 1
+
+    return name, i
 
 
 def parse_term(tokens, i, env):
