@@ -24,6 +24,16 @@ def evaluate(raw_term):
     return beta.beta_reduce(ast)
 
 
+def evaluate_prelude(program_lines):
+    """Evaluate a series of REPL entries constructing a prelude of
+    definitions that a program can subsequently use.
+
+    """
+
+    for line in program_lines:
+        evaluate(line)
+
+
 class TestPersistentPrograms(unittest.TestCase):
     def test_small_program(self):
         prelude = [
