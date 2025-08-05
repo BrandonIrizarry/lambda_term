@@ -104,7 +104,7 @@ def parse_name(tokens, i, env):
             return ast, i + 1
 
     try:
-        name = new_name(len(env) - env.index(tokens[i]) - 1)
+        name = new_name(list(reversed(env)).index(tokens[i]))
         i += 1
 
         return name, i
