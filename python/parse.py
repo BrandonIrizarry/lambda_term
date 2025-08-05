@@ -169,10 +169,11 @@ def parse(raw_term):
 
     label = None
 
+    # If applicable, record the name to be added to the global
+    # environment.
     if tokens[0] == "def":
-        # Record the name to be added to the global environment.  Note
-        # that we do this before we alter tokens so that the parser
-        # sees our augmented result.
+        # Note that we do this before we alter tokens so that the
+        # parser sees our augmented result.
         label = tokens[1]
 
         # Move the left-side params to the right side as lambda
@@ -186,6 +187,7 @@ def parse(raw_term):
 
         tokens = fn_prefix + body
 
+    # Parse the now preprocessed term.
     try:
         ast, num_tokens_parsed = parse_term(tokens, 0, [])
 
