@@ -62,6 +62,8 @@ class TestPersistentPrograms(unittest.TestCase):
         with self.assertRaises(err.UnboundNameError):
             evaluate(raw_term)
 
+    # This test is why I need to completely revamp how global
+    # variables are applied to the current expression.
     @unittest.expectedFailure
     def test_env_substitution(self):
         prelude = [
