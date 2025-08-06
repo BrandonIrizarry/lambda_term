@@ -32,10 +32,7 @@ class ProgramEnv():
         # If we parsed a def-statement, associate the label with the
         # AST.
         if label is not None:
-            self.env[label] = {
-                "kind": beta.Term.NAME,
-                "def": ast
-            }
+            self.env[label] = ast
 
         return beta.beta_reduce(ast)
 
