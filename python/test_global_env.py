@@ -70,3 +70,21 @@ class TestClobberGlobal(unittest.TestCase):
 
         self.assertTrue("id" in self.penv.env)
         self.assertEqual(value, applyfn)
+
+
+class TestRedefineGlobal(unittest.TestCase):
+    prelude = [
+        "def select_first x y := x",
+        "def select_first x y := y",
+        "def apply f n := (f n)"
+    ]
+
+    def setUp(self):
+        self.penv = program_env.ProgramEnv()
+        self.penv.load_program(self.prelude)
+
+    def test_redefine_global(self):
+        self.penv.append_line("(select_first select_first apply)")
+        value = self.penv.run()
+
+        self.assertEqual(value, applyfn)
