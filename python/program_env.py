@@ -39,23 +39,6 @@ class ProgramEnv():
 
         return beta.beta_reduce(ast)
 
-    def __substitute_globals(self, ast):
-        # Be sure to return the modified AST.
-        if ast["kind"] == beta.Term.NAME:
-            if "def" in ast:
-                ast = ast["def"]
-
-            return ast
-        elif ast["kind"] == beta.Term.ABSTRACTION:
-            new_body = self.__substitute_globals(ast["body"])
-
-            return parse.new_abstraction(new_body)
-        elif ast["kind"] == beta.Term.APPLICATION:
-            new_left = self.__substitute_globals(ast["left"])
-            new_right = self.__substitute_globals(ast["right"])
-
-            return parse.new_application(new_left, new_right)
-
     def run(self):
         """Run the currently loaded program, returning the last
         evaluation (an AST).
