@@ -32,8 +32,7 @@ class TrailingGarbageError(ParseError):
 
 class UnboundNameError(ParseError):
     def __str__(self):
-        return f"Name '{self.token}' at token-position {self.position}\
-        is unbound"
+        return f"Name '{self.token}' at token-position {self.position} is unbound"
 
 
 class StrayTokenError(ParseError):
