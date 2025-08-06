@@ -80,8 +80,5 @@ class ProgramEnv():
 
         for line in self.program:
             value = self.__evaluate(line)
-            print(line)
-            print(value)
-            print()
 
         return value
