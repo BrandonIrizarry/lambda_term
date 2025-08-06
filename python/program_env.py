@@ -3,8 +3,7 @@ import parse
 
 
 class ProgramEnv():
-    def __init__(self, g_index=1000):
-        self.g_index = g_index
+    def __init__(self):
         self.env = dict()
         self.program = []
 
@@ -35,11 +34,8 @@ class ProgramEnv():
         if label is not None:
             self.env[label] = {
                 "kind": beta.Term.NAME,
-                "index": self.g_index,
                 "def": ast
             }
-
-            self.g_index += 1
 
         ast_under_globals = self.__substitute_globals(ast)
         value = beta.beta_reduce(ast_under_globals)
