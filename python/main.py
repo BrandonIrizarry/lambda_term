@@ -4,9 +4,9 @@ import readline
 
 from wonderwords import RandomWord
 
+import beta
 import error as err
-from beta import beta_reduce
-from parse import Term, parse
+import parse
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -43,20 +43,20 @@ def pretty_print_term_ast(ast, env):
 
     """
 
-    if ast["kind"] == Term.NAME:
+    if ast["kind"] == beta.Term.NAME:
         # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
         # Ex: index = 0 -> -1, index = 1 -> -2, etc.
         depth = -(ast["index"] + 1)
 
         print(env[depth], end="")
-    elif ast["kind"] == Term.ABSTRACTION:
+    elif ast["kind"] == beta.Term.ABSTRACTION:
         # Generate a random word to use as the function parameter.
         param = rword.word()
         env.append(param)
 
         print("\\{}.".format(param), end="")
         pretty_print_term_ast(ast["body"], env[:])
-    elif ast["kind"] == Term.APPLICATION:
+    elif ast["kind"] == beta.Term.APPLICATION:
         print("(", end="")
         pretty_print_term_ast(ast["left"], env[:])
         print(" ", end="")
@@ -73,12 +73,14 @@ def repl():
             ast = None
 
             try:
-                ast, _ = parse(raw_term)
+                # FIXME: the REPL needs to be incorporated somehow
+                # with ProgramEnv.
+                ast, _, _ = parse.parse(raw_term)
             except (err.IllegalTokenError, err.ParseError) as e:
                 print(e)
                 continue
 
-            value = beta_reduce(ast)
+            value = beta.beta_reduce(ast)
 
             print()
             pretty_print_term_ast(value, [])

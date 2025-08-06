@@ -58,7 +58,7 @@ def new_application(left, right):
 # parsed.
 
 
-def parse_application(tokens, i, env):
+def parse_application(tokens, i, env, genv):
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
@@ -66,12 +66,12 @@ def parse_application(tokens, i, env):
     i += 1
 
     # Bootstrap the left-fold.
-    first_term, i = parse_term(tokens, i, env[:])
-    second_term, i = parse_term(tokens, i, env[:])
+    first_term, i = parse_term(tokens, i, env[:], genv)
+    second_term, i = parse_term(tokens, i, env[:], genv)
     partial = new_application(first_term, second_term)
 
     while tokens[i] != ")":
-        next_term, i = parse_term(tokens, i, env[:])
+        next_term, i = parse_term(tokens, i, env[:], genv)
         partial = new_application(partial, next_term)
 
     # Skip the closing parenthesis.
@@ -80,7 +80,7 @@ def parse_application(tokens, i, env):
     return partial, i
 
 
-def parse_abstraction(tokens, i, env):
+def parse_abstraction(tokens, i, env, genv):
     # Skip the lambda symbol.
     i += 1
 
@@ -93,16 +93,12 @@ def parse_abstraction(tokens, i, env):
     # Move past the dot.
     i += 2
 
-    body, i = parse_term(tokens, i, env[:])
+    body, i = parse_term(tokens, i, env[:], genv)
 
     return new_abstraction(body), i
 
 
-def parse_name(tokens, i, env):
-    for (name, ast) in reversed(global_env):
-        if name == tokens[i]:
-            return ast, i + 1
-
+def parse_name(tokens, i, env, genv):
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
@@ -116,25 +112,27 @@ def parse_name(tokens, i, env):
 
         index += 1
 
-    if not is_local:
-        raise err.UnboundNameError(i, tokens[i])
+    if is_local:
+        return new_name(index), i + 1
 
-    name = new_name(index)
-    i += 1
+    # Else, check the global environment.
+    for (label, node) in reversed(genv.items()):
+        if label == tokens[i]:
+            return node, i + 1
 
-    return name, i
+    raise err.UnboundNameError(i, tokens[i])
 
 
-def parse_term(tokens, i, env):
+def parse_term(tokens, i, env, genv):
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 
     if tokens[i] == "(":
-        return parse_application(tokens, i, env[:])
+        return parse_application(tokens, i, env[:], genv)
     elif tokens[i] == "\\":
-        return parse_abstraction(tokens, i, env[:])
+        return parse_abstraction(tokens, i, env[:], genv)
     elif re.fullmatch(IDENT, tokens[i]):
-        return parse_name(tokens, i, env[:])
+        return parse_name(tokens, i, env[:], genv)
     else:
         raise err.StrayTokenError(i, tokens[i])
 
@@ -170,7 +168,7 @@ def tokenize(raw_term):
     return tokens
 
 
-def parse(raw_term):
+def parse(raw_term, genv):
     """Given RAW_TERM, construct an AST.
 
     Return AST along with the number of tokens parsed.
@@ -202,14 +200,11 @@ def parse(raw_term):
 
     # Parse the now preprocessed term.
     try:
-        ast, num_tokens_parsed = parse_term(tokens, 0, [])
+        ast, num_tokens_parsed = parse_term(tokens, 0, [], genv)
 
         if num_tokens_parsed < len(tokens):
             raise err.TrailingGarbageError(num_tokens_parsed, tokens)
 
-        if label is not None:
-            global_env.append((label, ast))
-
-        return ast, num_tokens_parsed
+        return ast, num_tokens_parsed, label
     except IndexError:
         raise err.IncompleteTermError(len(tokens), tokens)
