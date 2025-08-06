@@ -23,9 +23,8 @@ class TestSelectionCombinators(unittest.TestCase):
         "def select_second x y := y"
     ]
 
-    penv = program_env.ProgramEnv()
-
     def setUp(self):
+        self.penv = program_env.ProgramEnv()
         self.penv.load_program(self.prelude)
 
     def test_select_first(self):
