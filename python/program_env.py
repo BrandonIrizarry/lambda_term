@@ -77,4 +77,7 @@ class ProgramEnv():
             value = self.__evaluate(line)
 
         # Return the last evaluation, similar to Lisp.
+        #
+        # Note that, for the time being, if a program is empty, None
+        # is returned.
         return value
