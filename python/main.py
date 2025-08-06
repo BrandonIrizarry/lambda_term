@@ -64,23 +64,27 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-while True:
-    try:
-        raw_term = input("> ")
-        readline.add_history(raw_term)
-
-        ast = None
-
+def repl():
+    while True:
         try:
-            ast, _ = parse(raw_term)
-        except (err.IllegalTokenError, err.ParseError) as e:
-            print(e)
-            continue
+            raw_term = input("> ")
+            readline.add_history(raw_term)
 
-        value = beta_reduce(ast)
+            ast = None
 
-        print()
-        pretty_print_term_ast(value, [])
-        print()
-    except EOFError:
-        break
+            try:
+                ast, _ = parse(raw_term)
+            except (err.IllegalTokenError, err.ParseError) as e:
+                print(e)
+                continue
+
+            value = beta_reduce(ast)
+
+            print()
+            pretty_print_term_ast(value, [])
+            print()
+        except EOFError:
+            break
+
+
+repl()
