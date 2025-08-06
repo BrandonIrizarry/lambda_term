@@ -6,6 +6,7 @@ class ProgramEnv():
     def __init__(self, g_index=1000):
         self.g_index = g_index
         self.env = dict()
+        self.program = []
 
     def load_program(self, program):
         """Load PROGRAM as a list of statements or expressions to be
@@ -17,15 +18,12 @@ class ProgramEnv():
 
         """
 
-        self.program = program
+        self.program.extend(program)
 
     def append_line(self, line):
         """Append LINE to the end of SELF.PROGRAM.
 
         """
-
-        if not hasattr(self, "program"):
-            self.program = []
 
         self.program.append(line)
 
@@ -72,9 +70,6 @@ class ProgramEnv():
         If no program is loaded, return.
 
         """
-
-        if not hasattr(self, "program"):
-            return
 
         value = None
 
