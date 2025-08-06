@@ -70,6 +70,10 @@ def repl():
     while True:
         try:
             raw_term = input("> ")
+
+            if raw_term == "":
+                continue
+
             readline.add_history(raw_term)
             penv.append_line(raw_term)
 
