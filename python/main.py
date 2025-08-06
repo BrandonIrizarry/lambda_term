@@ -7,6 +7,7 @@ from wonderwords import RandomWord
 import beta
 import error as err
 import parse
+import program_env
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -65,22 +66,21 @@ def pretty_print_term_ast(ast, env):
 
 
 def repl():
+    penv = program_env.ProgramEnv()
+
     while True:
         try:
             raw_term = input("> ")
             readline.add_history(raw_term)
+            penv.append_line(raw_term)
 
-            ast = None
+            value = None
 
             try:
-                # FIXME: the REPL needs to be incorporated somehow
-                # with ProgramEnv.
-                ast, _, _ = parse.parse(raw_term)
+                value = penv.eval_last()
             except (err.IllegalTokenError, err.ParseError) as e:
                 print(e)
                 continue
-
-            value = beta.beta_reduce(ast)
 
             print()
             pretty_print_term_ast(value, [])
