@@ -37,10 +37,7 @@ class ProgramEnv():
                 "def": ast
             }
 
-        ast_under_globals = self.__substitute_globals(ast)
-        value = beta.beta_reduce(ast_under_globals)
-
-        return value
+        return beta.beta_reduce(ast)
 
     def __substitute_globals(self, ast):
         # Be sure to return the modified AST.
