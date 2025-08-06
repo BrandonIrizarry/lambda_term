@@ -81,3 +81,16 @@ class ProgramEnv():
         # Note that, for the time being, if a program is empty, None
         # is returned.
         return value
+
+    def eval_last(self):
+        """Evaluate the last statement of the program only.
+
+        This is mainly useful for the REPL, where statements are
+        executed incrementally.
+
+        """
+
+        if len(self.program) == 0:
+            return None
+
+        return self.__evaluate(self.program[-1])
