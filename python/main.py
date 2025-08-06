@@ -6,7 +6,6 @@ from wonderwords import RandomWord
 
 import beta
 import error as err
-import parse
 import program_env
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
