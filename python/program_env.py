@@ -81,4 +81,5 @@ class ProgramEnv():
         for line in self.program:
             value = self.__evaluate(line)
 
+        # Return the last evaluation, similar to Lisp.
         return value
