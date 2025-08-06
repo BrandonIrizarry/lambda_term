@@ -51,7 +51,7 @@ class TestMissingDefinitions(unittest.TestCase):
             self.penv.run()
 
 
-class TestGlobalShadowing(unittest.TestCase):
+class TestClobberGlobal(unittest.TestCase):
     prelude = [
         "def id x := x",
         "def apply fn arg := (fn arg)",
