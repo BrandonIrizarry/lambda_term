@@ -30,8 +30,8 @@ class ProgramEnv():
     def __evaluate(self, raw_term):
         ast, _, label = parse.parse(raw_term, self.env)
 
-        # We just parsed a def-statement, so associate the label with
-        # the AST.
+        # If we parsed a def-statement, associate the label with the
+        # AST.
         if label is not None:
             self.env[label] = {
                 "kind": beta.Term.NAME,
