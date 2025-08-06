@@ -40,29 +40,33 @@ class TestSelectionCombinators(unittest.TestCase):
         self.assertEqual(value, applyfn)
 
 
-# class TestPersistentPrograms(unittest.TestCase):
-#       def test_missing_definition(self):
-#         raw_term = "(select_first identity apply)"
+class TestMissingDefinitions(unittest.TestCase):
+    def setUp(self):
+        self.penv = program_env.ProgramEnv()
 
-#         with self.assertRaises(err.UnboundNameError):
-#             evaluate(raw_term)
+    def test_missing_definition(self):
+        self.penv.append_line("(select_first identity apply)")
 
-#     # This test is why I need to completely revamp how global
-#     # variables are applied to the current expression.
-#     @unittest.expectedFailure
-#     def test_env_substitution(self):
-#         prelude = [
-#             "def id x := x",
-#             "def apply fn arg := (fn arg)",
+        with self.assertRaises(err.UnboundNameError):
+            self.penv.run()
 
-#             # The 'id' should be locally bound, effectively shadowing
-#             # the global definition.
-#             "def select_first id y := id"
-#         ]
 
-#         evaluate_prelude(prelude)
+class TestGlobalShadowing(unittest.TestCase):
+    prelude = [
+        "def id x := x",
+        "def apply fn arg := (fn arg)",
 
-#         raw_term = "(select_first apply id)"
-#         value = evaluate(raw_term)
+        # The global 'id' is being shadowed here
+        "def select_first id y := id"
+    ]
 
-#         self.assertEqual(value, applyfn)
+    def setUp(self):
+        self.penv = program_env.ProgramEnv()
+        self.penv.load_program(self.prelude)
+
+    def test_env_substitution(self):
+        self.penv.append_line("(select_first apply id)")
+        value = self.penv.run()
+
+        self.assertTrue("id" in self.penv.env)
+        self.assertEqual(value, applyfn)
