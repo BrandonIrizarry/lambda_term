@@ -37,8 +37,10 @@ def tokenize(raw_term):
         if kind == "error":
             raise err.IllegalTokenError(i, value)
 
-        if kind != "space":
-            tokens.append(value)
+        if kind == "space":
+            continue
+
+        tokens.append(value)
 
         i += 1
 
