@@ -3,8 +3,7 @@ import itertools
 import re
 
 import error as err
-
-IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
+import tokenize_lambda as tkz
 
 global_env = []
 
@@ -131,41 +130,10 @@ def parse_term(tokens, i, env, genv):
         return parse_application(tokens, i, env[:], genv)
     elif tokens[i] == "\\":
         return parse_abstraction(tokens, i, env[:], genv)
-    elif re.fullmatch(IDENT, tokens[i]):
+    elif re.fullmatch(tkz.IDENT, tokens[i]):
         return parse_name(tokens, i, env[:], genv)
     else:
         raise err.StrayTokenError(i, tokens[i])
-
-
-def tokenize(raw_term):
-    spec = [
-        ("assign", ":="),
-        ("name", IDENT),
-        ("other", r"[\\().]"),
-        ("space", r"[\t ]"),
-        ("error", r".")
-    ]
-
-    pats = [f"(?P<{kind}>{pat})" for (kind, pat) in spec]
-    token_pattern = "|".join(pats)
-    tokens = []
-
-    # Track the current iteration index, to make IllegalTokenError
-    # consistent with other errors.
-    i = 0
-    for mobj in re.finditer(token_pattern, raw_term):
-        kind = mobj.lastgroup
-        value = mobj.group()
-
-        if kind == "error":
-            raise err.IllegalTokenError(i, value)
-
-        if kind != "space":
-            tokens.append(value)
-
-        i += 1
-
-    return tokens
 
 
 def parse(raw_term, genv):
@@ -175,7 +143,7 @@ def parse(raw_term, genv):
 
     """
 
-    tokens = tokenize(raw_term)
+    tokens = tkz.tokenize(raw_term)
     err.ParseError.set_tokens(tokens)
 
     label = None
