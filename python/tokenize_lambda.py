@@ -5,6 +5,11 @@ import error as err
 IDENT = r"[A-Za-z_]\w*"
 
 
+def is_identifier(token):
+    """Return True iff TOKEN is an identifier."""
+    return re.fullmatch(IDENT, token)
+
+
 def tokenize(raw_term):
     spec = [
         ("assign", ":="),

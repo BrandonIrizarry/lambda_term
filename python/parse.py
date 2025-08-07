@@ -1,6 +1,5 @@
 import enum
 import itertools
-import re
 
 import error as err
 import tokenize_lambda as tkz
@@ -130,7 +129,7 @@ def parse_term(tokens, i, env, genv):
         return parse_application(tokens, i, env[:], genv)
     elif tokens[i] == "\\":
         return parse_abstraction(tokens, i, env[:], genv)
-    elif re.fullmatch(tkz.IDENT, tokens[i]):
+    elif tkz.is_identifier(tokens[i]):
         return parse_name(tokens, i, env[:], genv)
     else:
         raise err.StrayTokenError(i, tokens[i])
