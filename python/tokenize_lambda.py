@@ -2,7 +2,7 @@ import re
 
 import error as err
 
-IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
+IDENT = r"[A-Za-z_]\w*"
 
 
 def tokenize(raw_term):
