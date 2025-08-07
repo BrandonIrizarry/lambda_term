@@ -14,7 +14,10 @@ def tokenize(raw_term):
     spec = [
         ("assign", ":="),
         ("name", IDENT),
-        ("other", r"[\\().]"),
+        ("left_paren", r"\("),
+        ("right_paren", r"\)"),
+        ("dot", r"\."),
+        ("lambda", r"\\"),
         ("space", r"[\t ]"),
         ("error", r".")
     ]
