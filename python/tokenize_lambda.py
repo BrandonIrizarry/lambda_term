@@ -28,6 +28,10 @@ def tokenize(raw_term):
     i = 0
     for mobj in re.finditer(token_pattern, raw_term):
         kind = mobj.lastgroup
+
+        if kind is None:
+            raise ValueError("Fatal: found 'None'")
+
         value = mobj.group()
 
         if kind == "error":
