@@ -10,7 +10,7 @@ def is_identifier(token):
     return re.fullmatch(IDENT, token)
 
 
-def tokenize(raw_term):
+def tokenize(raw_term: str):
     spec = [
         ("assign", ":="),
         ("name", IDENT),
