@@ -57,6 +57,14 @@ class IllegalTokenError(Exception):
         return f"Illegal token {self.token} at token-position {self.position}"
 
 
+class MissingAssignmentError(IllegalTokenError):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return f"Definition missing ':='"
+
+
 class AbstractionNoDotError(ParseError):
     def __str__(self):
         return f"Missing dot-separator at token-position {self.position}"
