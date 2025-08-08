@@ -15,6 +15,30 @@ select_first = F(F(N(1)))
 select_second = F(F(N(0)))
 
 
+class TestPreludeEnv(unittest.TestCase):
+    prelude = [
+        "def identity := \\x.x",
+        "def apply fn arg := (fn arg)",
+        "def select_first x y := x",
+        "def select_second x y := y"
+    ]
+
+    def setUp(self):
+        self.penv = program_env.ProgramEnv()
+        self.penv.load_program(self.prelude)
+
+    def test_prelude_env(self):
+        self.penv.run()
+        genv = {
+            "identity": F(N(0)),
+            "apply": F(F(A(N(1), N(0)))),
+            "select_first": F(F(N(1))),
+            "select_second": F(F(N(0))),
+        }
+
+        self.assertEqual(self.penv.env, genv)
+
+
 class TestSelectionCombinators(unittest.TestCase):
     prelude = [
         "def identity := \\x.x",
