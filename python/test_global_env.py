@@ -88,12 +88,11 @@ class TestClobberGlobal(unittest.TestCase):
         self.penv = program_env.ProgramEnv()
         self.penv.load_program(self.prelude)
 
-    @unittest.expectedFailure
     def test_env_substitution(self):
         self.penv.append_line("(select_first apply id)")
         value = self.penv.run()
 
-        self.assertTrue("id" in self.penv.env)
+        self.assertTrue({"label": "id", "ast": identity} in self.penv.env)
         self.assertEqual(value, applyfn)
 
 
