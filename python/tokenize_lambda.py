@@ -58,6 +58,53 @@ def def_t():
     return {"kind": Token.DEF, "str": "def"}
 
 
+def is_name_t(token):
+    """Return whether TOKEN is a name-token."""
+
+    if "value" not in token:
+        return False
+
+    return token == name_t(token["value"])
+
+
+def is_lambda_t(token):
+    """Return whether TOKEN is a lambda-token."""
+
+    return token == lambda_t()
+
+
+def is_left_paren_t(token):
+    """Return whether TOKEN is a left-paren-token."""
+
+    return token == left_paren_t()
+
+
+def is_right_paren_t(token):
+    """Return whether TOKEN is a right-paren-token."""
+
+    return token == right_paren_t()
+
+
+def is_dot_t(token):
+    """Return whether TOKEN is a dot."""
+
+    return token == dot_t()
+
+
+def find(tokens, token):
+    """Return the first index where TOKEN is found in TOKENS.
+
+    If not found, return -1.
+
+    """
+
+    for i in range(len(tokens)):
+        if tokens[i] == token:
+            return i
+
+    return -1
+
+
 def is_identifier(token):
     """Return True iff TOKEN is an identifier."""
     return re.fullmatch(IDENT, token)

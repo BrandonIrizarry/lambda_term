@@ -68,7 +68,7 @@ def parse_application(tokens, i, env, genv):
     second_term, i = parse_term(tokens, i, env[:], genv)
     partial = new_application(first_term, second_term)
 
-    while tokens[i] != ")":
+    while not tkz.is_right_paren_t(tokens[i]):
         next_term, i = parse_term(tokens, i, env[:], genv)
         partial = new_application(partial, next_term)
 
@@ -83,9 +83,12 @@ def parse_abstraction(tokens, i, env, genv):
     i += 1
 
     # Record the formal parameter inside env.
-    env.append(tokens[i])
+    if not tkz.is_name_t(tokens[i]):
+        raise err.IllegalTokenError(i, tokens[i])
 
-    if tokens[i + 1] != ".":
+    env.append(tokens[i]["value"])
+
+    if not tkz.is_dot_t(tokens[i + 1]):
         raise err.AbstractionNoDotError(i + 1, tokens)
 
     # Move past the dot.
@@ -104,7 +107,9 @@ def parse_name(tokens, i, env, genv):
     index = 0
 
     for local_name in reversed(env):
-        if local_name == tokens[i]:
+        # FIXME: we expect this key to exist, so we should probably
+        # change the function signature.
+        if local_name == tokens[i]["value"]:
             is_local = True
             break
 
@@ -115,7 +120,7 @@ def parse_name(tokens, i, env, genv):
 
     # Else, check the global environment.
     for (label, ast) in reversed(genv.items()):
-        if label == tokens[i]:
+        if label == tokens[i]["value"]:
             return ast, i + 1
 
     raise err.UnboundNameError(i, tokens[i])
@@ -125,11 +130,11 @@ def parse_term(tokens, i, env, genv):
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 
-    if tokens[i] == "(":
+    if tkz.is_left_paren_t(tokens[i]):
         return parse_application(tokens, i, env[:], genv)
-    elif tokens[i] == "\\":
+    elif tkz.is_lambda_t(tokens[i]):
         return parse_abstraction(tokens, i, env[:], genv)
-    elif tkz.is_identifier(tokens[i]):
+    elif tkz.is_name_t(tokens[i]):
         return parse_name(tokens, i, env[:], genv)
     else:
         raise err.StrayTokenError(i, tokens[i])
@@ -149,19 +154,25 @@ def parse(raw_term, genv):
 
     # If applicable, record the name to be added to the global
     # environment.
-    if tokens[0] == "def":
+    if tokens[0]["kind"] == "def":
         # Note that we do this before we alter tokens so that the
         # parser sees our augmented result.
-        label = tokens[1]
+
+        second_token = tokens[1]
+
+        if not tkz.is_name_t(second_token):
+            raise err.IllegalTokenError(1, second_token)
+
+        label = second_token["value"]
 
         # Move the left-side params to the right side as lambda
         # binders.
-        mid = tokens.index(":=")
+        mid = tkz.find(tokens, tkz.assign_t())
 
         params = tokens[2:mid]
         body = tokens[mid+1:]
         fn_prefix = list(itertools.chain.from_iterable(
-            [["\\", f"{p}", "."] for p in params]))
+            [[tkz.lambda_t(), tkz.name_t(p), tkz.dot_t()] for p in params]))
 
         tokens = fn_prefix + body
 
