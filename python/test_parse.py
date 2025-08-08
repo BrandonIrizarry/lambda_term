@@ -34,7 +34,7 @@ class TestShorthand(unittest.TestCase):
 class TestLegalTerms(unittest.TestCase):
     def test_2_2_a(self):
         raw_term = "   ((\\input.\\func.(  func input  ) \\first.\\second.first) \\sole.sole)"
-        parsed, num_tokens, _ = parse(raw_term, dict())
+        parsed, num_tokens, _ = parse(raw_term, [])
 
         ast = A(A(F(F(A(N(0),
                         N(1)))),
@@ -46,7 +46,7 @@ class TestLegalTerms(unittest.TestCase):
 
     def test_2_2_b(self):
         raw_term = "(((\\x.\\y.\\z.((x y) z) \\f.\\a.(f a)) \\i.i) \\j.j)"
-        parsed, num_tokens, _ = parse(raw_term, dict())
+        parsed, num_tokens, _ = parse(raw_term, [])
 
         ast = A(A(A(F(F(F(A(A(N(2),
                               N(1)),
@@ -63,7 +63,7 @@ class TestLegalTerms(unittest.TestCase):
         self.maxDiff = None
 
         raw_term = "(\\h.((\\a.\\f.(f a) h) h) \\f.(f f))"
-        parsed, num_tokens, _ = parse(raw_term, dict())
+        parsed, num_tokens, _ = parse(raw_term, [])
 
         ast = A(F(A(A(F(F(A(N(0),
                             N(1)))),
@@ -81,18 +81,18 @@ class TestIllegalTerms(unittest.TestCase):
         raw_term = "\\xy"
 
         with self.assertRaises(err.IncompleteTermError):
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
         raw_term = "\\xylophone.(xylophone"
 
         with self.assertRaises(err.IncompleteTermError):
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
     def test_abstraction_missing_dot(self):
         raw_term = "\\xy(x y)"
 
         with self.assertRaises(err.AbstractionNoDotError) as cm:
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
         self.assertEqual(cm.exception.position, 2)
 
@@ -100,19 +100,19 @@ class TestIllegalTerms(unittest.TestCase):
         raw_term = "\\x.\\y.x y)"
 
         with self.assertRaises(err.TrailingGarbageError):
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
     def test_abstraction_missing_keyword(self):
         raw_term = "x.x"
 
         with self.assertRaises(err.UnboundNameError):
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
     def test_extra_dots(self):
         raw_term = "\\x..x"
 
         with self.assertRaises(err.StrayTokenError) as cm:
-            parse(raw_term, dict())
+            parse(raw_term, [])
 
         self.assertEqual(cm.exception.token, tkz.dot_t())
 
@@ -121,7 +121,7 @@ class TestSugaredApplications(unittest.TestCase):
     def test_xyz(self):
         raw_term = "\\x.\\y.\\z.(x y z)"
 
-        parsed, _, _ = parse(raw_term, dict())
+        parsed, _, _ = parse(raw_term, [])
 
         # Note how the generated AST includes the desugared extra
         # application.
@@ -134,7 +134,7 @@ class TestSugaredApplications(unittest.TestCase):
     def test_complex(self):
         raw_term = "\\false.\\iszero.\\n.((iszero n) n (n false))"
 
-        parsed, _, _ = parse(raw_term, dict())
+        parsed, _, _ = parse(raw_term, [])
 
         ast = F(F(F(A(A(A(N(1),
                           N(0)),

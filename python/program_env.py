@@ -4,7 +4,7 @@ import parse
 
 class ProgramEnv():
     def __init__(self):
-        self.env = dict()
+        self.env = []
         self.program = []
 
     def load_program(self, program):
@@ -32,7 +32,7 @@ class ProgramEnv():
         # If we parsed a def-statement, associate the label with the
         # AST.
         if label is not None:
-            self.env[label] = ast
+            self.env.append({"label": label, "ast": ast})
             return ast
 
         return beta.beta_reduce(ast)

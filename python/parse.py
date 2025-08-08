@@ -119,9 +119,9 @@ def parse_name(tokens, i, env, genv):
         return new_name(index), i + 1
 
     # Else, check the global environment.
-    for (label, ast) in reversed(genv.items()):
-        if label == tokens[i]["value"]:
-            return ast, i + 1
+    for gdef in reversed(genv):
+        if gdef["label"] == tokens[i]["value"]:
+            return gdef["ast"], i + 1
 
     raise err.UnboundNameError(i, tokens[i])
 
