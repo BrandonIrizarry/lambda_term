@@ -13,6 +13,7 @@ class Token(enum.Enum):
     RIGHT_PAREN = enum.auto()
     DOT = enum.auto()
     LAMBDA = enum.auto()
+    DEF = enum.auto()
 
 
 def is_identifier(token):
@@ -23,6 +24,7 @@ def is_identifier(token):
 def tokenize(raw_term: str):
     spec = [
         ("assign", ":="),
+        ("def", r"def"),
         ("name", IDENT),
         ("left_paren", r"\("),
         ("right_paren", r"\)"),
@@ -50,6 +52,8 @@ def tokenize(raw_term: str):
         match kind:
             case "assign":
                 tokens.append({"kind": Token.ASSIGN})
+            case "def":
+                tokens.append({"kind": Token.DEF})
             case "name":
                 tokens.append({"kind": Token.NAME, "value": value})
             case "left_paren":

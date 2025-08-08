@@ -16,3 +16,17 @@ class TestTokenizer(unittest.TestCase):
         ]
 
         self.assertEqual(tokens,  expected)
+
+    def test_def(self):
+        raw_term = "def id x := x"
+
+        tokens = tkz.tokenize(raw_term)
+        expected = [
+            {"kind": tkz.Token.DEF},
+            {"kind": tkz.Token.NAME, "value": "id"},
+            {"kind": tkz.Token.NAME, "value": "x"},
+            {"kind": tkz.Token.ASSIGN},
+            {"kind": tkz.Token.NAME, "value": "x"}
+        ]
+
+        self.assertEqual(tokens, expected)
