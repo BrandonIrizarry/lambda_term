@@ -15,9 +15,10 @@ class ParseError(Exception):
 
         """
 
-        current_tokens = self.tokens
-        current_tokens.insert(self.position, "*")
-        return " ".join(current_tokens)
+        read_format = [token["str"] for token in self.tokens]
+        read_format.insert(self.position, "*")
+
+        return " ".join(read_format)
 
 
 class IncompleteTermError(ParseError):
