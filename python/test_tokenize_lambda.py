@@ -30,3 +30,17 @@ class TestTokenizer(unittest.TestCase):
         ]
 
         self.assertEqual(tokens, expected)
+
+    def test_application(self):
+        raw_term = "(select_first x y)"
+
+        tokens = tkz.tokenize(raw_term)
+        expected = [
+            tkz.left_paren_t(),
+            tkz.name_t("select_first"),
+            tkz.name_t("x"),
+            tkz.name_t("y"),
+            tkz.right_paren_t()
+        ]
+
+        self.assertEqual(tokens, expected)
