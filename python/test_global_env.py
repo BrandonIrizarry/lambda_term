@@ -27,15 +27,14 @@ class TestPreludeEnv(unittest.TestCase):
         self.penv = program_env.ProgramEnv()
         self.penv.load_program(self.prelude)
 
-    @unittest.expectedFailure
     def test_prelude_env(self):
         self.penv.run()
-        genv = {
-            "identity": F(N(0)),
-            "apply": F(F(A(N(1), N(0)))),
-            "select_first": F(F(N(1))),
-            "select_second": F(F(N(0))),
-        }
+        genv = [
+            {"label": "identity", "ast": F(N(0))},
+            {"label": "apply", "ast": F(F(A(N(1), N(0))))},
+            {"label": "select_first", "ast": F(F(N(1)))},
+            {"label": "select_second", "ast": F(F(N(0)))},
+        ]
 
         self.assertEqual(self.penv.env, genv)
 
