@@ -33,6 +33,7 @@ class ProgramEnv():
         # AST.
         if label is not None:
             self.env[label] = ast
+            return ast
 
         return beta.beta_reduce(ast)
 
