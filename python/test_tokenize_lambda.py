@@ -9,10 +9,10 @@ class TestTokenizer(unittest.TestCase):
 
         tokens = tkz.tokenize(raw_term)
         expected = [
-            {"kind": tkz.Token.LAMBDA},
-            {"kind": tkz.Token.NAME, "value": "x"},
-            {"kind": tkz.Token.DOT},
-            {"kind": tkz.Token.NAME, "value": "x"}
+            tkz.lambda_t(),
+            tkz.name_t("x"),
+            tkz.dot_t(),
+            tkz.name_t("x")
         ]
 
         self.assertEqual(tokens,  expected)
@@ -22,11 +22,11 @@ class TestTokenizer(unittest.TestCase):
 
         tokens = tkz.tokenize(raw_term)
         expected = [
-            {"kind": tkz.Token.DEF},
-            {"kind": tkz.Token.NAME, "value": "id"},
-            {"kind": tkz.Token.NAME, "value": "x"},
-            {"kind": tkz.Token.ASSIGN},
-            {"kind": tkz.Token.NAME, "value": "x"}
+            tkz.def_t(),
+            tkz.name_t("id"),
+            tkz.name_t("x"),
+            tkz.assign_t(),
+            tkz.name_t("x")
         ]
 
         self.assertEqual(tokens, expected)
