@@ -16,6 +16,48 @@ class Token(enum.Enum):
     DEF = enum.auto()
 
 
+def assign_t():
+    """Return a new assign-token."""
+
+    return {"kind": Token.ASSIGN}
+
+
+def name_t(value):
+    """Return a new name-token."""
+
+    return {"kind": Token.NAME, "value": value}
+
+
+def left_paren_t():
+    """Return a new left-paren-token."""
+
+    return {"kind": Token.LEFT_PAREN}
+
+
+def right_paren_t():
+    """Return a new right-paren-token."""
+
+    return {"kind": Token.RIGHT_PAREN}
+
+
+def dot_t():
+    """Return a new dot-token."""
+
+    return {"kind": Token.DOT}
+
+
+def lambda_t():
+    """Return a new lambda-token."""
+
+    return {"kind": Token.LAMBDA}
+
+
+def def_t():
+    """Return a new def-token."""
+
+    return {"kind": Token.DEF}
+
+
 def is_identifier(token):
     """Return True iff TOKEN is an identifier."""
     return re.fullmatch(IDENT, token)
@@ -51,19 +93,19 @@ def tokenize(raw_term: str):
 
         match kind:
             case "assign":
-                tokens.append({"kind": Token.ASSIGN})
+                tokens.append(assign_t())
             case "def":
-                tokens.append({"kind": Token.DEF})
+                tokens.append(def_t())
             case "name":
-                tokens.append({"kind": Token.NAME, "value": value})
+                tokens.append(name_t(value))
             case "left_paren":
-                tokens.append({"kind": Token.LEFT_PAREN})
+                tokens.append(left_paren_t())
             case "right_paren":
-                tokens.append({"kind": Token.RIGHT_PAREN})
+                tokens.append(right_paren_t())
             case "dot":
-                tokens.append({"kind": Token.DOT})
+                tokens.append(dot_t())
             case "lambda":
-                tokens.append({"kind": Token.LAMBDA})
+                tokens.append(lambda_t())
             case "space":
                 continue
             case "error":
