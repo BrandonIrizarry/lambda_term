@@ -140,6 +140,38 @@ def parse_term(tokens, i, env, genv):
         raise err.StrayTokenError(i, tokens[i])
 
 
+def desugar_def(tokens):
+    if not tkz.is_def_t(tokens[0]):
+        return tokens, None
+
+    second_token = tokens[1]
+
+    if not tkz.is_name_t(second_token):
+        raise err.IllegalTokenError(1, second_token)
+
+    label = second_token["value"]
+
+    # Move the left-side params to the right side as lambda
+    # binders.
+    mid = tkz.find(tokens, tkz.assign_t())
+
+    if mid == -1:
+        raise err.MissingAssignmentError
+
+    params = tokens[2:mid]
+    body = tokens[mid+1:]
+
+    fn_prefix = []
+
+    for p in params:
+        for t in [tkz.lambda_t(), p, tkz.dot_t()]:
+            fn_prefix.append(t)
+
+    tokens = fn_prefix + body
+
+    return tokens, label
+
+
 def parse(raw_term, genv):
     """Given RAW_TERM, construct an AST.
 
@@ -150,38 +182,7 @@ def parse(raw_term, genv):
     tokens = tkz.tokenize(raw_term)
     err.ParseError.set_tokens(tokens)
 
-    label = None
-
-    # If applicable, record the name to be added to the global
-    # environment.
-    if tkz.is_def_t(tokens[0]):
-        # Note that we do this before we alter tokens so that the
-        # parser sees our augmented result.
-
-        second_token = tokens[1]
-
-        if not tkz.is_name_t(second_token):
-            raise err.IllegalTokenError(1, second_token)
-
-        label = second_token["value"]
-
-        # Move the left-side params to the right side as lambda
-        # binders.
-        mid = tkz.find(tokens, tkz.assign_t())
-
-        if mid == -1:
-            raise err.MissingAssignmentError
-
-        params = tokens[2:mid]
-        body = tokens[mid+1:]
-
-        fn_prefix = []
-
-        for p in params:
-            for t in [tkz.lambda_t(), p, tkz.dot_t()]:
-                fn_prefix.append(t)
-
-        tokens = fn_prefix + body
+    tokens, label = desugar_def(tokens[:])
 
     # Parse the now preprocessed term.
     try:
