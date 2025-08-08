@@ -172,7 +172,7 @@ def parse(raw_term, genv):
         params = tokens[2:mid]
         body = tokens[mid+1:]
         fn_prefix = list(itertools.chain.from_iterable(
-            [[tkz.lambda_t(), tkz.name_t(p), tkz.dot_t()] for p in params]))
+            [[tkz.lambda_t(), p, tkz.dot_t()] for p in params]))
 
         tokens = fn_prefix + body
 
