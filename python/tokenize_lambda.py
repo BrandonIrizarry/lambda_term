@@ -91,6 +91,12 @@ def is_dot_t(token):
     return token == dot_t()
 
 
+def is_def_t(token):
+    """Return whether TOKEN is the 'def' keyword."""
+
+    return token == def_t()
+
+
 def find(tokens, token):
     """Return the first index where TOKEN is found in TOKENS.
 

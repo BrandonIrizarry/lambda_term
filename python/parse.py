@@ -154,7 +154,7 @@ def parse(raw_term, genv):
 
     # If applicable, record the name to be added to the global
     # environment.
-    if tokens[0]["kind"] == "def":
+    if tkz.is_def_t(tokens[0]):
         # Note that we do this before we alter tokens so that the
         # parser sees our augmented result.
 
