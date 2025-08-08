@@ -1,6 +1,7 @@
 import unittest
 
 import error as err
+import tokenize_lambda as tkz
 from parse import *
 
 A = new_application
@@ -113,7 +114,7 @@ class TestIllegalTerms(unittest.TestCase):
         with self.assertRaises(err.StrayTokenError) as cm:
             parse(raw_term, dict())
 
-        self.assertEqual(cm.exception.token, ".")
+        self.assertEqual(cm.exception.token, tkz.dot_t())
 
 
 class TestSugaredApplications(unittest.TestCase):
