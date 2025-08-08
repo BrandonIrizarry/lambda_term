@@ -19,43 +19,43 @@ class Token(enum.Enum):
 def assign_t():
     """Return a new assign-token."""
 
-    return {"kind": Token.ASSIGN}
+    return {"kind": Token.ASSIGN, "str": ":="}
 
 
 def name_t(value):
     """Return a new name-token."""
 
-    return {"kind": Token.NAME, "value": value}
+    return {"kind": Token.NAME, "value": value, "str": value}
 
 
 def left_paren_t():
     """Return a new left-paren-token."""
 
-    return {"kind": Token.LEFT_PAREN}
+    return {"kind": Token.LEFT_PAREN, "str": "("}
 
 
 def right_paren_t():
     """Return a new right-paren-token."""
 
-    return {"kind": Token.RIGHT_PAREN}
+    return {"kind": Token.RIGHT_PAREN, "str": ")"}
 
 
 def dot_t():
     """Return a new dot-token."""
 
-    return {"kind": Token.DOT}
+    return {"kind": Token.DOT, "str": "."}
 
 
 def lambda_t():
     """Return a new lambda-token."""
 
-    return {"kind": Token.LAMBDA}
+    return {"kind": Token.LAMBDA, "str": "\\"}
 
 
 def def_t():
     """Return a new def-token."""
 
-    return {"kind": Token.DEF}
+    return {"kind": Token.DEF, "str": "def"}
 
 
 def is_identifier(token):
