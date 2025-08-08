@@ -111,11 +111,6 @@ def find(tokens, token):
     return -1
 
 
-def is_identifier(token):
-    """Return True iff TOKEN is an identifier."""
-    return re.fullmatch(IDENT, token)
-
-
 def tokenize(raw_term: str):
     spec = [
         ("assign", ":="),
