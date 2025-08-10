@@ -1,0 +1,21 @@
+def id x := x
+
+def apply fn x := (fn x)
+
+def zero := id
+
+def if c _t _f := (c _t _f)
+
+def succ n := \s.(s false n)
+
+def pred1 n := (n select_second)
+
+def iszero n := (n select_first)
+
+def pred n := (if (iszero n) zero (pred1 n))
+
+def recursive f := (\s.(f (s s)) \s.(f (s s)))
+
+def make_zero1 _rec n := (if (iszero n) zero (_rec (pred n)))
+
+def make_zero := (recursive make_zero1)
