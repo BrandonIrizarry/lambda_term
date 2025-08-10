@@ -91,8 +91,6 @@ def repl():
 
                         match status:
                             case dtv.Status.SUCCESS:
-                                print(penv.env)
-                                print(penv.program)
                                 penv.load_program(program)
                                 penv.run()
                             case dtv.Status.FILE_NOT_FOUND:
