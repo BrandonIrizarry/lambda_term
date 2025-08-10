@@ -4,8 +4,6 @@ import desugar as dsg
 import error as err
 import tokenize_lambda as tkz
 
-global_env = []
-
 
 class Term(enum.StrEnum):
     NAME = "name"
