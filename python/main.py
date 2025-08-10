@@ -86,7 +86,8 @@ def repl():
                     case "load":
                         continue
                     case _:
-                        raise err.InvalidDirectiveError(cmd)
+                        print(f"Invalid directive: '.{cmd}'")
+                        continue
 
             penv.append_line(raw_term)
 
