@@ -26,7 +26,7 @@ class ProgramEnv():
 
         self.program.append(line)
 
-    def __evaluate(self, raw_term):
+    def evaluate(self, raw_term):
         ast, _, label = parse.parse(raw_term, self.env)
 
         # If we parsed a def-statement, associate the label with the
@@ -48,7 +48,7 @@ class ProgramEnv():
         value = None
 
         for line in self.program:
-            value = self.__evaluate(line)
+            value = self.evaluate(line)
 
         # Return the last evaluation, similar to Lisp.
         #
@@ -67,4 +67,4 @@ class ProgramEnv():
         if len(self.program) == 0:
             return None
 
-        return self.__evaluate(self.program[-1])
+        return self.evaluate(self.program[-1])

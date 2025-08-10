@@ -6,6 +6,7 @@ import readline
 from wonderwords import RandomWord
 
 import beta
+import directive as dtv
 import error as err
 import program_env
 
@@ -81,23 +82,40 @@ def repl():
 
             if directive is not None:
                 cmd = directive.group("cmd")
+                params = directive.group("params").strip().split(" ")
 
                 match cmd:
                     case "load":
-                        continue
+                        filename = params[0]
+                        program, status = dtv.load_d(filename)
+
+                        match status:
+                            case dtv.Status.SUCCESS:
+                                print(penv.env)
+                                print(penv.program)
+                                penv.load_program(program)
+                                penv.run()
+                            case dtv.Status.FILE_NOT_FOUND:
+                                print(f"Couldn't load program 'f{filename}'")
+                            case dtv.Status.WRONG_EXTENSION:
+                                print(f"File requires '.lbd' extension")
                     case _:
                         print(f"Invalid directive: '.{cmd}'")
-                        continue
 
-            penv.append_line(raw_term)
+                # We're finished with the directive, continue with the
+                # REPL.
+                continue
 
             value = None
 
             try:
-                value = penv.eval_last()
+                value = penv.evaluate(raw_term)
             except (err.IllegalTokenError, err.ParseError) as e:
                 print(e)
                 continue
+
+            # I suspect we don't need this, but we'll see.
+            penv.append_line(raw_term)
 
             print()
             pretty_print_term_ast(value, [])
