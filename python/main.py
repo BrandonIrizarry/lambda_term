@@ -1,5 +1,6 @@
 import atexit
 import os
+import re
 import readline
 
 from wonderwords import RandomWord
@@ -75,6 +76,18 @@ def repl():
                 continue
 
             readline.add_history(raw_term)
+
+            directive = re.match(r"(\.)(?P<cmd>.+?\b)(?P<params>.*)", raw_term)
+
+            if directive is not None:
+                cmd = directive.group("cmd")
+
+                match cmd:
+                    case "load":
+                        continue
+                    case _:
+                        raise err.InvalidDirectiveError(cmd)
+
             penv.append_line(raw_term)
 
             value = None

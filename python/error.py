@@ -68,3 +68,11 @@ class MissingAssignmentError(IllegalTokenError):
 class AbstractionNoDotError(ParseError):
     def __str__(self):
         return f"Missing dot-separator at token-position {self.position}"
+
+
+class InvalidDirectiveError(Exception):
+    def __init__(self, directive):
+        self.directive = directive
+
+    def __str__(self):
+        return f"Invalid directive '{self.directive}'"
