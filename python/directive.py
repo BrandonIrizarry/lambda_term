@@ -8,8 +8,12 @@ class Status(typing.TypedDict):
 
 
 def load_d(filename) -> Status:
-    if not re.fullmatch(r"\S+\.lbd", filename):
-        return {"user_data": [], "error": "Wrong extension"}
+    mobj = re.fullmatch(r"([^.]+)\.(\w+)", filename)
+
+    if not mobj:
+        return {"user_data": [], "error": f"Wrong format (possible missing extension): {filename}"}
+    elif mobj.group(2) != "lbd":
+        return {"user_data": [], "error": f"Non-lbd extension: {mobj.group(2)}"}
 
     lines = None
 
@@ -19,4 +23,4 @@ def load_d(filename) -> Status:
 
             return {"user_data": lines, "error": None}
     except FileNotFoundError:
-        return {"user_data": [], "error": "file not found"}
+        return {"user_data": [], "error": f"File not found: {filename}"}
