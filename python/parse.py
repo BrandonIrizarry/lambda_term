@@ -1,46 +1,7 @@
-import enum
-
 import desugar as dsg
 import error as err
+import term
 import tokenize_lambda as tkz
-
-
-class Term(enum.StrEnum):
-    NAME = "name"
-    ABSTRACTION = "abstraction"
-    APPLICATION = "application"
-
-    def __repr__(self):
-        return self
-
-
-def new_name(index):
-    """Construct and return a name with the given INDEX."""
-
-    return {
-        "kind": Term.NAME,
-        "index": index,
-    }
-
-
-def new_abstraction(body):
-    """Construct and return an abstraction with the given BODY."""
-
-    return {
-        "kind": Term.ABSTRACTION,
-        "body": body,
-    }
-
-
-def new_application(left, right):
-    """Construct and return an application with the given LEFT and
-    RIGHT terms."""
-
-    return {
-        "kind": Term.APPLICATION,
-        "left": left,
-        "right": right,
-    }
 
 # What follows is a series of parse functions for a recursive-descent
 # apparatus. As a rule, they accept the tokenized expression (given as
@@ -64,11 +25,11 @@ def parse_application(tokens, i, env, genv):
     # Bootstrap the left-fold.
     first_term, i = parse_term(tokens, i, env[:], genv)
     second_term, i = parse_term(tokens, i, env[:], genv)
-    partial = new_application(first_term, second_term)
+    partial = term.new_application(first_term, second_term)
 
     while not tkz.is_right_paren_t(tokens[i]):
         next_term, i = parse_term(tokens, i, env[:], genv)
-        partial = new_application(partial, next_term)
+        partial = term.new_application(partial, next_term)
 
     # Skip the closing parenthesis.
     i += 1
@@ -94,7 +55,7 @@ def parse_abstraction(tokens, i, env, genv):
 
     body, i = parse_term(tokens, i, env[:], genv)
 
-    return new_abstraction(body), i
+    return term.new_abstraction(body), i
 
 
 def parse_name(tokens, i, env, genv):
@@ -114,7 +75,7 @@ def parse_name(tokens, i, env, genv):
         index += 1
 
     if is_local:
-        return new_name(index), i + 1
+        return term.new_name(index), i + 1
 
     # Else, check the global environment.
     for gdef in reversed(genv):

@@ -5,10 +5,10 @@ import readline
 
 from wonderwords import RandomWord
 
-import beta
 import directive as dtv
 import error as err
 import program_env
+import term
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -45,20 +45,20 @@ def pretty_print_term_ast(ast, env):
 
     """
 
-    if ast["kind"] == beta.Term.NAME:
+    if ast["kind"] == term.Term.NAME:
         # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
         # Ex: index = 0 -> -1, index = 1 -> -2, etc.
         depth = -(ast["index"] + 1)
 
         print(env[depth], end="")
-    elif ast["kind"] == beta.Term.ABSTRACTION:
+    elif ast["kind"] == term.Term.ABSTRACTION:
         # Generate a random word to use as the function parameter.
         param = rword.word()
         env.append(param)
 
         print("\\{}.".format(param), end="")
         pretty_print_term_ast(ast["body"], env[:])
-    elif ast["kind"] == beta.Term.APPLICATION:
+    elif ast["kind"] == term.Term.APPLICATION:
         print("(", end="")
         pretty_print_term_ast(ast["left"], env[:])
         print(" ", end="")

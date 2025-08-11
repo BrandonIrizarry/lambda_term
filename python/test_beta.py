@@ -1,10 +1,11 @@
 import unittest
 
 import beta
+import term
 
-A = beta.new_application
-F = beta.new_abstraction
-N = beta.new_name
+A = term.new_application
+F = term.new_abstraction
+N = term.new_name
 
 identity = F(N(0))
 self_apply = F(A(N(0), N(0)))

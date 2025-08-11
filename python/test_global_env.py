@@ -1,13 +1,12 @@
 import unittest
 
-import beta
 import error as err
-import parse
 import program_env
+import term
 
-A = beta.new_application
-F = beta.new_abstraction
-N = beta.new_name
+A = term.new_application
+F = term.new_abstraction
+N = term.new_name
 
 identity = F(N(0))
 applyfn = F(F(A(N(1), N(0))))

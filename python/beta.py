@@ -1,7 +1,4 @@
-from parse import Term
-from parse import new_name
-from parse import new_abstraction
-from parse import new_application
+import term
 
 
 def shift(ast, amount, minimum):
@@ -12,12 +9,12 @@ def shift(ast, amount, minimum):
 
     """
 
-    if ast["kind"] == Term.NAME:
+    if ast["kind"] == term.Term.NAME:
         if ast["index"] >= minimum:
             ast["index"] += 1
-    elif ast["kind"] == Term.ABSTRACTION:
+    elif ast["kind"] == term.Term.ABSTRACTION:
         shift(ast["body"], amount, minimum + 1)
-    elif ast["kind"] == Term.APPLICATION:
+    elif ast["kind"] == term.Term.APPLICATION:
         shift(ast["left"], amount, minimum)
         shift(ast["right"], amount, minimum)
     else:
@@ -40,21 +37,21 @@ def replace(ast, argument, target_index):
     """Replace TARGET_INDEX inside AST with ARGUMENT, another AST.
 
     Return the modified AST."""
-    if ast["kind"] == Term.NAME:
+    if ast["kind"] == term.Term.NAME:
         if ast["index"] == target_index:
             return argument
 
         return ast
-    elif ast["kind"] == Term.ABSTRACTION:
+    elif ast["kind"] == term.Term.ABSTRACTION:
         inc(argument, 0)
         new_body = replace(ast["body"], argument, target_index + 1)
 
-        return new_abstraction(new_body)
-    elif ast["kind"] == Term.APPLICATION:
+        return term.new_abstraction(new_body)
+    elif ast["kind"] == term.Term.APPLICATION:
         new_left = replace(ast["left"], argument, target_index)
         new_right = replace(ast["right"], argument, target_index)
 
-        return new_application(new_left, new_right)
+        return term.new_application(new_left, new_right)
     else:
         raise ValueError
 
@@ -66,15 +63,15 @@ def beta_reduce(ast):
 
     """
 
-    if ast["kind"] != Term.APPLICATION:
+    if ast["kind"] != term.Term.APPLICATION:
         return ast
 
     beta_left = beta_reduce(ast["left"])
 
-    if beta_left["kind"] != Term.ABSTRACTION:
+    if beta_left["kind"] != term.Term.ABSTRACTION:
         beta_right = beta_reduce(ast["right"])
 
-        return new_application(beta_left, beta_right)
+        return term.new_application(beta_left, beta_right)
 
     fn = beta_left
     arg = ast["right"]
