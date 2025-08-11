@@ -1,19 +1,15 @@
-import enum
 import re
+import typing
 
 
-class Status(enum.Enum):
-    SUCCESS = enum.auto()
-    FILE_NOT_FOUND = enum.auto()
-    WRONG_EXTENSION = enum.auto()
+class Status(typing.TypedDict):
+    user_data: typing.Any
+    error: str | None
 
 
-type program = list[str]
-
-
-def load_d(filename) -> tuple[program, Status]:
+def load_d(filename) -> Status:
     if not re.fullmatch(r"\S+\.lbd", filename):
-        return ([], Status.WRONG_EXTENSION)
+        return {"user_data": [], "error": "Wrong extension"}
 
     lines = None
 
@@ -21,6 +17,6 @@ def load_d(filename) -> tuple[program, Status]:
         with open(filename, "r") as file:
             lines = file.readlines()
 
-            return (lines, Status.SUCCESS)
+            return {"user_data": lines, "error": None}
     except FileNotFoundError:
-        return ([], Status.FILE_NOT_FOUND)
+        return {"user_data": [], "error": "file not found"}

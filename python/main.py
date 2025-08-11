@@ -66,60 +66,61 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
+def eval_as_lambda(raw_term, penv):
+    try:
+        value = penv.evaluate(raw_term)
+    except (err.IllegalTokenError, err.ParseError) as e:
+        print(e)
+        return
+
+    # I suspect we don't need this, but we'll see.
+    penv.append_line(raw_term)
+
+    print()
+    pretty_print_term_ast(value, [])
+    print()
+
+
+def eval_as_directive(directive: re.Match[str], penv):
+    cmd = directive.group("cmd")
+    params = directive.group("params").strip().split(" ")
+
+    match cmd:
+        case "load":
+            filename = params[0]
+            status = dtv.load_d(filename)
+
+            if status["error"] is not None:
+                print(status["error"])
+            else:
+                program = status["user_data"]
+                penv.load_program(program)
+                penv.run()
+        case _:
+            print(f"Invalid directive: '.{cmd}'")
+
+
 def repl():
     penv = program_env.ProgramEnv()
 
     while True:
         try:
-            raw_term = input("> ")
-
-            if raw_term == "":
-                continue
-
-            readline.add_history(raw_term)
-
-            directive = re.match(r"(\.)(?P<cmd>.+?\b)(?P<params>.*)", raw_term)
-
-            if directive is not None:
-                cmd = directive.group("cmd")
-                params = directive.group("params").strip().split(" ")
-
-                match cmd:
-                    case "load":
-                        filename = params[0]
-                        program, status = dtv.load_d(filename)
-
-                        match status:
-                            case dtv.Status.SUCCESS:
-                                penv.load_program(program)
-                                penv.run()
-                            case dtv.Status.FILE_NOT_FOUND:
-                                print(f"Couldn't load program 'f{filename}'")
-                            case dtv.Status.WRONG_EXTENSION:
-                                print(f"File requires '.lbd' extension")
-                    case _:
-                        print(f"Invalid directive: '.{cmd}'")
-
-                # We're finished with the directive, continue with the
-                # REPL.
-                continue
-
-            value = None
-
-            try:
-                value = penv.evaluate(raw_term)
-            except (err.IllegalTokenError, err.ParseError) as e:
-                print(e)
-                continue
-
-            # I suspect we don't need this, but we'll see.
-            penv.append_line(raw_term)
-
-            print()
-            pretty_print_term_ast(value, [])
-            print()
+            repl_input = input("> ")
         except EOFError:
             break
+
+        if repl_input == "":
+            continue
+
+        readline.add_history(repl_input)
+
+        directive = re.match(
+            r"(\.)(?P<cmd>.+?\b)(?P<params>.*)", repl_input)
+
+        if directive is None:
+            eval_as_lambda(repl_input, penv)
+        else:
+            eval_as_directive(directive, penv)
 
 
 repl()
