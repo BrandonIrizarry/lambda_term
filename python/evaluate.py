@@ -25,7 +25,7 @@ def eval_raw_term(raw_term: str, genv: Genv):
     return beta.beta_reduce(ast)
 
 
-def eval_program(program: list[str], genv: Genv):
+def eval_program(program: list[str], genv: Genv) -> dict[typing.Any, typing.Any]:
     value = None
 
     for line in program:
