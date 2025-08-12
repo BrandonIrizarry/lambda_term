@@ -10,7 +10,13 @@ class Status(typing.TypedDict):
 def load_d(filename: str) -> Status:
     try:
         with open(f"{filename}.lbd", "r") as file:
-            lines = file.readlines()
+            lines = []
+
+            for _line in file.readlines():
+                line = _line.strip()
+
+                if line != "":
+                    lines.append(line)
 
             return {"user_data": lines, "error": None}
     except FileNotFoundError:
