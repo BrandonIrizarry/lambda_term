@@ -6,6 +6,14 @@ def zero := id
 
 def if c _t _f := (c _t _f)
 
+def select_first x y := x
+
+def select_second x y := y
+
+def true := select_first
+
+def false := select_second
+
 def succ n := \s.(s false n)
 
 def pred1 n := (n select_second)
