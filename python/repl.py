@@ -106,7 +106,6 @@ def repl():
 
             match name:
                 case "load":
-                    # FIXME: this part can be refactored into a function.
                     filename = params[0]
                     status = dtv.load_d(filename)
 
