@@ -27,3 +27,7 @@ def recursive f := (\s.(f (s s)) \s.(f (s s)))
 def make_zero1 _rec n := (if (iszero n) zero (_rec (pred n)))
 
 def make_zero := (recursive make_zero1)
+
+def three := (succ (succ (succ zero)))
+
+(make_zero three)
