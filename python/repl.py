@@ -2,12 +2,12 @@ import atexit
 import os
 import re
 import readline
+import typing
 
 from wonderwords import RandomWord
 
 import directive as dtv
-import error as err
-import program_env
+import evaluate as evl
 import term
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
@@ -66,42 +66,20 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-def eval_as_lambda(raw_term, penv):
-    try:
-        value = penv.evaluate(raw_term)
-    except (err.IllegalTokenError, err.ParseError) as e:
-        print(e)
-        return
-
-    # I suspect we don't need this, but we'll see.
-    penv.append_line(raw_term)
-
-    print()
-    pretty_print_term_ast(value, [])
-    print()
+class Directive(typing.TypedDict):
+    name: str
+    params: list[str]
 
 
-def eval_as_directive(directive: re.Match[str], penv):
+def parse_directive(directive: re.Match[str]) -> Directive:
     cmd = directive.group("cmd")
     params = directive.group("params").strip().split(" ")
 
-    match cmd:
-        case "load":
-            filename = params[0]
-            status = dtv.load_d(filename)
-
-            if status["error"] is not None:
-                print(status["error"])
-            else:
-                program = status["user_data"]
-                penv.load_program(program)
-                penv.run()
-        case _:
-            print(f"Invalid directive: '.{cmd}'")
+    return {"name": cmd, "params": params}
 
 
 def repl():
-    penv = program_env.ProgramEnv()
+    genv: evl.Genv = []
 
     while True:
         try:
@@ -114,13 +92,37 @@ def repl():
 
         readline.add_history(repl_input)
 
-        directive = re.match(
+        _directive = re.match(
             r"(\.)(?P<cmd>.+?\b)(?P<params>.*)", repl_input)
 
-        if directive is None:
-            eval_as_lambda(repl_input, penv)
+        program = []
+
+        if _directive is None:
+            program.append(repl_input)
         else:
-            eval_as_directive(directive, penv)
+            directive = parse_directive(_directive)
+            name = directive["name"]
+            params = directive["params"]
+
+            match name:
+                case "load":
+                    # FIXME: this part can be refactored into a function.
+                    filename = params[0]
+                    status = dtv.load_d(filename)
+
+                    if status["error"] is not None:
+                        print(status["error"])
+                    else:
+                        program.extend(status["user_data"])
+
+                case _:
+                    print(f"Invalid directive: '.{name}'")
+
+        ast = evl.eval_program(program, genv)
+
+        print()
+        pretty_print_term_ast(ast, [])
+        print()
 
 
 repl()

@@ -1,7 +1,7 @@
 import unittest
 
 import error as err
-import program_env
+import evaluate as evl
 import term
 
 A = term.new_application
@@ -22,20 +22,19 @@ class TestPreludeEnv(unittest.TestCase):
         "def select_second x y := y"
     ]
 
-    def setUp(self):
-        self.penv = program_env.ProgramEnv()
-        self.penv.load_program(self.prelude)
-
-    def test_prelude_env(self):
-        self.penv.run()
-        genv = [
+    def test_genv_after_prelude(self):
+        expected: evl.Genv = [
             {"label": "identity", "ast": F(N(0))},
             {"label": "apply", "ast": F(F(A(N(1), N(0))))},
             {"label": "select_first", "ast": F(F(N(1)))},
             {"label": "select_second", "ast": F(F(N(0)))},
         ]
 
-        self.assertEqual(self.penv.env, genv)
+        actual: evl.Genv = []
+
+        evl.eval_program(self.prelude, actual)
+
+        self.assertEqual(actual, expected)
 
 
 class TestSelectionCombinators(unittest.TestCase):
@@ -47,31 +46,26 @@ class TestSelectionCombinators(unittest.TestCase):
     ]
 
     def setUp(self):
-        self.penv = program_env.ProgramEnv()
-        self.penv.load_program(self.prelude)
+        self.genv: evl.Genv = []
+        evl.eval_program(self.prelude, self.genv)
 
     def test_select_first(self):
-        self.penv.append_line("(select_first identity apply)")
-        value = self.penv.run()
+        term = "(select_first identity apply)"
+        value = evl.eval_raw_term(term, self.genv)
 
         self.assertEqual(value, identity)
 
     def test_select_second(self):
-        self.penv.append_line("(select_second identity apply)")
-        value = self.penv.run()
+        term = "(select_second identity apply)"
+        value = evl.eval_raw_term(term, self.genv)
 
         self.assertEqual(value, applyfn)
 
 
 class TestMissingDefinitions(unittest.TestCase):
-    def setUp(self):
-        self.penv = program_env.ProgramEnv()
-
     def test_missing_definition(self):
-        self.penv.append_line("(select_first identity apply)")
-
         with self.assertRaises(err.UnboundNameError):
-            self.penv.run()
+            evl.eval_raw_term("(select_first identity apply)", [])
 
 
 class TestClobberGlobal(unittest.TestCase):
@@ -84,14 +78,14 @@ class TestClobberGlobal(unittest.TestCase):
     ]
 
     def setUp(self):
-        self.penv = program_env.ProgramEnv()
-        self.penv.load_program(self.prelude)
+        self.genv: evl.Genv = []
+        evl.eval_program(self.prelude, self.genv)
 
     def test_env_substitution(self):
-        self.penv.append_line("(select_first apply id)")
-        value = self.penv.run()
+        term = "(select_first apply id)"
+        value = evl.eval_raw_term(term, self.genv)
 
-        self.assertTrue({"label": "id", "ast": identity} in self.penv.env)
+        self.assertTrue({"label": "id", "ast": identity} in self.genv)
         self.assertEqual(value, applyfn)
 
 
@@ -103,11 +97,11 @@ class TestRedefineGlobal(unittest.TestCase):
     ]
 
     def setUp(self):
-        self.penv = program_env.ProgramEnv()
-        self.penv.load_program(self.prelude)
+        self.genv: evl.Genv = []
+        evl.eval_program(self.prelude, self.genv)
 
     def test_redefine_global(self):
-        self.penv.append_line("(select_first select_first apply)")
-        value = self.penv.run()
+        term = "(select_first select_first apply)"
+        value = evl.eval_raw_term(term, self.genv)
 
         self.assertEqual(value, applyfn)
