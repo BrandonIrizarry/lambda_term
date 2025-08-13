@@ -87,7 +87,10 @@ def repl():
         if _directive is None:
             program.append(repl_input)
         else:
-            status = dtv.eval_directive(_directive)
+            name = _directive.group("name")
+            params = _directive.group("params").strip().split(" ")
+
+            status = dtv.eval_directive(name, params)
             program.extend(status["user_data"])
 
         ast = evl.eval_program(program, genv)

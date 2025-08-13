@@ -1,4 +1,3 @@
-import re
 import typing
 
 
@@ -7,10 +6,7 @@ class Status(typing.TypedDict):
     error: str | None
 
 
-def eval_directive(directive: re.Match[str]) -> Status:
-    name = directive.group("name")
-    params = directive.group("params").strip().split(" ")
-
+def eval_directive(name: str, params: list[str]) -> Status:
     match name:
         case "load":
             filename = params[0]
