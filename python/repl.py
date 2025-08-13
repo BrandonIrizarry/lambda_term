@@ -66,7 +66,7 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-def eval_repl_input(repl_input: str, genv: evl.Genv) -> dict[typing.Any, typing.Any]:
+def eval_line(repl_input: str, genv: evl.Genv) -> dict[typing.Any, typing.Any]:
     """Given REPL_INPUT, either evaluate as a directive, or else a raw
     lambda term.
 
@@ -107,7 +107,7 @@ def repl():
 
         readline.add_history(repl_input)
 
-        ast = eval_repl_input(repl_input, genv)
+        ast = eval_line(repl_input, genv)
 
         print()
         pretty_print_term_ast(ast, [])
