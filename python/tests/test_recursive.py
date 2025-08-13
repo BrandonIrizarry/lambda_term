@@ -32,6 +32,10 @@ class TestMakeZero(unittest.TestCase):
 
         # Pass in the genv that was populated by the definitions found
         # in 'prelude.lbd'.
-        value = evl.eval_program(main_program, genv)
+        status = evl.eval_program(main_program, genv)
 
-        self.assertEqual(value, zero)
+        self.assertIsNone(status["error"])
+
+        ast = status["user_data"]
+
+        self.assertEqual(ast, zero)

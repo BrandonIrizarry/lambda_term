@@ -1,8 +1,11 @@
+import re
 import typing
 
 import beta
+import directive as dtv
 import error as err
 import parse
+import status
 
 
 class GenvEntry(typing.TypedDict):
@@ -25,13 +28,49 @@ def eval_raw_term(raw_term: str, genv: Genv):
     return beta.beta_reduce(ast)
 
 
-def eval_program(program: list[str], genv: Genv) -> dict[typing.Any, typing.Any]:
+def eval_program(program: list[str], genv: Genv) -> status.Status:
     value = dict()
 
     for line in program:
         try:
             value = eval_raw_term(line, genv)
         except (err.IllegalTokenError, err.ParseError) as e:
-            raise e
+            return {"user_data": None, "error": str(e)}
 
-    return value
+    return {"user_data": value, "error": None}
+
+
+def eval_line(repl_input: str, genv: Genv) -> status.Status:
+    """Given REPL_INPUT, either evaluate as a directive, or else a raw
+    lambda term.
+
+    """
+
+    # Try to match the following pattern:
+    #
+    # NAME PARAMS...
+    #
+    # where NAME is the directive in question (e.g., "load").
+    _directive = re.match(r"(\.)(?P<name>.+?\b)(?P<params>.*)", repl_input)
+
+    if _directive is None:
+        # The program is this single line.
+        ast = eval_raw_term(repl_input, genv)
+
+        return {"user_data": ast, "error": None}
+
+    name = _directive.group("name")
+    params = _directive.group("params").strip().split(" ")
+
+    # FIXME: right now, this just assumes that the directive
+    # always returns a program as the user_data field.
+    status = dtv.eval_directive(name, params)
+
+    if status["error"] is not None:
+        return status
+
+    program = status["user_data"]
+
+    ast = eval_program(program, genv)
+
+    return {"user_data": ast, "error": None}

@@ -1,12 +1,9 @@
 import atexit
 import os
-import re
 import readline
-import typing
 
 from wonderwords import RandomWord
 
-import directive as dtv
 import evaluate as evl
 import term
 
@@ -66,38 +63,6 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-def eval_line(repl_input: str, genv: evl.Genv) -> dict[typing.Any, typing.Any]:
-    """Given REPL_INPUT, either evaluate as a directive, or else a raw
-    lambda term.
-
-    """
-
-    # Try to match the following pattern:
-    #
-    # NAME PARAMS...
-    #
-    # where NAME is the directive in question (e.g., "load").
-    _directive = re.match(r"(\.)(?P<name>.+?\b)(?P<params>.*)", repl_input)
-
-    if _directive is None:
-        # The program is this single line.
-        return evl.eval_raw_term(repl_input, genv)
-
-    name = _directive.group("name")
-    params = _directive.group("params").strip().split(" ")
-
-    # FIXME: right now, this just assumes that the directive
-    # always returns a program as the user_data field.
-    status = dtv.eval_directive(name, params)
-
-    if status["error"] is not None:
-        raise ValueError
-
-    program = status["user_data"]
-
-    return evl.eval_program(program, genv)
-
-
 def repl():
     genv: evl.Genv = []
 
@@ -112,7 +77,13 @@ def repl():
 
         readline.add_history(repl_input)
 
-        ast = eval_line(repl_input, genv)
+        status = evl.eval_line(repl_input, genv)
+
+        if e := status["error"]:
+            print(e)
+            continue
+
+        ast = status["user_data"]
 
         print()
         pretty_print_term_ast(ast, [])

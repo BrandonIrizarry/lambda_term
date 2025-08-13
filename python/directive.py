@@ -1,12 +1,7 @@
-import typing
+import status
 
 
-class Status(typing.TypedDict):
-    user_data: typing.Any
-    error: str | None
-
-
-def eval_directive(name: str, params: list[str]) -> Status:
+def eval_directive(name: str, params: list[str]) -> status.Status:
     match name:
         case "load":
             filename = params[0]
@@ -15,7 +10,7 @@ def eval_directive(name: str, params: list[str]) -> Status:
             return {"user_data": [], "error": f"Undefined directive: '{name}'"}
 
 
-def load_d(filename: str) -> Status:
+def load_d(filename: str) -> status.Status:
     try:
         with open(f"{filename}.lbd", "r") as file:
             lines = []
