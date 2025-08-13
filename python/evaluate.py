@@ -33,7 +33,12 @@ def eval_program(program: list[str], genv: Genv) -> status.Status:
 
     for line in program:
         try:
-            value = eval_raw_term(line, genv)
+            status = eval_line(line, genv)
+
+            if status["error"]:
+                return status
+
+            value = status["user_data"]
         except (err.IllegalTokenError, err.ParseError) as e:
             return {"user_data": None, "error": str(e)}
 
@@ -71,6 +76,9 @@ def eval_line(repl_input: str, genv: Genv) -> status.Status:
 
     program = status["user_data"]
 
-    ast = eval_program(program, genv)
+    status = eval_program(program, genv)
 
-    return {"user_data": ast, "error": None}
+    if status["error"]:
+        return status
+
+    return {"user_data": status["user_data"], "error": None}
