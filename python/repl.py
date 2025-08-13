@@ -72,6 +72,11 @@ def eval_line(repl_input: str, genv: evl.Genv) -> dict[typing.Any, typing.Any]:
 
     """
 
+    # Try to match the following pattern:
+    #
+    # NAME PARAMS...
+    #
+    # where NAME is the directive in question (e.g., "load").
     _directive = re.match(r"(\.)(?P<name>.+?\b)(?P<params>.*)", repl_input)
 
     if _directive is None:
