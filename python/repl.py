@@ -66,18 +66,6 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-class Directive(typing.TypedDict):
-    name: str
-    params: list[str]
-
-
-def parse_directive(directive: re.Match[str]) -> Directive:
-    cmd = directive.group("cmd")
-    params = directive.group("params").strip().split(" ")
-
-    return {"name": cmd, "params": params}
-
-
 def repl():
     genv: evl.Genv = []
 
@@ -93,29 +81,15 @@ def repl():
         readline.add_history(repl_input)
 
         _directive = re.match(
-            r"(\.)(?P<cmd>.+?\b)(?P<params>.*)", repl_input)
+            r"(\.)(?P<name>.+?\b)(?P<params>.*)", repl_input)
 
         program = []
 
         if _directive is None:
             program.append(repl_input)
         else:
-            directive = parse_directive(_directive)
-            name = directive["name"]
-            params = directive["params"]
-
-            match name:
-                case "load":
-                    filename = params[0]
-                    status = dtv.load_d(filename)
-
-                    if status["error"] is not None:
-                        print(status["error"])
-                    else:
-                        program.extend(status["user_data"])
-
-                case _:
-                    print(f"Invalid directive: '.{name}'")
+            status = dtv.eval_directive(_directive)
+            program.extend(status["user_data"])
 
         ast = evl.eval_program(program, genv)
 

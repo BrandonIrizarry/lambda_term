@@ -7,6 +7,18 @@ class Status(typing.TypedDict):
     error: str | None
 
 
+def eval_directive(directive: re.Match[str]) -> Status:
+    name = directive.group("name")
+    params = directive.group("params").strip().split(" ")
+
+    match name:
+        case "load":
+            filename = params[0]
+            return load_d(filename)
+        case _:
+            return {"user_data": [], "error": f"Undefined directive: '{name}'"}
+
+
 def load_d(filename: str) -> Status:
     try:
         with open(f"{filename}.lbd", "r") as file:
