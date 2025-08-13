@@ -1,5 +1,6 @@
 import unittest
 
+import configuration as cfg
 import directive as dtv
 import evaluate as evl
 import term
@@ -13,8 +14,11 @@ zero = F(N(0))
 
 
 class TestMakeZero(unittest.TestCase):
+    PRELUDE = cfg.lambda_filename("prelude")
+    SRCFILE = cfg.lambda_filename("make_zero")
+
     def test_three(self):
-        status = dtv.eval_directive("load", ["prelude"])
+        status = dtv.eval_directive("load", [self.PRELUDE])
 
         self.assertIsNone(status["error"])
 
@@ -24,7 +28,7 @@ class TestMakeZero(unittest.TestCase):
 
         evl.eval_program(prelude_defs, genv)
 
-        status = dtv.eval_directive("load", ["tests/make_zero"])
+        status = dtv.eval_directive("load", [self.SRCFILE])
 
         self.assertIsNone(status["error"])
 
