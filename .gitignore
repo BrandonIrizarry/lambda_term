@@ -1,3 +1,4 @@
 /python/**/__pycache__
 /python/.repl_history
 *.org
+/python/**/__init__.py
