@@ -2,7 +2,6 @@ import atexit
 import os
 import re
 import readline
-import typing
 
 from wonderwords import RandomWord
 
