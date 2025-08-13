@@ -90,7 +90,10 @@ def repl():
             name = _directive.group("name")
             params = _directive.group("params").strip().split(" ")
 
+            # FIXME: right now, this just assumes that the directive
+            # always returns a program as the user_data field.
             status = dtv.eval_directive(name, params)
+
             program.extend(status["user_data"])
 
         ast = evl.eval_program(program, genv)
