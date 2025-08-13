@@ -26,13 +26,12 @@ def eval_raw_term(raw_term: str, genv: Genv):
 
 
 def eval_program(program: list[str], genv: Genv) -> dict[typing.Any, typing.Any]:
-    value = None
+    value = dict()
 
     for line in program:
         try:
             value = eval_raw_term(line, genv)
         except (err.IllegalTokenError, err.ParseError) as e:
-            print(e)
-            return
+            raise e
 
     return value
