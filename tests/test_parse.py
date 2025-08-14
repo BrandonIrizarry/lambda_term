@@ -1,9 +1,9 @@
 import unittest
 
-import error as err
-import parse
-import term
-import tokenize_lambda as tkz
+import lbd.error as err
+import lbd.parse as parse
+import lbd.term as term
+import lbd.tokenize_lambda as tkz
 
 A = term.new_application
 F = term.new_abstraction

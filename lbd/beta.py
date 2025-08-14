@@ -1,4 +1,4 @@
-import term
+import lbd.term as term
 
 
 def shift(ast, amount, minimum):

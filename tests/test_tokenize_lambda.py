@@ -1,6 +1,6 @@
 import unittest
 
-import tokenize_lambda as tkz
+import lbd.tokenize_lambda as tkz
 
 
 class TestTokenizer(unittest.TestCase):

@@ -1,11 +1,11 @@
 import re
 import typing
 
-import beta
-import directive as dtv
-import error as err
-import parse
-import status
+import lbd.beta as beta
+import lbd.directive as dtv
+import lbd.error as err
+import lbd.parse as parse
+import lbd.status as status
 
 
 class GenvEntry(typing.TypedDict):

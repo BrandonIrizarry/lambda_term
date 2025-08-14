@@ -1,7 +1,7 @@
-import desugar as dsg
-import error as err
-import term
-import tokenize_lambda as tkz
+import lbd.desugar as dsg
+import lbd.error as err
+import lbd.term as term
+import lbd.tokenize_lambda as tkz
 
 # What follows is a series of parse functions for a recursive-descent
 # apparatus. As a rule, they accept the tokenized expression (given as

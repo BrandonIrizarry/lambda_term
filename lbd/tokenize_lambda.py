@@ -1,7 +1,7 @@
 import enum
 import re
 
-import error as err
+import lbd.error as err
 
 IDENT = r"[A-Za-z_]\w*"
 

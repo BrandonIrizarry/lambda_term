@@ -1,5 +1,5 @@
-import error as err
-import tokenize_lambda as tkz
+import lbd.error as err
+import lbd.tokenize_lambda as tkz
 
 
 def desugar_def(tokens):

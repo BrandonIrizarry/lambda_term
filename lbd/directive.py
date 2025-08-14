@@ -1,4 +1,4 @@
-import status
+import lbd.status as status
 
 
 def eval_directive(name: str, params: list[str]) -> status.Status:

@@ -1,7 +1,7 @@
 import unittest
 
-import beta
-import term
+import lbd.beta as beta
+import lbd.term as term
 
 A = term.new_application
 F = term.new_abstraction

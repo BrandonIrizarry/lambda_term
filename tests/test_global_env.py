@@ -1,8 +1,8 @@
 import unittest
 
-import error as err
-import evaluate as evl
-import term
+import lbd.error as err
+import lbd.evaluate as evl
+import lbd.term as term
 
 A = term.new_application
 F = term.new_abstraction

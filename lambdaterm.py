@@ -3,10 +3,10 @@
 import argparse
 import sys
 
-import directive as dtv
-import evaluate as evl
-import repl
-import status
+import lbd.directive as dtv
+import lbd.evaluate as evl
+import lbd.repl as repl
+import lbd.status as status
 
 ap = argparse.ArgumentParser(
     description="""A lightweight programming language, based on functional paradigms."""

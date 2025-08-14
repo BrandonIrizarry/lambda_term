@@ -1,9 +1,9 @@
 import unittest
 
-import configuration as cfg
-import directive as dtv
-import evaluate as evl
-import term
+import lbd.configuration as cfg
+import lbd.directive as dtv
+import lbd.evaluate as evl
+import lbd.term as term
 
 N = term.new_name
 F = term.new_abstraction
