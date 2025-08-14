@@ -63,9 +63,7 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-def repl():
-    genv: evl.Genv = []
-
+def repl(genv: evl.Genv):
     while True:
         try:
             repl_input = input("> ")
@@ -88,6 +86,3 @@ def repl():
         print()
         pretty_print_term_ast(ast, [])
         print()
-
-
-repl()
