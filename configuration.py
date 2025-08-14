@@ -9,4 +9,4 @@ def lambda_filename(filename: str) -> str:
 
     """
 
-    return f"{LAMBDA_SRC}/{filename}"
+    return f"{LAMBDA_SRC}/{filename}.lbd"

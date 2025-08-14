@@ -1,2 +1,2 @@
-.load lambda/prelude
-.load lambda/make_zero
+.load lambda/prelude.lbd
+.load lambda/make_zero.lbd
