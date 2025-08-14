@@ -83,6 +83,4 @@ def repl(genv: evl.Genv):
 
         ast = status["user_data"]
 
-        print()
-        pretty_print_term_ast(ast, [])
-        print()
+        print(ast)
