@@ -1,4 +1,4 @@
-LAMBDA_SRC = "lambda"
+LAMBDA_SRC = "example_src"
 
 
 def lambda_filename(filename: str) -> str:
