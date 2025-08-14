@@ -4,8 +4,8 @@ import readline
 
 from wonderwords import RandomWord
 
-import evaluate as evl
-import term
+import lbd.evaluate as evl
+import lbd.term as term
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
