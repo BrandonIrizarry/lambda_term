@@ -63,22 +63,23 @@ def beta_reduce(ast):
 
     """
 
-    if ast["kind"] != term.Term.APPLICATION:
-        return ast
+    match ast["kind"]:
+        case term.Term.NAME | term.Term.ABSTRACTION:
+            return ast
+        case term.Term.APPLICATION:
+            beta_left = beta_reduce(ast["left"])
 
-    beta_left = beta_reduce(ast["left"])
+            if beta_left["kind"] != term.Term.ABSTRACTION:
+                beta_right = beta_reduce(ast["right"])
 
-    if beta_left["kind"] != term.Term.ABSTRACTION:
-        beta_right = beta_reduce(ast["right"])
+                return term.new_application(beta_left, beta_right)
 
-        return term.new_application(beta_left, beta_right)
+            fn = beta_left
+            arg = ast["right"]
 
-    fn = beta_left
-    arg = ast["right"]
+            # Actual beta redux algorithm.
+            inc(arg, 0)
+            replaced_body = replace(fn["body"], arg, 0)
+            dec(replaced_body, 0)
 
-    # Actual beta redux algorithm.
-    inc(arg, 0)
-    replaced_body = replace(fn["body"], arg, 0)
-    dec(replaced_body, 0)
-
-    return beta_reduce(replaced_body)
+            return beta_reduce(replaced_body)
