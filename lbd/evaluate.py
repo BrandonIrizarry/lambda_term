@@ -17,7 +17,7 @@ type Genv = list[GenvEntry]
 
 
 def eval_raw_term(raw_term: str, genv: Genv):
-    ast, _, label = parse.parse(raw_term, genv)
+    ast, _, label = parse.parse(raw_term)
 
     # If we parsed a def-statement, associate the label with the
     # AST.

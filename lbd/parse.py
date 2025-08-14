@@ -15,7 +15,7 @@ import lbd.tokenize_lambda as tkz
 # parsed.
 
 
-def parse_application(tokens, i, env, genv):
+def parse_application(tokens, i, env):
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
@@ -23,12 +23,12 @@ def parse_application(tokens, i, env, genv):
     i += 1
 
     # Bootstrap the left-fold.
-    first_term, i = parse_term(tokens, i, env[:], genv)
-    second_term, i = parse_term(tokens, i, env[:], genv)
+    first_term, i = parse_term(tokens, i, env[:])
+    second_term, i = parse_term(tokens, i, env[:])
     partial = term.new_application(first_term, second_term)
 
     while not tkz.is_right_paren_t(tokens[i]):
-        next_term, i = parse_term(tokens, i, env[:], genv)
+        next_term, i = parse_term(tokens, i, env[:])
         partial = term.new_application(partial, next_term)
 
     # Skip the closing parenthesis.
@@ -37,7 +37,7 @@ def parse_application(tokens, i, env, genv):
     return partial, i
 
 
-def parse_abstraction(tokens, i, env, genv):
+def parse_abstraction(tokens, i, env):
     # Skip the lambda symbol.
     i += 1
 
@@ -53,12 +53,12 @@ def parse_abstraction(tokens, i, env, genv):
     # Move past the dot.
     i += 2
 
-    body, i = parse_term(tokens, i, env[:], genv)
+    body, i = parse_term(tokens, i, env[:])
 
     return term.new_abstraction(body), i
 
 
-def parse_name(tokens, i, env, genv):
+def parse_name(tokens, i, env):
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
@@ -77,29 +77,24 @@ def parse_name(tokens, i, env, genv):
     if is_local:
         return term.new_name(index), i + 1
 
-    # Else, check the global environment.
-    for gdef in reversed(genv):
-        if gdef["label"] == tokens[i]["value"]:
-            return gdef["ast"], i + 1
-
     raise err.UnboundNameError(i, tokens[i])
 
 
-def parse_term(tokens, i, env, genv):
+def parse_term(tokens, i, env):
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 
     if tkz.is_left_paren_t(tokens[i]):
-        return parse_application(tokens, i, env[:], genv)
+        return parse_application(tokens, i, env[:])
     elif tkz.is_lambda_t(tokens[i]):
-        return parse_abstraction(tokens, i, env[:], genv)
+        return parse_abstraction(tokens, i, env[:])
     elif tkz.is_name_t(tokens[i]):
-        return parse_name(tokens, i, env[:], genv)
+        return parse_name(tokens, i, env[:])
     else:
         raise err.StrayTokenError(i, tokens[i])
 
 
-def parse(raw_term, genv):
+def parse(raw_term):
     """Given RAW_TERM, construct an AST.
 
     Return AST along with the number of tokens parsed.
@@ -113,7 +108,7 @@ def parse(raw_term, genv):
 
     # Parse the now preprocessed term.
     try:
-        ast, num_tokens_parsed = parse_term(tokens, 0, [], genv)
+        ast, num_tokens_parsed = parse_term(tokens, 0, [])
 
         if num_tokens_parsed < len(tokens):
             raise err.TrailingGarbageError(num_tokens_parsed, tokens)
