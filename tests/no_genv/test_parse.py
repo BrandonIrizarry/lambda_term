@@ -106,7 +106,7 @@ class TestIllegalTerms(unittest.TestCase):
     def test_abstraction_missing_keyword(self):
         raw_term = "x.x"
 
-        with self.assertRaises(err.UnboundNameError):
+        with self.assertRaises(err.TrailingGarbageError):
             parse.parse(raw_term)
 
     def test_extra_dots(self):
