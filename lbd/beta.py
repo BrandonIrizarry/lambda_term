@@ -11,7 +11,7 @@ def shift(ast, amount, minimum):
 
     if ast["kind"] == term.Term.NAME:
         if ast["index"] >= minimum:
-            ast["index"] += 1
+            ast["index"] += amount
     elif ast["kind"] == term.Term.ABSTRACTION:
         shift(ast["body"], amount, minimum + 1)
     elif ast["kind"] == term.Term.APPLICATION:
