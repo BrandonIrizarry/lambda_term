@@ -54,7 +54,7 @@ class IllegalTokenError(Exception):
         self.token = token
 
     def __str__(self):
-        return f"Illegal token {self.token} at token-position {self.position}"
+        return f"Illegal token '{self.token}' at token-position {self.position}"
 
 
 class MissingAssignmentError(IllegalTokenError):
