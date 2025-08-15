@@ -1,12 +1,13 @@
 import enum
 import re
+from typing import TypedDict
 
 import lbd.error as err
 
 IDENT = r"[A-Za-z_]\w*"
 
 
-class Token(enum.Enum):
+class Tk(enum.Enum):
     ASSIGN = enum.auto()
     NAME = enum.auto()
     LEFT_PAREN = enum.auto()
@@ -16,85 +17,90 @@ class Token(enum.Enum):
     DEF = enum.auto()
 
 
-def assign_t():
+class Token(TypedDict):
+    kind: Tk
+    str: str
+
+
+def assign_t() -> Token:
     """Return a new assign-token."""
 
-    return {"kind": Token.ASSIGN, "str": ":="}
+    return {"kind": Tk.ASSIGN, "str": ":="}
 
 
-def name_t(value):
+def name_t(value) -> Token:
     """Return a new name-token."""
 
-    return {"kind": Token.NAME, "str": value}
+    return {"kind": Tk.NAME, "str": value}
 
 
-def left_paren_t():
+def left_paren_t() -> Token:
     """Return a new left-paren-token."""
 
-    return {"kind": Token.LEFT_PAREN, "str": "("}
+    return {"kind": Tk.LEFT_PAREN, "str": "("}
 
 
-def right_paren_t():
+def right_paren_t() -> Token:
     """Return a new right-paren-token."""
 
-    return {"kind": Token.RIGHT_PAREN, "str": ")"}
+    return {"kind": Tk.RIGHT_PAREN, "str": ")"}
 
 
-def dot_t():
+def dot_t() -> Token:
     """Return a new dot-token."""
 
-    return {"kind": Token.DOT, "str": "."}
+    return {"kind": Tk.DOT, "str": "."}
 
 
-def lambda_t():
+def lambda_t() -> Token:
     """Return a new lambda-token."""
 
-    return {"kind": Token.LAMBDA, "str": "\\"}
+    return {"kind": Tk.LAMBDA, "str": "\\"}
 
 
-def def_t():
+def def_t() -> Token:
     """Return a new def-token."""
 
-    return {"kind": Token.DEF, "str": "def"}
+    return {"kind": Tk.DEF, "str": "def"}
 
 
-def is_name_t(token):
+def is_name_t(token: Token) -> bool:
     """Return whether TOKEN is a name-token."""
 
-    return token["kind"] == Token.NAME
+    return token["kind"] == Tk.NAME
 
 
-def is_lambda_t(token):
+def is_lambda_t(token: Token) -> bool:
     """Return whether TOKEN is a lambda-token."""
 
     return token == lambda_t()
 
 
-def is_left_paren_t(token):
+def is_left_paren_t(token: Token) -> bool:
     """Return whether TOKEN is a left-paren-token."""
 
     return token == left_paren_t()
 
 
-def is_right_paren_t(token):
+def is_right_paren_t(token: Token) -> bool:
     """Return whether TOKEN is a right-paren-token."""
 
     return token == right_paren_t()
 
 
-def is_dot_t(token):
+def is_dot_t(token: Token) -> bool:
     """Return whether TOKEN is a dot."""
 
     return token == dot_t()
 
 
-def is_def_t(token):
+def is_def_t(token: Token) -> bool:
     """Return whether TOKEN is the 'def' keyword."""
 
     return token == def_t()
 
 
-def find(tokens, token):
+def find(tokens: list[Token], token: Token) -> int:
     """Return the first index where TOKEN is found in TOKENS.
 
     If not found, return -1.
@@ -108,7 +114,7 @@ def find(tokens, token):
     return -1
 
 
-def tokenize(raw_term: str):
+def tokenize(raw_term: str) -> list[Token]:
     spec = [
         ("assign", ":="),
         ("def", r"def"),
@@ -123,7 +129,7 @@ def tokenize(raw_term: str):
 
     pats = [f"(?P<{kind}>{pat})" for (kind, pat) in spec]
     token_pattern = "|".join(pats)
-    tokens = []
+    tokens: list[Token] = []
 
     # Track the current iteration index, to make IllegalTokenError
     # consistent with other errors.
