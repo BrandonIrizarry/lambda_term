@@ -46,7 +46,7 @@ def parse_abstraction(tokens, i, env):
     if not tkz.is_name_t(tokens[i]):
         raise err.IllegalTokenError(i, tokens[i])
 
-    env.append(tokens[i]["value"])
+    env.append(tokens[i]["str"])
 
     if not tkz.is_dot_t(tokens[i + 1]):
         raise err.AbstractionNoDotError(i + 1, tokens)
@@ -65,11 +65,12 @@ def parse_name(tokens, i, env):
     # layered function scopes.)
     is_local = False
     index = 0
+    name = tokens[i]["str"]
 
     for local_name in reversed(env):
         # FIXME: we expect this key to exist, so we should probably
         # change the function signature.
-        if local_name == tokens[i]["value"]:
+        if local_name == name:
             is_local = True
             break
 
@@ -78,7 +79,7 @@ def parse_name(tokens, i, env):
     if is_local:
         return term.new_name(index), i + 1
 
-    free_index = gamma.debruijn(tokens[i]["value"], len(env))
+    free_index = gamma.debruijn(name, len(env))
 
     return term.new_name(free_index), i + 1
 
