@@ -1,6 +1,6 @@
 import lbd.desugar as dsg
 import lbd.error as err
-import lbd.free_vars as fvar
+import lbd.gamma as gamma
 import lbd.term as term
 import lbd.tokenize_lambda as tkz
 
@@ -78,7 +78,9 @@ def parse_name(tokens, i, env):
     if is_local:
         return term.new_name(index), i + 1
 
-    return fvar.new_free_var(tokens[i]["value"]), i + 1
+    free_index = gamma.debruijn(tokens[i]["value"], len(env))
+
+    return term.new_name(free_index), i + 1
 
 
 def parse_term(tokens, i, env):
