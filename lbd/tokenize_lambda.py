@@ -25,7 +25,7 @@ def assign_t():
 def name_t(value):
     """Return a new name-token."""
 
-    return {"kind": Token.NAME, "value": value, "str": value}
+    return {"kind": Token.NAME, "str": value}
 
 
 def left_paren_t():
@@ -61,10 +61,7 @@ def def_t():
 def is_name_t(token):
     """Return whether TOKEN is a name-token."""
 
-    if "value" not in token:
-        return False
-
-    return token == name_t(token["value"])
+    return token["kind"] == Token.NAME
 
 
 def is_lambda_t(token):
