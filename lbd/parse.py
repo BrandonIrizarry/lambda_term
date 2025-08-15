@@ -96,27 +96,3 @@ def parse_term(tokens: list[tkz.Token], i, env: list[str]):
         return parse_name(tokens, i, env[:])
     else:
         raise err.StrayTokenError(i, tokens[i])
-
-
-def parse(raw_term):
-    """Given RAW_TERM, construct an AST.
-
-    Return AST along with the number of tokens parsed.
-
-    """
-
-    tokens = tkz.tokenize(raw_term)
-    err.ParseError.set_tokens(tokens)
-
-    tokens, label = dsg.desugar_def(tokens[:])
-
-    # Parse the now preprocessed term.
-    try:
-        ast, num_tokens_parsed = parse_term(tokens, 0, [])
-
-        if num_tokens_parsed < len(tokens):
-            raise err.TrailingGarbageError(num_tokens_parsed, tokens)
-
-        return ast, num_tokens_parsed, label
-    except IndexError:
-        raise err.IncompleteTermError(len(tokens), tokens)
