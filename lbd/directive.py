@@ -1,16 +1,15 @@
-import lbd.status as status
 
 
-def eval_directive(name: str, params: list[str]) -> status.Status:
+def eval_directive(name: str, params: list[str]) -> list[str] | Exception:
     match name:
         case "load":
             filename = params[0]
             return load_d(filename)
         case _:
-            return {"user_data": [], "error": f"Undefined directive: '{name}'"}
+            return ValueError(f"Undefined directive: '{name}'")
 
 
-def load_d(filename: str) -> status.Status:
+def load_d(filename: str) -> list[str] | Exception:
     try:
         with open(filename, "r") as file:
             lines = []
@@ -21,6 +20,6 @@ def load_d(filename: str) -> status.Status:
                 if line != "":
                     lines.append(line)
 
-            return {"user_data": lines, "error": None}
+            return lines
     except FileNotFoundError:
-        return {"user_data": [], "error": f"File not found: {filename}"}
+        return ValueError(f"File not found: {filename}")

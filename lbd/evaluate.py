@@ -1,29 +1,29 @@
 import re
-import typing
+from typing import Any, TypedDict
 
 import lbd.beta as beta
 import lbd.desugar as dsg
 import lbd.directive as dtv
 import lbd.error as err
 import lbd.parse as parse
-import lbd.status as status
 import lbd.tokenize_lambda as tkz
 
 
-class GenvEntry(typing.TypedDict):
+class GenvEntry(TypedDict):
     label: str
-    ast: dict[typing.Any, typing.Any]
+    ast: dict[str, Any]
 
 
 type Genv = list[GenvEntry]
 
 
-def eval_raw_term(raw_term: str, genv: Genv):
+def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     tokens = tkz.tokenize(raw_term)
-    err.ParseError.set_tokens(tokens)
 
-    # FIXME: setting 'tokens' twice like this looks awkward. Was it
-    # event the right thing to do?
+    if isinstance(tokens, Exception):
+        return tokens
+
+    err.ParseError.set_tokens(tokens)
     tokens, label = dsg.desugar_def(tokens[:])
 
     try:
@@ -43,24 +43,21 @@ def eval_raw_term(raw_term: str, genv: Genv):
         raise err.IncompleteTermError(len(tokens), tokens)
 
 
-def eval_program(program: list[str], genv: Genv) -> status.Status:
+def eval_program(program: list[str], genv: Genv) -> dict[str, Any] | Exception:
     value = dict()
 
     for line in program:
-        try:
-            status = eval_line(line, genv)
+        ast = eval_line(line, genv)
 
-            if status["error"]:
-                return status
+        if isinstance(ast, Exception):
+            return ast
 
-            value = status["user_data"]
-        except (err.IllegalTokenError, err.ParseError) as e:
-            return {"user_data": None, "error": str(e)}
+        value = ast
 
-    return {"user_data": value, "error": None}
+    return value
 
 
-def eval_line(repl_input: str, genv: Genv) -> status.Status:
+def eval_line(repl_input: str, genv: Genv) -> dict[str, Any] | Exception:
     """Given REPL_INPUT, either evaluate as a directive, or else a raw
     lambda term.
 
@@ -77,23 +74,24 @@ def eval_line(repl_input: str, genv: Genv) -> status.Status:
         # The program is this single line.
         ast = eval_raw_term(repl_input, genv)
 
-        return {"user_data": ast, "error": None}
+        if isinstance(ast, Exception):
+            return ast
+
+        return ast
 
     name = _directive.group("name")
     params = _directive.group("params").strip().split(" ")
 
     # FIXME: right now, this just assumes that the directive
     # always returns a program as the user_data field.
-    status = dtv.eval_directive(name, params)
+    program = dtv.eval_directive(name, params)
 
-    if status["error"] is not None:
-        return status
+    if isinstance(program, Exception):
+        return program
 
-    program = status["user_data"]
+    value = eval_program(program, genv)
 
-    status = eval_program(program, genv)
+    if isinstance(value, Exception):
+        return value
 
-    if status["error"]:
-        return status
-
-    return {"user_data": status["user_data"], "error": None}
+    return value

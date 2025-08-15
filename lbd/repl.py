@@ -75,12 +75,10 @@ def repl(genv: evl.Genv):
 
         readline.add_history(repl_input)
 
-        status = evl.eval_line(repl_input, genv)
+        ast = evl.eval_line(repl_input, genv)
 
-        if e := status["error"]:
-            print(e)
+        if isinstance(ast, Exception):
+            print(ast)
             continue
-
-        ast = status["user_data"]
 
         print(ast)

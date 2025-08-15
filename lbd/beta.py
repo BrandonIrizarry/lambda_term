@@ -1,3 +1,5 @@
+from typing import Any
+
 import lbd.term as term
 
 
@@ -56,7 +58,7 @@ def replace(ast, argument, target_index):
         raise ValueError
 
 
-def beta_reduce(ast):
+def beta_reduce(ast) -> dict[str, Any]:
     """Evaluate AST using normal order beta reduction.
 
     Return the reduced AST.
@@ -83,3 +85,5 @@ def beta_reduce(ast):
             dec(replaced_body, 0)
 
             return beta_reduce(replaced_body)
+        case _:
+            raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")

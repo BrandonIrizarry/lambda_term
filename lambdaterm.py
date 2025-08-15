@@ -2,11 +2,11 @@
 
 import argparse
 import sys
+from typing import Any
 
 import lbd.directive as dtv
 import lbd.evaluate as evl
 import lbd.repl as repl
-import lbd.status as status
 
 ap = argparse.ArgumentParser(
     description="""A lightweight programming language, based on functional paradigms."""
@@ -27,27 +27,23 @@ args = ap.parse_args()
 
 # FIXME: This might have to return a tuple of the last evaluation,
 # coupled with the genv.
-def process_filename(filename: str) -> status.Status:
+def process_filename(filename: str) -> tuple[evl.Genv, dict[str, Any]] | Exception:
     """Process filename.
 
     """
     genv: evl.Genv = []
 
-    loaded = dtv.load_d(filename)
+    program = dtv.load_d(filename)
 
-    if loaded["error"]:
-        return loaded
+    if isinstance(program, Exception):
+        return program
 
-    program = loaded["user_data"]
+    ast = evl.eval_program(program, genv)
 
-    evaled = evl.eval_program(program, genv)
+    if isinstance(ast, Exception):
+        return ast
 
-    if evaled["error"]:
-        return evaled
-
-    value = evaled["user_data"]
-
-    return {"user_data": (genv, value), "error": None}
+    return (genv, ast)
 
 
 def main():
@@ -58,11 +54,11 @@ def main():
     if filename:
         processed = process_filename(filename)
 
-        if err := processed["error"]:
-            print(err)
+        if isinstance(processed, Exception):
+            print(processed)
             sys.exit(1)
 
-        fgenv, value = processed["user_data"]
+        fgenv, value = processed
 
         # Extend the initial genv with the given program.
         genv.extend(fgenv)
