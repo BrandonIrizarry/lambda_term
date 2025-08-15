@@ -2,10 +2,12 @@ import re
 import typing
 
 import lbd.beta as beta
+import lbd.desugar as dsg
 import lbd.directive as dtv
 import lbd.error as err
 import lbd.parse as parse
 import lbd.status as status
+import lbd.tokenize_lambda as tkz
 
 
 class GenvEntry(typing.TypedDict):
@@ -17,15 +19,28 @@ type Genv = list[GenvEntry]
 
 
 def eval_raw_term(raw_term: str, genv: Genv):
-    ast, _, label = parse.parse(raw_term)
+    tokens = tkz.tokenize(raw_term)
+    err.ParseError.set_tokens(tokens)
 
-    # If we parsed a def-statement, associate the label with the
-    # AST.
-    if label is not None:
-        genv.append({"label": label, "ast": ast})
-        return ast
+    # FIXME: setting 'tokens' twice like this looks awkward. Was it
+    # event the right thing to do?
+    tokens, label = dsg.desugar_def(tokens[:])
 
-    return beta.beta_reduce(ast)
+    try:
+        ast, num_tokens = parse.parse_term(tokens, 0, [])
+
+        if num_tokens < len(tokens):
+            raise err.TrailingGarbageError(num_tokens, tokens)
+
+        # If we parsed a def-statement, associate the label with the
+        # AST.
+        if label is not None:
+            genv.append({"label": label, "ast": ast})
+            return ast
+
+        return beta.beta_reduce(ast)
+    except IndexError:
+        raise err.IncompleteTermError(len(tokens), tokens)
 
 
 def eval_program(program: list[str], genv: Genv) -> status.Status:
