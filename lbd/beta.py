@@ -20,7 +20,7 @@ def shift(ast, amount, minimum):
         shift(ast["left"], amount, minimum)
         shift(ast["right"], amount, minimum)
     else:
-        raise ValueError
+        raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
 
 
 def inc(ast, minimum):
@@ -55,7 +55,7 @@ def replace(ast, argument, target_index):
 
         return term.new_application(new_left, new_right)
     else:
-        raise ValueError
+        raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
 
 
 def beta_reduce(ast) -> dict[str, Any]:

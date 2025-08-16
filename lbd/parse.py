@@ -1,4 +1,3 @@
-import lbd.desugar as dsg
 import lbd.error as err
 import lbd.gamma as gamma
 import lbd.term as term
@@ -16,7 +15,7 @@ import lbd.tokenize_lambda as tkz
 # parsed.
 
 
-def parse_application(tokens: list[tkz.Token], i, env: list[str]):
+def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
@@ -24,12 +23,30 @@ def parse_application(tokens: list[tkz.Token], i, env: list[str]):
     i += 1
 
     # Bootstrap the left-fold.
-    first_term, i = parse_term(tokens, i, env[:])
-    second_term, i = parse_term(tokens, i, env[:])
+    _first = parse_term(tokens, i, env[:])
+
+    if isinstance(_first, Exception):
+        return _first
+
+    first_term, i = _first
+
+    _second = parse_term(tokens, i, env[:])
+
+    if isinstance(_second, Exception):
+        return _second
+
+    second_term, i = _second
+
     partial = term.new_application(first_term, second_term)
 
     while not tkz.is_right_paren_t(tokens[i]):
-        next_term, i = parse_term(tokens, i, env[:])
+        _next = parse_term(tokens, i, env[:])
+
+        if isinstance(_next, Exception):
+            return _next
+
+        next_term, i = _next
+
         partial = term.new_application(partial, next_term)
 
     # Skip the closing parenthesis.
@@ -38,7 +55,12 @@ def parse_application(tokens: list[tkz.Token], i, env: list[str]):
     return partial, i
 
 
-def parse_abstraction(tokens: list[tkz.Token], i, env: list[str]):
+def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
+    # Check that the "lambda" has at least three characters to work
+    # with.
+    if len(tokens[i:i+3]) < 3:
+        return ValueError(f"Position {i}: Malformed lambda")
+
     # Skip the lambda symbol.
     i += 1
 
@@ -49,17 +71,22 @@ def parse_abstraction(tokens: list[tkz.Token], i, env: list[str]):
     env.append(tokens[i]["str"])
 
     if not tkz.is_dot_t(tokens[i + 1]):
-        raise err.AbstractionNoDotError(i + 1, tokens)
+        raise err.AbstractionNoDotError(i + 1, tokens[i + 1])
 
     # Move past the dot.
     i += 2
 
-    body, i = parse_term(tokens, i, env[:])
+    _body = parse_term(tokens, i, env[:])
+
+    if isinstance(_body, Exception):
+        return _body
+
+    body, i = _body
 
     return term.new_abstraction(body), i
 
 
-def parse_name(tokens: list[tkz.Token], i, env: list[str]):
+def parse_name(tokens: list[tkz.Token], i: int, env: list[str]):
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
@@ -84,9 +111,12 @@ def parse_name(tokens: list[tkz.Token], i, env: list[str]):
     return term.new_name(free_index), i + 1
 
 
-def parse_term(tokens: list[tkz.Token], i, env: list[str]):
+def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
+
+    if tokens[i:] == []:
+        return ValueError(f"Position {i}: Incomplete term")
 
     if tkz.is_left_paren_t(tokens[i]):
         return parse_application(tokens, i, env[:])
@@ -95,4 +125,4 @@ def parse_term(tokens: list[tkz.Token], i, env: list[str]):
     elif tkz.is_name_t(tokens[i]):
         return parse_name(tokens, i, env[:])
     else:
-        raise err.StrayTokenError(i, tokens[i])
+        return err.StrayTokenError(i, tokens[i])

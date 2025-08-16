@@ -24,23 +24,28 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
         return tokens
 
     err.ParseError.set_tokens(tokens)
-    tokens, label = dsg.desugar_def(tokens[:])
+    desugared = dsg.desugar_def(tokens[:])
 
-    try:
-        ast, num_tokens = parse.parse_term(tokens, 0, [])
+    if isinstance(desugared, Exception):
+        return desugared
 
-        if num_tokens < len(tokens):
-            raise err.TrailingGarbageError(num_tokens, tokens)
+    tokens, label = desugared
+    _parsed = parse.parse_term(tokens, 0, [])
 
-        # If we parsed a def-statement, associate the label with the
-        # AST.
-        if label is not None:
-            genv.append({"label": label, "ast": ast})
-            return ast
+    if isinstance(_parsed, Exception):
+        return _parsed
 
-        return beta.beta_reduce(ast)
-    except IndexError:
-        raise err.IncompleteTermError(len(tokens), tokens)
+    ast, num_tokens = _parsed
+
+    if num_tokens < len(tokens):
+        return err.TrailingGarbageError(num_tokens, tokens)
+
+    # If we parsed a def-statement, associate the label with the AST.
+    if label is not None:
+        genv.append({"label": label, "ast": ast})
+        return ast
+
+    return beta.beta_reduce(ast)
 
 
 def eval_program(program: list[str], genv: Genv) -> dict[str, Any] | Exception:

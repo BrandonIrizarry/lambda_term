@@ -1,4 +1,5 @@
 import enum
+from typing import Any
 
 
 class Term(enum.StrEnum):
@@ -8,6 +9,9 @@ class Term(enum.StrEnum):
 
     def __repr__(self):
         return self
+
+
+type AST = dict[str, Any]
 
 
 def new_name(index):
