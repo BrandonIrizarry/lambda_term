@@ -2,7 +2,7 @@ import lbd.error as err
 import lbd.tokenize_lambda as tkz
 
 
-def desugar_def(tokens) -> tuple[list[tkz.Token], str | None] | Exception:
+def desugar_def(tokens: list[tkz.Token]) -> tuple[list[tkz.Token], str | None] | Exception:
     if not tkz.is_def_t(tokens[0]):
         return tokens, None
 
