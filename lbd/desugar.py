@@ -9,7 +9,7 @@ def desugar_def(tokens) -> tuple[list[tkz.Token], str | None] | Exception:
     second_token = tokens[1]
 
     if not tkz.is_name_t(second_token):
-        return err.IllegalTokenError(1, second_token)
+        return err.error(tokens, 1, err.Err.MALFORMED_DEF)
 
     label = second_token["value"]
 
@@ -18,7 +18,7 @@ def desugar_def(tokens) -> tuple[list[tkz.Token], str | None] | Exception:
     mid = tkz.find(tokens, tkz.assign_t())
 
     if mid == -1:
-        return err.MissingAssignmentError()
+        return err.error(tokens, len(tokens), err.Err.MISSING_ASSIGN_OP)
 
     params = tokens[2:mid]
     body = tokens[mid+1:]

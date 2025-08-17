@@ -11,6 +11,8 @@ class Err(enum.StrEnum):
     INVALID_PARAM = "Invalid parameter name"
     MISSING_DOT = "Missing dot after parameter name"
     TRAILING_GARBAGE = "Trailing garbage"
+    MALFORMED_DEF = "Malformed def statement"
+    MISSING_ASSIGN_OP = "Missing assignment operator"
 
 
 @dataclass
