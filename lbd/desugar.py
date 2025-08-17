@@ -11,7 +11,7 @@ def desugar_def(tokens: list[tkz.Token]) -> tuple[list[tkz.Token], str | None] |
     if not tkz.is_name_t(second_token):
         return err.error(tokens, 1, err.Err.MALFORMED_DEF)
 
-    label = second_token["value"]
+    label = second_token["str"]
 
     # Move the left-side params to the right side as lambda
     # binders.
