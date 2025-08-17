@@ -1,6 +1,5 @@
 import unittest
 
-import lbd.desugar as dsg
 import lbd.error as err
 import lbd.parse as parse
 import lbd.term as term
@@ -16,15 +15,6 @@ def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
 
     if isinstance(tokens, Exception):
         return tokens
-
-    _tokens = dsg.desugar_def(tokens)
-
-    if isinstance(_tokens, Exception):
-        return _tokens
-
-    # The 'def' feature isn't tested in this suite, so ignore the
-    # 'label' return value.
-    tokens, _ = _tokens
 
     _ast = parse.parse_term(tokens, 0, [])
 

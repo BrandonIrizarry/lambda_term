@@ -2,7 +2,6 @@ import re
 from typing import Any, TypedDict
 
 import lbd.beta as beta
-import lbd.desugar as dsg
 import lbd.directive as dtv
 import lbd.error as err
 import lbd.parse as parse
@@ -23,12 +22,6 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     if isinstance(tokens, Exception):
         return tokens
 
-    desugared = dsg.desugar_def(tokens[:])
-
-    if isinstance(desugared, Exception):
-        return desugared
-
-    tokens, label = desugared
     _parsed = parse.parse_term(tokens, 0, [])
 
     if isinstance(_parsed, Exception):
@@ -40,11 +33,6 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     # some point I may need to disentangle this.
     if num_tokens < len(tokens):
         return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
-
-    # If we parsed a def-statement, associate the label with the AST.
-    if label is not None:
-        genv.append({"label": label, "ast": ast})
-        return ast
 
     return beta.beta_reduce(ast)
 
