@@ -39,7 +39,7 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     # FIXME: right now I'm checking this _after_ desugaring, so at
     # some point I may need to disentangle this.
     if num_tokens < len(tokens):
-        return err.parsing(tokens, num_tokens, err.Perr.TRAILING_GARBAGE)
+        return err.parsing(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
     # If we parsed a def-statement, associate the label with the AST.
     if label is not None:

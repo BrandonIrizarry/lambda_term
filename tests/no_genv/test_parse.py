@@ -34,7 +34,7 @@ def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
     ast, num_tokens = _ast
 
     if num_tokens < len(tokens):
-        return err.parsing(tokens, num_tokens, err.Perr.TRAILING_GARBAGE)
+        return err.parsing(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
     return ast, num_tokens
 
@@ -129,59 +129,59 @@ class TestIllegalTerms(unittest.TestCase):
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.INCOMPLETE)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.INCOMPLETE)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
         raw_term = "\\xylophone.(xylophone"
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.INCOMPLETE)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.INCOMPLETE)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
     def test_abstraction_missing_dot(self):
         raw_term = "\\xy(x y)"
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.MISSING_DOT)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.MISSING_DOT)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
     def test_application_no_opening_paren(self):
         raw_term = "\\x.\\y.x y)"
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.TRAILING_GARBAGE)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.TRAILING_GARBAGE)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
     def test_abstraction_missing_keyword(self):
         raw_term = "x.x"
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.TRAILING_GARBAGE)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.TRAILING_GARBAGE)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
     def test_extra_dots(self):
         raw_term = "\\x..x"
 
         exception = parse_raw(raw_term)
 
-        if isinstance(exception, err.ParseError):
-            self.assertEqual(exception.kind, err.Perr.MEANINGLESS)
+        if isinstance(exception, err.LambdaError):
+            self.assertEqual(exception.kind, err.Err.MEANINGLESS)
         else:
-            self.assertIsInstance(exception, err.ParseError)
+            self.assertIsInstance(exception, err.LambdaError)
 
 
 class TestSugaredApplications(unittest.TestCase):

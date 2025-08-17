@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import lbd.tokenize_lambda as tkz
 
 
-class Perr(enum.StrEnum):
+class Err(enum.StrEnum):
     INCOMPLETE = "Incomplete term"
     MEANINGLESS = "Meaningless token"
     MISSING_PARAM = "Missing parameter"
@@ -14,15 +14,15 @@ class Perr(enum.StrEnum):
 
 
 @dataclass
-class ParseError(Exception):
-    kind: Perr
+class LambdaError(Exception):
+    kind: Err
     message: str
 
     def __str__(self):
         return self.message
 
 
-def parsing(tokens: list[tkz.Token], pos: int, kind: Perr) -> Exception:
+def parsing(tokens: list[tkz.Token], pos: int, kind: Err) -> Exception:
     """Report a parsing error."""
 
     what = f"Position {pos}: {kind.value}"
@@ -46,4 +46,4 @@ def parsing(tokens: list[tkz.Token], pos: int, kind: Perr) -> Exception:
 
     what += f"\n{''.join(view)}"
 
-    return ParseError(kind, what)
+    return LambdaError(kind, what)
