@@ -22,7 +22,7 @@ class LambdaError(Exception):
         return self.message
 
 
-def parsing(tokens: list[tkz.Token], pos: int, kind: Err) -> Exception:
+def error(tokens: list[tkz.Token], pos: int, kind: Err) -> Exception:
     """Report a parsing error."""
 
     what = f"Position {pos}: {kind.value}"

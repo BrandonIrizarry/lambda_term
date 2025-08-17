@@ -56,7 +56,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         t = tkz.get(tokens, i)
 
         if t is None:
-            return err.parsing(tokens, i, err.Err.INCOMPLETE)
+            return err.error(tokens, i, err.Err.INCOMPLETE)
 
         if tkz.is_right_paren_t(t):
             break
@@ -88,10 +88,10 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     param = tkz.get(tokens, i)
 
     if param is None:
-        return err.parsing(tokens, i, err.Err.MISSING_PARAM)
+        return err.error(tokens, i, err.Err.MISSING_PARAM)
 
     if not tkz.is_name_t(param):
-        return err.parsing(tokens, i, err.Err.INVALID_PARAM)
+        return err.error(tokens, i, err.Err.INVALID_PARAM)
 
     env.append(param["str"])
 
@@ -101,10 +101,10 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     dot = tkz.get(tokens, i)
 
     if dot is None:
-        return err.parsing(tokens, i, err.Err.INCOMPLETE)
+        return err.error(tokens, i, err.Err.INCOMPLETE)
 
     if not tkz.is_dot_t(dot):
-        return err.parsing(tokens, i, err.Err.MISSING_DOT)
+        return err.error(tokens, i, err.Err.MISSING_DOT)
 
     # Advance; we should then be at the start of the body.
     i += 1
@@ -129,7 +129,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]):
     t = tkz.get(tokens, i)
 
     if t is None:
-        return err.parsing(tokens, i, err.Err.INCOMPLETE)
+        return err.error(tokens, i, err.Err.INCOMPLETE)
 
     name = t["str"]
 
@@ -155,7 +155,7 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     index into TOKENS.)"""
 
     if len(tokens[i:]) == 0:
-        return err.parsing(tokens, i, err.Err.INCOMPLETE)
+        return err.error(tokens, i, err.Err.INCOMPLETE)
 
     if tkz.is_left_paren_t(tokens[i]):
         return parse_application(tokens, i, env[:])
@@ -164,4 +164,4 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     elif tkz.is_name_t(tokens[i]):
         return parse_name(tokens, i, env[:])
     else:
-        return err.parsing(tokens, i, err.Err.MEANINGLESS)
+        return err.error(tokens, i, err.Err.MEANINGLESS)

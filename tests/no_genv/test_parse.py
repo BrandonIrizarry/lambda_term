@@ -34,7 +34,7 @@ def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
     ast, num_tokens = _ast
 
     if num_tokens < len(tokens):
-        return err.parsing(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
+        return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
     return ast, num_tokens
 
