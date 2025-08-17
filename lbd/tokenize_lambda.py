@@ -100,6 +100,22 @@ def is_def_t(token: Token) -> bool:
     return token == def_t()
 
 
+def get(tokens: list[Token], pos: int) -> Token | None:
+    """Return the token at position POS.
+
+    If POS is out of range, then return None.
+
+    """
+
+    if pos < 0:
+        raise ValueError(f"Fatal: negative token-buffer index {pos}")
+
+    if pos >= len(tokens):
+        return None
+
+    return tokens[pos]
+
+
 def find(tokens: list[Token], token: Token) -> int:
     """Return the first index where TOKEN is found in TOKENS.
 

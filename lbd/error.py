@@ -1,78 +1,49 @@
+import enum
+from dataclasses import dataclass
+
+import lbd.tokenize_lambda as tkz
+
+
+class Perr(enum.StrEnum):
+    INCOMPLETE = "Incomplete term"
+    MEANINGLESS = "Meaningless token"
+    MISSING_PARAM = "Missing parameter"
+    INVALID_PARAM = "Invalid parameter name"
+    MISSING_DOT = "Missing dot after parameter name"
+    TRAILING_GARBAGE = "Trailing garbage"
+
+
+@dataclass
 class ParseError(Exception):
-    def __init__(self, position, token):
-        self.position = position
-        self.token = token
-        self.diagnostic = self.generate_diagnostic()
-        print(self.diagnostic)
-
-    @classmethod
-    def set_tokens(cls, tokens):
-        cls.tokens = tokens
-
-    def generate_diagnostic(self):
-        """Signify where in the user's expression a syntax error
-        occurred.
-
-        """
-
-        read_format = [token["str"] for token in self.tokens]
-        read_format.insert(self.position, "*")
-
-        return " ".join(read_format)
-
-
-class IncompleteTermError(ParseError):
-    def __str__(self):
-        return "Incomplete term"
-
-
-class TrailingGarbageError(ParseError):
-    def __str__(self):
-        return "Trailing garbage"
-
-
-class UnboundNameError(ParseError):
-    def __str__(self):
-        return f"Name '{self.token}' at token-position {self.position} is unbound"
-
-
-class StrayTokenError(ParseError):
-    def __str__(self):
-        return f"Stray token {self.token} at token-position {self.position}"
-
-
-class IllegalTokenError(Exception):
-    """Catch errors at the tokenizing stage.
-
-    Since these always occur before the parsing stage, we can't
-    inherit from ParseError.
-
-    """
-
-    def __init__(self, position, token):
-        self.position = position
-        self.token = token
+    kind: Perr
+    message: str
 
     def __str__(self):
-        return f"Illegal token '{self.token}' at token-position {self.position}"
+        return self.message
 
 
-class MissingAssignmentError(IllegalTokenError):
-    def __init__(self):
-        pass
+def parsing(tokens: list[tkz.Token], pos: int, kind: Perr) -> Exception:
+    """Report a parsing error."""
 
-    def __str__(self):
-        return f"Definition missing ':='"
+    what = f"Position {pos}: {kind.value}"
 
+    # Create a simple "debug" view of the given tokens.
+    view = []
 
-class AbstractionNoDotError(ParseError):
-    def __str__(self):
-        return f"Missing dot-separator at token-position {self.position}"
+    outside = True
 
+    for i in range(len(tokens)):
+        t_raw = tokens[i]["str"]
 
-class InvalidDirectiveError(Exception):
-    def __init__(self, directive):
-        self.directive = directive
+        if i == pos:
+            view.append(f"{{{t_raw}}}")
+            outside = False
+        else:
+            view.append(t_raw)
 
-    def __str__(self):
-        return f"Invalid directive '{self.directive}'"
+    if outside:
+        view.append("???")
+
+    what += f"\n{''.join(view)}"
+
+    return ParseError(kind, what)

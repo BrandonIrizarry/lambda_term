@@ -14,7 +14,7 @@ class Term(enum.StrEnum):
 type AST = dict[str, Any]
 
 
-def new_name(index):
+def new_name(index) -> AST:
     """Construct and return a name with the given INDEX."""
 
     return {
@@ -23,7 +23,7 @@ def new_name(index):
     }
 
 
-def new_abstraction(body):
+def new_abstraction(body) -> AST:
     """Construct and return an abstraction with the given BODY."""
 
     return {
@@ -32,7 +32,7 @@ def new_abstraction(body):
     }
 
 
-def new_application(left, right):
+def new_application(left, right) -> AST:
     """Construct and return an application with the given LEFT and
     RIGHT terms."""
 

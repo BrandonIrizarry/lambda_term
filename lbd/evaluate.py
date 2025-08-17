@@ -23,7 +23,6 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     if isinstance(tokens, Exception):
         return tokens
 
-    err.ParseError.set_tokens(tokens)
     desugared = dsg.desugar_def(tokens[:])
 
     if isinstance(desugared, Exception):
@@ -37,8 +36,10 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
 
     ast, num_tokens = _parsed
 
+    # FIXME: right now I'm checking this _after_ desugaring, so at
+    # some point I may need to disentangle this.
     if num_tokens < len(tokens):
-        return err.TrailingGarbageError(num_tokens, tokens)
+        return err.parsing(tokens, num_tokens, err.Perr.TRAILING_GARBAGE)
 
     # If we parsed a def-statement, associate the label with the AST.
     if label is not None:

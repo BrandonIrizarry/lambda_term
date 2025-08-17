@@ -10,9 +10,10 @@ import lbd.tokenize_lambda as tkz
 # current environment merely consisting of the list of
 # parameter-binders seen so far "above" us.
 #
-# The functions return the product of the parsing - the AST - along
-# with the index of the first token that lies past the expression just
-# parsed.
+# The functions normally return the product of the parsing - the AST -
+# along with the index of the first token that lies past the
+# expression just parsed. If an Exception is found, return that
+# instead.
 
 
 def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
@@ -37,16 +38,40 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
     second_term, i = _second
 
+    # What follows is our implementation of sugar for writing
+    # applications, given that these are left-associative. For
+    # example, (a b c d e) becomes ((((a b) c) d) e). Otherwise, here
+    # we would simply stop here, skipping the right paren and
+    # returning the newly created application-term.
+    #
+    # Here I use an iterative version of fold-left, where 'partial' is
+    # the accumulator variable.
+
+    # Start with (a b).
     partial = term.new_application(first_term, second_term)
 
-    while not tkz.is_right_paren_t(tokens[i]):
+    while True:
+        # Get the next token in the application-expression list, or
+        # possibly the terminating right-parenthesis.
+        t = tkz.get(tokens, i)
+
+        if t is None:
+            return err.parsing(tokens, i, err.Perr.INCOMPLETE)
+
+        if tkz.is_right_paren_t(t):
+            break
+
+        # The next token signifies the beginning of the next _term_ in
+        # the list, so parse that.
         _next = parse_term(tokens, i, env[:])
 
         if isinstance(_next, Exception):
             return _next
 
+        # Here we update i to advance the loop.
         next_term, i = _next
 
+        # The accumulation step.
         partial = term.new_application(partial, next_term)
 
     # Skip the closing parenthesis.
@@ -56,25 +81,33 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
 
 def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
-    # Check that the "lambda" has at least three characters to work
-    # with.
-    if len(tokens[i:i+3]) < 3:
-        return ValueError(f"Position {i}: Malformed lambda")
-
     # Skip the lambda symbol.
     i += 1
 
     # Record the formal parameter inside env.
-    if not tkz.is_name_t(tokens[i]):
-        raise err.IllegalTokenError(i, tokens[i])
+    param = tkz.get(tokens, i)
 
-    env.append(tokens[i]["str"])
+    if param is None:
+        return err.parsing(tokens, i, err.Perr.MISSING_PARAM)
 
-    if not tkz.is_dot_t(tokens[i + 1]):
-        raise err.AbstractionNoDotError(i + 1, tokens[i + 1])
+    if not tkz.is_name_t(param):
+        return err.parsing(tokens, i, err.Perr.INVALID_PARAM)
 
-    # Move past the dot.
-    i += 2
+    env.append(param["str"])
+
+    # Advance; we should then be on the dot.
+    i += 1
+
+    dot = tkz.get(tokens, i)
+
+    if dot is None:
+        return err.parsing(tokens, i, err.Perr.INCOMPLETE)
+
+    if not tkz.is_dot_t(dot):
+        return err.parsing(tokens, i, err.Perr.MISSING_DOT)
+
+    # Advance; we should then be at the start of the body.
+    i += 1
 
     _body = parse_term(tokens, i, env[:])
 
@@ -92,7 +125,13 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]):
     # layered function scopes.)
     is_local = False
     index = 0
-    name = tokens[i]["str"]
+
+    t = tkz.get(tokens, i)
+
+    if t is None:
+        return err.parsing(tokens, i, err.Perr.INCOMPLETE)
+
+    name = t["str"]
 
     for local_name in reversed(env):
         # FIXME: we expect this key to exist, so we should probably
@@ -115,8 +154,8 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 
-    if tokens[i:] == []:
-        return ValueError(f"Position {i}: Incomplete term")
+    if len(tokens[i:]) == 0:
+        return err.parsing(tokens, i, err.Perr.INCOMPLETE)
 
     if tkz.is_left_paren_t(tokens[i]):
         return parse_application(tokens, i, env[:])
@@ -125,4 +164,4 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     elif tkz.is_name_t(tokens[i]):
         return parse_name(tokens, i, env[:])
     else:
-        return err.StrayTokenError(i, tokens[i])
+        return err.parsing(tokens, i, err.Perr.MEANINGLESS)
