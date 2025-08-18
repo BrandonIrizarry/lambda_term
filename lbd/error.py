@@ -5,6 +5,7 @@ import lbd.tokenize_lambda as tkz
 
 
 class Err(enum.StrEnum):
+    ILLEGAL_TOKEN = "Illegal token"
     INCOMPLETE = "Incomplete term"
     INVALID_PARAM = "Invalid parameter name"
     MALFORMED_DEF = "Malformed def statement"
