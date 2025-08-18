@@ -16,7 +16,7 @@ import lbd.tokenize_lambda as tkz
 # instead.
 
 
-def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
+def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Return a parsed application, as well as the index corresponding
     to the start of the next lambda term."""
 
@@ -80,7 +80,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     return partial, i
 
 
-def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
+def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     # Skip the lambda symbol.
     i += 1
 
@@ -119,7 +119,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     return term.new_abstraction(body), i
 
 
-def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
+def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
@@ -151,7 +151,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 
 
-def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
+def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
 

@@ -63,7 +63,7 @@ def pretty_print_term_ast(ast, env):
         print(")")
 
 
-def repl(genv: evl.Genv):
+def repl():
     while True:
         try:
             repl_input = input("> ")
@@ -75,7 +75,7 @@ def repl(genv: evl.Genv):
 
         readline.add_history(repl_input)
 
-        ast = evl.eval_line(repl_input, genv)
+        ast = evl.eval_line(repl_input)
 
         if isinstance(ast, Exception):
             print(ast)

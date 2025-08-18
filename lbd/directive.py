@@ -1,15 +1,16 @@
+import lbd.error as err
 
 
-def eval_directive(name: str, params: list[str]) -> list[str] | Exception:
+def eval_directive(name: str, params: list[str]) -> list[str] | err.LambdaError:
     match name:
         case "load":
             filename = params[0]
             return load_d(filename)
         case _:
-            return ValueError(f"Undefined directive: '{name}'")
+            raise ValueError(f"Undefined directive: '{name}'")
 
 
-def load_d(filename: str) -> list[str] | Exception:
+def load_d(filename: str) -> list[str] | err.LambdaError:
     try:
         with open(filename, "r") as file:
             lines = []
@@ -22,4 +23,4 @@ def load_d(filename: str) -> list[str] | Exception:
 
             return lines
     except FileNotFoundError:
-        return ValueError(f"File not found: {filename}")
+        raise ValueError(f"File not found: {filename}")

@@ -2,11 +2,12 @@
 
 import argparse
 import sys
-from typing import Any
 
 import lbd.directive as dtv
 import lbd.evaluate as evl
 import lbd.repl as repl
+from lbd.error import LambdaError
+from lbd.term import AST
 
 ap = argparse.ArgumentParser(
     description="""A lightweight programming language, based on functional paradigms."""
@@ -27,41 +28,35 @@ args = ap.parse_args()
 
 # FIXME: This might have to return a tuple of the last evaluation,
 # coupled with the genv.
-def process_filename(filename: str) -> tuple[evl.Genv, dict[str, Any]] | Exception:
+def process_filename(filename: str) -> AST | LambdaError:
     """Process filename.
 
     """
-    genv: evl.Genv = []
-
     program = dtv.load_d(filename)
 
     if isinstance(program, Exception):
         return program
 
-    ast = evl.eval_program(program, genv)
+    ast = evl.eval_program(program)
 
     if isinstance(ast, Exception):
         return ast
 
-    return (genv, ast)
+    return ast
 
 
 def main():
     filename: str = args.filename
-    genv: evl.Genv = []
 
     # Fill in the global environment with the given program
     if filename:
         processed = process_filename(filename)
 
-        if isinstance(processed, Exception):
+        if isinstance(processed, LambdaError):
             print(processed)
             sys.exit(1)
 
-        fgenv, value = processed
-
-        # Extend the initial genv with the given program.
-        genv.extend(fgenv)
+        value = processed
 
         # If only the name of a program is given (no --repl), print
         # the program's final evaluation, and exit.
@@ -71,7 +66,7 @@ def main():
 
     # In every other case, launch the REPL, possibly with a
     # pre-populated global environment.
-    repl.repl(genv)
+    repl.repl()
 
 
 if __name__ == "__main__":

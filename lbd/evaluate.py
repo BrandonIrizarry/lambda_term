@@ -1,30 +1,23 @@
 import re
-from typing import Any, TypedDict
 
 import lbd.beta as beta
 import lbd.directive as dtv
 import lbd.error as err
 import lbd.parse as parse
 import lbd.tokenize_lambda as tkz
+from lbd.error import LambdaError
+from lbd.term import AST
 
 
-class GenvEntry(TypedDict):
-    label: str
-    ast: dict[str, Any]
-
-
-type Genv = list[GenvEntry]
-
-
-def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
+def eval_raw_term(raw_term: str) -> AST | LambdaError:
     tokens = tkz.tokenize(raw_term)
 
-    if isinstance(tokens, Exception):
+    if isinstance(tokens, LambdaError):
         return tokens
 
     _parsed = parse.parse_term(tokens, 0, [])
 
-    if isinstance(_parsed, Exception):
+    if isinstance(_parsed, LambdaError):
         return _parsed
 
     ast, num_tokens = _parsed
@@ -37,13 +30,13 @@ def eval_raw_term(raw_term: str, genv: Genv) -> dict[str, Any] | Exception:
     return beta.beta_reduce(ast)
 
 
-def eval_program(program: list[str], genv: Genv) -> dict[str, Any] | Exception:
+def eval_program(program: list[str]) -> AST | LambdaError:
     value = dict()
 
     for line in program:
-        ast = eval_line(line, genv)
+        ast = eval_line(line)
 
-        if isinstance(ast, Exception):
+        if isinstance(ast, LambdaError):
             return ast
 
         value = ast
@@ -51,7 +44,7 @@ def eval_program(program: list[str], genv: Genv) -> dict[str, Any] | Exception:
     return value
 
 
-def eval_line(repl_input: str, genv: Genv) -> dict[str, Any] | Exception:
+def eval_line(repl_input: str) -> AST | LambdaError:
     """Given REPL_INPUT, either evaluate as a directive, or else a raw
     lambda term.
 
@@ -66,7 +59,7 @@ def eval_line(repl_input: str, genv: Genv) -> dict[str, Any] | Exception:
 
     if _directive is None:
         # The program is this single line.
-        ast = eval_raw_term(repl_input, genv)
+        ast = eval_raw_term(repl_input)
 
         if isinstance(ast, Exception):
             return ast
@@ -80,10 +73,10 @@ def eval_line(repl_input: str, genv: Genv) -> dict[str, Any] | Exception:
     # always returns a program as the user_data field.
     program = dtv.eval_directive(name, params)
 
-    if isinstance(program, Exception):
+    if isinstance(program, LambdaError):
         return program
 
-    value = eval_program(program, genv)
+    value = eval_program(program)
 
     if isinstance(value, Exception):
         return value

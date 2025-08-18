@@ -130,7 +130,7 @@ def find(tokens: list[Token], token: Token) -> int:
     return -1
 
 
-def tokenize(raw_term: str) -> list[Token] | Exception:
+def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
     spec = [
         ("assign", ":="),
         ("def", r"def"),
@@ -176,7 +176,7 @@ def tokenize(raw_term: str) -> list[Token] | Exception:
             case "space":
                 continue
             case "error":
-                return err.IllegalTokenError(i, value)
+                return err.error(tokens, i, err.Err.ILLEGAL_TOKEN)
 
         i += 1
 
