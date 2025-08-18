@@ -119,7 +119,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     return term.new_abstraction(body), i
 
 
-def parse_name(tokens: list[tkz.Token], i: int, env: list[str]):
+def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
