@@ -13,7 +13,7 @@ class Err(enum.StrEnum):
     TRAILING_GARBAGE = "Trailing garbage"
     MALFORMED_DEF = "Malformed def statement"
     MISSING_ASSIGN_OP = "Missing assignment operator"
-    UNDECLARED_SYMBOL = "Undeclared symbol"
+    UNDECLARED_SYMBOL = "Undeclared free symbol"
 
 
 @dataclass
