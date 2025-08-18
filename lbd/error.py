@@ -6,13 +6,13 @@ import lbd.tokenize_lambda as tkz
 
 class Err(enum.StrEnum):
     INCOMPLETE = "Incomplete term"
-    MEANINGLESS = "Meaningless token"
-    MISSING_PARAM = "Missing parameter"
     INVALID_PARAM = "Invalid parameter name"
-    MISSING_DOT = "Missing dot after parameter name"
-    TRAILING_GARBAGE = "Trailing garbage"
     MALFORMED_DEF = "Malformed def statement"
+    MEANINGLESS = "Meaningless token"
     MISSING_ASSIGN_OP = "Missing assignment operator"
+    MISSING_DOT = "Missing dot after parameter name"
+    MISSING_PARAM = "Missing parameter"
+    TRAILING_GARBAGE = "Trailing garbage"
     UNDECLARED_SYMBOL = "Undeclared free symbol"
 
 
