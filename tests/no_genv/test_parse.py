@@ -158,8 +158,14 @@ class TestIllegalTerms(unittest.TestCase):
 
         exception = parse_raw(raw_term)
 
+        # Before, this raw_term was invalid because 'x' was parsed as
+        # a name, and so the '.x' counted as trailing garbage (because
+        # no valid token is present to spur on the parsing process.)
+        # Now, it's invalid simply because the lack of the lambda
+        # keyword means there's no longer a local binding for x,
+        # meaning that it's an undeclared free symbol.
         if isinstance(exception, err.LambdaError):
-            self.assertEqual(exception.kind, err.Err.TRAILING_GARBAGE)
+            self.assertEqual(exception.kind, err.Err.UNDECLARED_SYMBOL)
         else:
             self.assertIsInstance(exception, err.LambdaError)
 

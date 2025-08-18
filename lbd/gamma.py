@@ -2,17 +2,17 @@
 _gamma: list[str] = []
 
 
-def gamma(free_name: str) -> int:
+def gamma(free_name: str) -> int | None:
     """Return the index of FREE_NAME inside gamma.
 
-    If not found, return -1.
+    If not found, return None.
 
     """
 
     try:
         index = _gamma.index(free_name)
     except ValueError:
-        return -1
+        return None
 
     return index
 

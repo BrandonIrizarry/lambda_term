@@ -145,9 +145,10 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if is_local:
         return term.new_name(index), i + 1
 
-    free_index = gamma.debruijn(name, len(env))
+    if (free_index := gamma.gamma(name)):
+        return term.new_name(free_index), i + 1
 
-    return term.new_name(free_index), i + 1
+    return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 
 
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | Exception:
