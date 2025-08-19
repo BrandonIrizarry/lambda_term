@@ -1,6 +1,5 @@
 import enum
 import re
-import typing
 
 import lbd.error as err
 
@@ -17,21 +16,19 @@ class Tk(enum.Enum):
     DEF = enum.auto()
 
 
-class Token(typing.NamedTuple):
-    kind: Tk
-    value: str
+type Token = tuple[Tk, str]
 
 
-ASSIGN = Token(Tk.ASSIGN, ":=")
-LEFT_PAREN = Token(Tk.LEFT_PAREN, "(")
-RIGHT_PAREN = Token(Tk.RIGHT_PAREN, ")")
-DOT = Token(Tk.DOT, ".")
-LAMBDA = Token(Tk.LAMBDA, "\\")
-DEF = Token(Tk.DEF, "def")
+ASSIGN = (Tk.ASSIGN, ":=")
+LEFT_PAREN = (Tk.LEFT_PAREN, "(")
+RIGHT_PAREN = (Tk.RIGHT_PAREN, ")")
+DOT = (Tk.DOT, ".")
+LAMBDA = (Tk.LAMBDA, "\\")
+DEF = (Tk.DEF, "def")
 
 
 def name_t(value: str):
-    return Token(Tk.NAME, value)
+    return (Tk.NAME, value)
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:

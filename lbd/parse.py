@@ -58,7 +58,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         if t is None:
             return err.error(tokens, i, err.Err.INCOMPLETE)
 
-        if t.kind == tkz.Tk.RIGHT_PAREN:
+        if t == tkz.RIGHT_PAREN:
             break
 
         # The next token signifies the beginning of the next _term_ in
@@ -90,12 +90,12 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if param.kind != tkz.Tk.NAME:
+    (kind, value) = param
+
+    if kind != tkz.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    assert param.value is not None
-
-    env.append(param.value)
+    env.append(value)
 
     # Advance; we should then be on the dot.
     i += 1
@@ -105,7 +105,9 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if dot is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if dot.kind != tkz.Tk.DOT:
+    (kind, _) = dot
+
+    if kind != tkz.Tk.DOT:
         return err.error(tokens, i, err.Err.MISSING_DOT)
 
     # Advance; we should then be at the start of the body.
@@ -133,15 +135,13 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if t.kind != tkz.Tk.NAME:
+    (kind, value) = t
+
+    if kind != tkz.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
-    assert t.value is not None
-
-    name = t.value
-
     for local_name in reversed(env):
-        if local_name == name:
+        if local_name == value:
             is_local = True
             break
 
@@ -150,7 +150,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if is_local:
         return term.new_name(index), i + 1
 
-    if (free_index := gamma.gamma(name)):
+    if (free_index := gamma.gamma(value)):
         return term.new_name(free_index), i + 1
 
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
