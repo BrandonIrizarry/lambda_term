@@ -7,27 +7,31 @@ import lbd.error as err
 IDENT = r"[A-Za-z_]\w*"
 
 
-class Tk(enum.StrEnum):
-    ASSIGN = ":="
-    NAME = ""
-    LEFT_PAREN = "("
-    RIGHT_PAREN = ")"
-    DOT = "."
-    LAMBDA = "\\"
-    DEF = "."
+class Tk(enum.Enum):
+    ASSIGN = enum.auto()
+    NAME = enum.auto()
+    LEFT_PAREN = enum.auto()
+    RIGHT_PAREN = enum.auto()
+    DOT = enum.auto()
+    LAMBDA = enum.auto()
+    DEF = enum.auto()
 
 
 class Token(typing.NamedTuple):
     kind: Tk
-    value: str | None = None
+    value: str
 
-    def __str__(self):
-        if self.value is None:
-            assert self.kind is not Tk.NAME
 
-            return self.kind.value
+ASSIGN = Token(Tk.ASSIGN, ":=")
+LEFT_PAREN = Token(Tk.LEFT_PAREN, "(")
+RIGHT_PAREN = Token(Tk.RIGHT_PAREN, ")")
+DOT = Token(Tk.DOT, ".")
+LAMBDA = Token(Tk.LAMBDA, "\\")
+DEF = Token(Tk.DEF, "def")
 
-        return self.value
+
+def name_t(value: str):
+    return Token(Tk.NAME, value)
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:
@@ -90,19 +94,19 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
 
         match kind:
             case "assign":
-                tokens.append(Token(Tk.ASSIGN))
+                tokens.append(ASSIGN)
             case "def":
-                tokens.append(Token(Tk.DEF))
+                tokens.append(DEF)
             case "name":
-                tokens.append(Token(Tk.NAME, value))
+                tokens.append(name_t(value))
             case "left_paren":
-                tokens.append(Token(Tk.LEFT_PAREN))
+                tokens.append(LEFT_PAREN)
             case "right_paren":
-                tokens.append(Token(Tk.RIGHT_PAREN))
+                tokens.append(RIGHT_PAREN)
             case "dot":
-                tokens.append(Token(Tk.DOT))
+                tokens.append(DOT)
             case "lambda":
-                tokens.append(Token(Tk.LAMBDA))
+                tokens.append(LAMBDA)
             case "space":
                 continue
             case "error":
