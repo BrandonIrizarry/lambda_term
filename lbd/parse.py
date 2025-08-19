@@ -26,14 +26,14 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     # Bootstrap the left-fold.
     _first = parse_term(tokens, i, env[:])
 
-    if isinstance(_first, Exception):
+    if isinstance(_first, err.LambdaError):
         return _first
 
     first_term, i = _first
 
     _second = parse_term(tokens, i, env[:])
 
-    if isinstance(_second, Exception):
+    if isinstance(_second, err.LambdaError):
         return _second
 
     second_term, i = _second
@@ -65,7 +65,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         # the list, so parse that.
         _next = parse_term(tokens, i, env[:])
 
-        if isinstance(_next, Exception):
+        if isinstance(_next, err.LambdaError):
             return _next
 
         # Here we update i to advance the loop.
@@ -111,7 +111,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
     _body = parse_term(tokens, i, env[:])
 
-    if isinstance(_body, Exception):
+    if isinstance(_body, err.LambdaError):
         return _body
 
     body, i = _body
