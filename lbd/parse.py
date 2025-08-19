@@ -163,15 +163,14 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if len(tokens[i:]) == 0:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    (kind, value) = tokens[i]
+    (kind, _) = tokens[i]
 
-    if kind == tkz.Tk.LEFT_PAREN:
-        return parse_application(tokens, i, env[:])
-    elif kind == tkz.Tk.LAMBDA:
-        return parse_abstraction(tokens, i, env[:])
-    elif kind == tkz.Tk.NAME:
-        assert value is not None
-
-        return parse_name(tokens, i, env[:])
-    else:
-        return err.error(tokens, i, err.Err.MEANINGLESS)
+    match kind:
+        case tkz.Tk.LEFT_PAREN:
+            return parse_application(tokens, i, env[:])
+        case tkz.Tk.LAMBDA:
+            return parse_abstraction(tokens, i, env[:])
+        case tkz.Tk.NAME:
+            return parse_name(tokens, i, env[:])
+        case _:
+            return err.error(tokens, i, err.Err.MEANINGLESS)
