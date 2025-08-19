@@ -1,103 +1,33 @@
 import enum
 import re
-from typing import TypedDict
+import typing
 
 import lbd.error as err
 
 IDENT = r"[A-Za-z_]\w*"
 
 
-class Tk(enum.Enum):
-    ASSIGN = enum.auto()
-    NAME = enum.auto()
-    LEFT_PAREN = enum.auto()
-    RIGHT_PAREN = enum.auto()
-    DOT = enum.auto()
-    LAMBDA = enum.auto()
-    DEF = enum.auto()
+class Tk(enum.StrEnum):
+    ASSIGN = ":="
+    NAME = ""
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
+    DOT = "."
+    LAMBDA = "\\"
+    DEF = "."
 
 
-class Token(TypedDict):
+class Token(typing.NamedTuple):
     kind: Tk
-    str: str
+    value: str | None = None
 
+    def __str__(self):
+        if self.value is None:
+            assert self.kind is not Tk.NAME
 
-def assign_t() -> Token:
-    """Return a new assign-token."""
+            return self.kind.value
 
-    return {"kind": Tk.ASSIGN, "str": ":="}
-
-
-def name_t(value) -> Token:
-    """Return a new name-token."""
-
-    return {"kind": Tk.NAME, "str": value}
-
-
-def left_paren_t() -> Token:
-    """Return a new left-paren-token."""
-
-    return {"kind": Tk.LEFT_PAREN, "str": "("}
-
-
-def right_paren_t() -> Token:
-    """Return a new right-paren-token."""
-
-    return {"kind": Tk.RIGHT_PAREN, "str": ")"}
-
-
-def dot_t() -> Token:
-    """Return a new dot-token."""
-
-    return {"kind": Tk.DOT, "str": "."}
-
-
-def lambda_t() -> Token:
-    """Return a new lambda-token."""
-
-    return {"kind": Tk.LAMBDA, "str": "\\"}
-
-
-def def_t() -> Token:
-    """Return a new def-token."""
-
-    return {"kind": Tk.DEF, "str": "def"}
-
-
-def is_name_t(token: Token) -> bool:
-    """Return whether TOKEN is a name-token."""
-
-    return token["kind"] == Tk.NAME
-
-
-def is_lambda_t(token: Token) -> bool:
-    """Return whether TOKEN is a lambda-token."""
-
-    return token == lambda_t()
-
-
-def is_left_paren_t(token: Token) -> bool:
-    """Return whether TOKEN is a left-paren-token."""
-
-    return token == left_paren_t()
-
-
-def is_right_paren_t(token: Token) -> bool:
-    """Return whether TOKEN is a right-paren-token."""
-
-    return token == right_paren_t()
-
-
-def is_dot_t(token: Token) -> bool:
-    """Return whether TOKEN is a dot."""
-
-    return token == dot_t()
-
-
-def is_def_t(token: Token) -> bool:
-    """Return whether TOKEN is the 'def' keyword."""
-
-    return token == def_t()
+        return self.value
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:
@@ -160,19 +90,19 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
 
         match kind:
             case "assign":
-                tokens.append(assign_t())
+                tokens.append(Token(Tk.ASSIGN))
             case "def":
-                tokens.append(def_t())
+                tokens.append(Token(Tk.DEF))
             case "name":
-                tokens.append(name_t(value))
+                tokens.append(Token(Tk.NAME, value))
             case "left_paren":
-                tokens.append(left_paren_t())
+                tokens.append(Token(Tk.LEFT_PAREN))
             case "right_paren":
-                tokens.append(right_paren_t())
+                tokens.append(Token(Tk.RIGHT_PAREN))
             case "dot":
-                tokens.append(dot_t())
+                tokens.append(Token(Tk.DOT))
             case "lambda":
-                tokens.append(lambda_t())
+                tokens.append(Token(Tk.LAMBDA))
             case "space":
                 continue
             case "error":

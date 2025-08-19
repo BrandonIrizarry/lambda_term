@@ -58,7 +58,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         if t is None:
             return err.error(tokens, i, err.Err.INCOMPLETE)
 
-        if tkz.is_right_paren_t(t):
+        if t.kind == tkz.Tk.RIGHT_PAREN:
             break
 
         # The next token signifies the beginning of the next _term_ in
@@ -90,10 +90,12 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if not tkz.is_name_t(param):
+    if param.kind != tkz.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    env.append(param["str"])
+    assert param.value is not None
+
+    env.append(param.value)
 
     # Advance; we should then be on the dot.
     i += 1
@@ -103,7 +105,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if dot is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if not tkz.is_dot_t(dot):
+    if dot.kind != tkz.Tk.DOT:
         return err.error(tokens, i, err.Err.MISSING_DOT)
 
     # Advance; we should then be at the start of the body.
@@ -131,11 +133,14 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    name = t["str"]
+    if t.kind != tkz.Tk.NAME:
+        return err.error(tokens, i, err.Err.INVALID_NAME)
+
+    assert t.value is not None
+
+    name = t.value
 
     for local_name in reversed(env):
-        # FIXME: we expect this key to exist, so we should probably
-        # change the function signature.
         if local_name == name:
             is_local = True
             break
@@ -158,11 +163,15 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if len(tokens[i:]) == 0:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if tkz.is_left_paren_t(tokens[i]):
+    (kind, value) = tokens[i]
+
+    if kind == tkz.Tk.LEFT_PAREN:
         return parse_application(tokens, i, env[:])
-    elif tkz.is_lambda_t(tokens[i]):
+    elif kind == tkz.Tk.LAMBDA:
         return parse_abstraction(tokens, i, env[:])
-    elif tkz.is_name_t(tokens[i]):
+    elif kind == tkz.Tk.NAME:
+        assert value is not None
+
         return parse_name(tokens, i, env[:])
     else:
         return err.error(tokens, i, err.Err.MEANINGLESS)

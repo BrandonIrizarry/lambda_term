@@ -2,6 +2,17 @@ import unittest
 
 import lbd.tokenize_lambda as tkz
 
+LAMBDA = tkz.Token(tkz.Tk.LAMBDA)
+DOT = tkz.Token(tkz.Tk.DOT)
+DEF = tkz.Token(tkz.Tk.DEF)
+ASSIGN = tkz.Token(tkz.Tk.ASSIGN)
+LEFT_PAREN = tkz.Token(tkz.Tk.LEFT_PAREN)
+RIGHT_PAREN = tkz.Token(tkz.Tk.RIGHT_PAREN)
+
+
+def name_t(value: str):
+    return tkz.Token(tkz.Tk.NAME, value)
+
 
 class TestTokenizer(unittest.TestCase):
     def test_identity(self):
@@ -9,10 +20,10 @@ class TestTokenizer(unittest.TestCase):
 
         tokens = tkz.tokenize(raw_term)
         expected = [
-            tkz.lambda_t(),
-            tkz.name_t("x"),
-            tkz.dot_t(),
-            tkz.name_t("x")
+            LAMBDA,
+            name_t("x"),
+            DOT,
+            name_t("x"),
         ]
 
         self.assertEqual(tokens,  expected)
@@ -22,11 +33,11 @@ class TestTokenizer(unittest.TestCase):
 
         tokens = tkz.tokenize(raw_term)
         expected = [
-            tkz.def_t(),
-            tkz.name_t("id"),
-            tkz.name_t("x"),
-            tkz.assign_t(),
-            tkz.name_t("x")
+            DEF,
+            name_t("id"),
+            name_t("x"),
+            ASSIGN,
+            name_t("x")
         ]
 
         self.assertEqual(tokens, expected)
@@ -36,11 +47,12 @@ class TestTokenizer(unittest.TestCase):
 
         tokens = tkz.tokenize(raw_term)
         expected = [
-            tkz.left_paren_t(),
-            tkz.name_t("select_first"),
-            tkz.name_t("x"),
-            tkz.name_t("y"),
-            tkz.right_paren_t()
+            LEFT_PAREN,
+            name_t("select_first"),
+            name_t("x"),
+            name_t("y"),
+            RIGHT_PAREN
+
         ]
 
         self.assertEqual(tokens, expected)
