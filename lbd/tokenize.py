@@ -1,29 +1,10 @@
-import enum
 import re
-
-import lbd.error as err
 from typing import TypedDict
 
+import lbd.error as err
+from lbd.token_defs import Tk
+
 IDENT = r"[A-Za-z_]\w*"
-
-
-class Tk(enum.StrEnum):
-    """An enum used to tag token types.
-
-    Empty-string entries are special cases, handled separately.
-
-    """
-
-    ASSIGN = ":="
-    LEFT_PAREN = "("
-    RIGHT_PAREN = ")"
-    DOT = "."
-    LAMBDA = "\\"
-    DEF = "def"
-    SYM = "sym"
-    SPACE = ""
-    NAME = ""
-    ERROR = ""
 
 
 class Token(TypedDict):
