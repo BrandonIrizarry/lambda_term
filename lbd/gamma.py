@@ -77,19 +77,3 @@ def sym_delete(sym_name: str) -> bool:
     """
 
     return sym_set(sym_name, None, True)
-
-
-def debruijn(free_name: str, offset: int) -> int | None:
-    """Compute the effective DeBruijn index of FREE_NAME.
-
-    OFFSET is meant to be the length of the current local environment
-    kept track of by the parser.
-
-    """
-
-    index = gamma(free_name)
-
-    if index is None:
-        return index
-
-    return offset + index
