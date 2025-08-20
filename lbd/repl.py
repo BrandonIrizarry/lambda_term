@@ -75,7 +75,7 @@ def repl():
 
         readline.add_history(repl_input)
 
-        ast = evl.eval_line(repl_input)
+        ast = evl.eval_raw_term(repl_input)
 
         if isinstance(ast, Exception):
             print(ast)
