@@ -28,6 +28,13 @@ def gamma(free_name: str) -> int | None:
     return None
 
 
+def sym_get(index: int) -> Symbol | None:
+    try:
+        return _gamma[index]
+    except ValueError:
+        return None
+
+
 def sym_declare(free_name: str) -> int:
     """Add FREE_NAME to gamma."""
 

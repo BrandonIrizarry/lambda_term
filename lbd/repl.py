@@ -6,6 +6,7 @@ from wonderwords import RandomWord
 
 import lbd.evaluate as evl
 import lbd.term as term
+import lbd.gamma as g
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -51,6 +52,14 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
 
             if abs(depth) <= len(env):
                 readable_name = env[depth]
+            else:
+                gindex = ast["index"] - len(env)
+                free_sym = g.sym_get(gindex)
+
+                if free_sym is None:
+                    raise ValueError(f"Fatal: sym_get({gindex}) failed")
+
+                readable_name = free_sym["name"]
 
             print(readable_name, end="")
         case term.Term.ABSTRACTION:
