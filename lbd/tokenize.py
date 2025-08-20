@@ -79,21 +79,27 @@ def find(tokens: list[Token], token: Token) -> int:
     return -1
 
 
-spec = dict()
+def define_spec() -> dict[str, Token]:
+    spec: dict[str, Token] = dict()
 
-for tk in Tk:
-    enum_name = tk.name.lower()
-    enum_value = tk.value
+    for tk in Tk:
+        enum_name = tk.name.lower()
+        enum_value = tk.value
 
-    if enum_value != "":
-        spec[enum_name] = new_token(tk, enum_value)
+        if enum_value != "":
+            spec[enum_name] = new_token(tk, enum_value)
 
-# Singleton cases. These must be added after spec is initialized with
-# the other, constant tokens. This is because the order in which
-# entries are added to spec affects the regex-based tokenization used.
-spec["space"] = new_token(Tk.SPACE, " ", r"[\t ]")
-spec["name"] = new_token(Tk.NAME, "", IDENT)
-spec["error"] = new_token(Tk.ERROR, "", r".")
+    # Singleton cases. These must be added after spec is initialized with
+    # the other, constant tokens. This is because the order in which
+    # entries are added to spec affects the regex-based tokenization used.
+    spec["space"] = new_token(Tk.SPACE, " ", r"[\t ]")
+    spec["name"] = new_token(Tk.NAME, "", IDENT)
+    spec["error"] = new_token(Tk.ERROR, "", r".")
+
+    return spec
+
+
+spec = define_spec()
 
 
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
