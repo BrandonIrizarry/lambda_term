@@ -37,7 +37,7 @@ def pretty_print_term_ast(ast, env):
     """Pretty print AST as a human-readable lambda expression.
 
     Since the AST is constructed using DeBruijn indices, the original
-    local variable names are discarded, and so original names are used
+    local variable names are discarded, and so synthetic names are used
     for the reconstructed human-readable expression.
 
     """
