@@ -68,12 +68,12 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
         ("assign", ":="),
         ("def", r"def"),
         ("sym", r"sym"),
-        ("name", IDENT),
         ("left_paren", r"\("),
         ("right_paren", r"\)"),
         ("dot", r"\."),
         ("lambda", r"\\"),
         ("space", r"[\t ]"),
+        ("name", IDENT),
         ("error", r".")
     ]
 
