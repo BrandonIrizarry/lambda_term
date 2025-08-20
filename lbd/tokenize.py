@@ -2,11 +2,12 @@ import enum
 import re
 
 import lbd.error as err
+from typing import TypedDict
 
 IDENT = r"[A-Za-z_]\w*"
 
 
-class Tk(enum.Enum):
+class Tk(enum.StrEnum):
     ASSIGN = enum.auto()
     NAME = enum.auto()
     LEFT_PAREN = enum.auto()
@@ -15,22 +16,31 @@ class Tk(enum.Enum):
     LAMBDA = enum.auto()
     DEF = enum.auto()
     SYM = enum.auto()
+    SPACE = enum.auto()
+    ERROR = enum.auto()
 
 
-type Token = tuple[Tk, str]
+class Token(TypedDict):
+    kind: Tk
+    name: str
+    value: str
+    regex: str
 
 
-ASSIGN = (Tk.ASSIGN, ":=")
-LEFT_PAREN = (Tk.LEFT_PAREN, "(")
-RIGHT_PAREN = (Tk.RIGHT_PAREN, ")")
-DOT = (Tk.DOT, ".")
-LAMBDA = (Tk.LAMBDA, "\\")
-DEF = (Tk.DEF, "def")
-SYM = (Tk.SYM, "sym")
+def new_token(kind: Tk, value: str, regex: str | None = None) -> Token:
+    if regex is None:
+        regex = re.escape(value)
+
+    return {
+        "kind": kind,
+        "name": kind.name.lower(),
+        "value": value,
+        "regex": regex
+    }
 
 
 def name_t(value: str):
-    return (Tk.NAME, value)
+    return new_token(Tk.NAME, value, IDENT)
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:
@@ -63,56 +73,50 @@ def find(tokens: list[Token], token: Token) -> int:
     return -1
 
 
-def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
-    spec = [
-        ("assign", ":="),
-        ("def", r"def"),
-        ("sym", r"sym"),
-        ("left_paren", r"\("),
-        ("right_paren", r"\)"),
-        ("dot", r"\."),
-        ("lambda", r"\\"),
-        ("space", r"[\t ]"),
-        ("name", IDENT),
-        ("error", r".")
-    ]
+# Note that the spec is order-sensitive, that is, "name" and "error"
+# must remain in their positions at the bottom of this dict for regex
+# tokenization to detect these patterns only after keywords aren't
+# first found.
+spec = {
+    "assign": new_token(Tk.ASSIGN, ":="),
+    "left_paren": new_token(Tk.LEFT_PAREN, "("),
+    "right_paren": new_token(Tk.RIGHT_PAREN, ")"),
+    "dot": new_token(Tk.DOT, "."),
+    "lambda": new_token(Tk.LAMBDA, "\\"),
+    "def": new_token(Tk.DEF, "def"),
+    "sym": new_token(Tk.SYM, "sym"),
+    "space": new_token(Tk.SPACE, " ", r"[\t ]"),
+    "name": new_token(Tk.NAME, "", IDENT),
+    "error": new_token(Tk.ERROR, "", r"."),
+}
 
-    pats = [f"(?P<{kind}>{pat})" for (kind, pat) in spec]
+
+def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
+    pats = [f"(?P<{label}>{t["regex"]})" for (label, t) in spec.items()]
     token_pattern = "|".join(pats)
+
     tokens: list[Token] = []
 
     # Track the current iteration index, to make IllegalTokenError
     # consistent with other errors.
     i = 0
     for mobj in re.finditer(token_pattern, raw_term):
-        kind = mobj.lastgroup
+        label = mobj.lastgroup
 
-        if kind is None:
+        if label is None:
             raise ValueError("Fatal: found 'None'")
 
         value = mobj.group()
 
-        match kind:
-            case "assign":
-                tokens.append(ASSIGN)
-            case "def":
-                tokens.append(DEF)
-            case "sym":
-                tokens.append(SYM)
+        match label:
             case "name":
                 tokens.append(name_t(value))
-            case "left_paren":
-                tokens.append(LEFT_PAREN)
-            case "right_paren":
-                tokens.append(RIGHT_PAREN)
-            case "dot":
-                tokens.append(DOT)
-            case "lambda":
-                tokens.append(LAMBDA)
-            case "space":
-                continue
             case "error":
                 return err.error(tokens, i, err.Err.ILLEGAL_TOKEN)
+            case "space":
+                continue
+            case _:
+                tokens.append(spec[label])
 
         i += 1
 

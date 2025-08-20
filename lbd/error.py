@@ -39,7 +39,7 @@ def error(tokens: list["tkz.Token"], pos: int, kind: Err) -> LambdaError:
     outside = True
 
     for i in range(len(tokens)):
-        (_, t_raw) = tokens[i]
+        t_raw = tokens[i]["value"]
 
         if i == pos:
             view.append(f"{{{t_raw}}}")
