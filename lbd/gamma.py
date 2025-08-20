@@ -28,11 +28,13 @@ def gamma(free_name: str) -> int | None:
     return None
 
 
-def sym_declare(free_name: str) -> None:
+def sym_declare(free_name: str) -> int:
     """Add FREE_NAME to gamma."""
 
     new_symbol: Symbol = {"name": free_name, "ast": None}
     _gamma.append(new_symbol)
+
+    return len(_gamma) - 1
 
 
 def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:

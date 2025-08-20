@@ -3,11 +3,11 @@ import lbd.error as err
 import lbd.parse as parse
 import lbd.tokenize as tkz
 from lbd.error import LambdaError
-from lbd.term import AST
+import lbd.term as term
 import lbd.gamma as g
 
 
-def eval_raw_term(raw_term: str) -> AST | LambdaError:
+def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
     tokens = tkz.tokenize(raw_term)
 
     if isinstance(tokens, LambdaError):
@@ -17,15 +17,17 @@ def eval_raw_term(raw_term: str) -> AST | LambdaError:
     # them to gamma.
     match tokens[0]:
         case  tkz.SYM:
+            last = 0
+
             for i, t in enumerate(tokens[1:], start=1):
                 (kind, value) = t
 
                 if kind != tkz.Tk.NAME:
                     return err.error(tokens, i, err.Err.INVALID_SYM_DECL)
 
-                g.sym_declare(value)
+                last = g.sym_declare(value)
 
-            return dict()
+            return term.new_name(last)
         case _:
             _parsed = parse.parse_term(tokens, 0, [])
 

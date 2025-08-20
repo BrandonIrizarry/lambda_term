@@ -33,7 +33,7 @@ See the TUTORIAL file accompanying this project for details.
 rword = RandomWord()
 
 
-def pretty_print_term_ast(ast, env):
+def pretty_print_term_ast(ast: term.AST, env: list[str]):
     """Pretty print AST as a human-readable lambda expression.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -47,10 +47,15 @@ def pretty_print_term_ast(ast, env):
             # Ex: index = 0 -> -1, index = 1 -> -2, etc.
             depth = -(ast["index"] + 1)
 
-            print(env[depth], end="")
+            readable_name = "?"
+
+            if abs(depth) <= len(env):
+                readable_name = env[depth]
+
+            print(readable_name, end="")
         case term.Term.ABSTRACTION:
             # Generate a random word to use as the function parameter.
-            param = rword.word()
+            param: str = rword.word()
             env.append(param)
 
             print("\\{}.".format(param), end="")
