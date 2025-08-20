@@ -41,26 +41,26 @@ def pretty_print_term_ast(ast, env):
     for the reconstructed human-readable expression.
 
     """
+    match ast["kind"]:
+        case term.Term.NAME:
+            # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
+            # Ex: index = 0 -> -1, index = 1 -> -2, etc.
+            depth = -(ast["index"] + 1)
 
-    if ast["kind"] == term.Term.NAME:
-        # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
-        # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-        depth = -(ast["index"] + 1)
+            print(env[depth], end="")
+        case term.Term.ABSTRACTION:
+            # Generate a random word to use as the function parameter.
+            param = rword.word()
+            env.append(param)
 
-        print(env[depth], end="")
-    elif ast["kind"] == term.Term.ABSTRACTION:
-        # Generate a random word to use as the function parameter.
-        param = rword.word()
-        env.append(param)
-
-        print("\\{}.".format(param), end="")
-        pretty_print_term_ast(ast["body"], env[:])
-    elif ast["kind"] == term.Term.APPLICATION:
-        print("(", end="")
-        pretty_print_term_ast(ast["left"], env[:])
-        print(" ", end="")
-        pretty_print_term_ast(ast["right"], env[:])
-        print(")")
+            print("\\{}.".format(param), end="")
+            pretty_print_term_ast(ast["body"], env[:])
+        case term.Term.APPLICATION:
+            print("(", end="")
+            pretty_print_term_ast(ast["left"], env[:])
+            print(" ", end="")
+            pretty_print_term_ast(ast["right"], env[:])
+            print(")")
 
 
 def repl():
