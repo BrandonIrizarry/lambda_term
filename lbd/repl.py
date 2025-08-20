@@ -65,7 +65,7 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
             pretty_print_term_ast(ast["left"], env[:])
             print(" ", end="")
             pretty_print_term_ast(ast["right"], env[:])
-            print(")")
+            print(")", end="")
 
 
 def repl():
@@ -86,4 +86,5 @@ def repl():
             print(ast)
             continue
 
-        print(ast)
+        pretty_print_term_ast(ast, [])
+        print()
