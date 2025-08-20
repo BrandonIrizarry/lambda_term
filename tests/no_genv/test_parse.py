@@ -3,7 +3,7 @@ import unittest
 import lbd.error as err
 import lbd.parse as parse
 import lbd.term as term
-import lbd.tokenize_lambda as tkz
+import lbd.tokenize as tkz
 
 A = term.new_application
 F = term.new_abstraction

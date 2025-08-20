@@ -1,7 +1,7 @@
 import lbd.error as err
 import lbd.gamma as gamma
 import lbd.term as term
-import lbd.tokenize_lambda as tkz
+import lbd.tokenize as tkz
 
 # What follows is a series of parse functions for a recursive-descent
 # apparatus. As a rule, they accept the tokenized expression (given as

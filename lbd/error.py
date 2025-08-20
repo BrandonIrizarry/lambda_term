@@ -1,7 +1,7 @@
 import enum
 from dataclasses import dataclass
 
-import lbd.tokenize_lambda as tkz
+import lbd.tokenize as tkz
 
 
 class Err(enum.StrEnum):

@@ -1,7 +1,7 @@
 import lbd.beta as beta
 import lbd.error as err
 import lbd.parse as parse
-import lbd.tokenize_lambda as tkz
+import lbd.tokenize as tkz
 from lbd.error import LambdaError
 from lbd.term import AST
 
