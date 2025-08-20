@@ -9,6 +9,7 @@ class Err(enum.StrEnum):
     INCOMPLETE = "Incomplete term"
     INVALID_NAME = "Invalid name"
     INVALID_PARAM = "Invalid parameter name"
+    INVALID_SYM_DECL = "Invalid free-variable declaration"
     MALFORMED_DEF = "Malformed def statement"
     MEANINGLESS = "Meaningless token"
     MISSING_ASSIGN_OP = "Missing assignment operator"

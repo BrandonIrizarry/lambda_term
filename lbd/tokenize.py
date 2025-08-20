@@ -14,6 +14,7 @@ class Tk(enum.Enum):
     DOT = enum.auto()
     LAMBDA = enum.auto()
     DEF = enum.auto()
+    SYM = enum.auto()
 
 
 type Token = tuple[Tk, str]
@@ -25,6 +26,7 @@ RIGHT_PAREN = (Tk.RIGHT_PAREN, ")")
 DOT = (Tk.DOT, ".")
 LAMBDA = (Tk.LAMBDA, "\\")
 DEF = (Tk.DEF, "def")
+SYM = (Tk.SYM, "sym")
 
 
 def name_t(value: str):
@@ -65,6 +67,7 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
     spec = [
         ("assign", ":="),
         ("def", r"def"),
+        ("sym", r"sym"),
         ("name", IDENT),
         ("left_paren", r"\("),
         ("right_paren", r"\)"),
@@ -94,6 +97,8 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
                 tokens.append(ASSIGN)
             case "def":
                 tokens.append(DEF)
+            case "sym":
+                tokens.append(SYM)
             case "name":
                 tokens.append(name_t(value))
             case "left_paren":
