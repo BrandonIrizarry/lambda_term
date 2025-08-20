@@ -8,16 +8,22 @@ IDENT = r"[A-Za-z_]\w*"
 
 
 class Tk(enum.StrEnum):
-    ASSIGN = enum.auto()
-    NAME = enum.auto()
-    LEFT_PAREN = enum.auto()
-    RIGHT_PAREN = enum.auto()
-    DOT = enum.auto()
-    LAMBDA = enum.auto()
-    DEF = enum.auto()
-    SYM = enum.auto()
-    SPACE = enum.auto()
-    ERROR = enum.auto()
+    """An enum used to tag token types.
+
+    Empty-string entries are special cases, handled separately.
+
+    """
+
+    ASSIGN = ":="
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
+    DOT = "."
+    LAMBDA = "\\"
+    DEF = "def"
+    SYM = "sym"
+    SPACE = ""
+    NAME = ""
+    ERROR = ""
 
 
 class Token(TypedDict):
@@ -73,22 +79,21 @@ def find(tokens: list[Token], token: Token) -> int:
     return -1
 
 
-# Note that the spec is order-sensitive, that is, "name" and "error"
-# must remain in their positions at the bottom of this dict for regex
-# tokenization to detect these patterns only after keywords aren't
-# first found.
-spec = {
-    "assign": new_token(Tk.ASSIGN, ":="),
-    "left_paren": new_token(Tk.LEFT_PAREN, "("),
-    "right_paren": new_token(Tk.RIGHT_PAREN, ")"),
-    "dot": new_token(Tk.DOT, "."),
-    "lambda": new_token(Tk.LAMBDA, "\\"),
-    "def": new_token(Tk.DEF, "def"),
-    "sym": new_token(Tk.SYM, "sym"),
-    "space": new_token(Tk.SPACE, " ", r"[\t ]"),
-    "name": new_token(Tk.NAME, "", IDENT),
-    "error": new_token(Tk.ERROR, "", r"."),
-}
+spec = dict()
+
+for tk in Tk:
+    enum_name = tk.name.lower()
+    enum_value = tk.value
+
+    if enum_value != "":
+        spec[enum_name] = new_token(tk, enum_value)
+
+# Singleton cases. These must be added after spec is initialized with
+# the other, constant tokens. This is because the order in which
+# entries are added to spec affects the regex-based tokenization used.
+spec["space"] = new_token(Tk.SPACE, " ", r"[\t ]")
+spec["name"] = new_token(Tk.NAME, "", IDENT)
+spec["error"] = new_token(Tk.ERROR, "", r".")
 
 
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
