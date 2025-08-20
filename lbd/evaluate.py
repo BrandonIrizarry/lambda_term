@@ -22,8 +22,6 @@ def eval_raw_term(raw_term: str) -> AST | LambdaError:
 
     ast, num_tokens = _parsed
 
-    # FIXME: right now I'm checking this _after_ desugaring, so at
-    # some point I may need to disentangle this.
     if num_tokens < len(tokens):
         return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
