@@ -43,23 +43,28 @@ def replace(ast, argument, target_index):
     """Replace TARGET_INDEX inside AST with ARGUMENT, another AST.
 
     Return the modified AST."""
-    if ast["kind"] == term.Term.NAME:
-        if ast["index"] == target_index:
-            return argument
 
-        return ast
-    elif ast["kind"] == term.Term.ABSTRACTION:
-        inc(argument, 0)
-        new_body = replace(ast["body"], argument, target_index + 1)
+    match ast["kind"]:
+        case term.Term.NAME:
+            if ast["index"] == target_index:
+                return argument
 
-        return term.new_abstraction(new_body)
-    elif ast["kind"] == term.Term.APPLICATION:
-        new_left = replace(ast["left"], argument, target_index)
-        new_right = replace(ast["right"], argument, target_index)
+            return ast
 
-        return term.new_application(new_left, new_right)
-    else:
-        raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
+        case term.Term.ABSTRACTION:
+            inc(argument, 0)
+            new_body = replace(ast["body"], argument, target_index + 1)
+
+            return term.new_abstraction(new_body)
+
+        case term.Term.APPLICATION:
+            new_left = replace(ast["left"], argument, target_index)
+            new_right = replace(ast["right"], argument, target_index)
+
+            return term.new_application(new_left, new_right)
+
+        case _:
+            raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
 
 
 def beta_reduce(ast) -> dict[str, Any]:
