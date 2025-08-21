@@ -72,6 +72,7 @@ def beta_reduce(ast) -> dict[str, Any]:
     match ast["kind"]:
         case term.Term.NAME | term.Term.ABSTRACTION:
             return ast
+
         case term.Term.APPLICATION:
             beta_left = beta_reduce(ast["left"])
 
@@ -89,5 +90,6 @@ def beta_reduce(ast) -> dict[str, Any]:
             dec(replaced_body, 0)
 
             return beta_reduce(replaced_body)
+
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
