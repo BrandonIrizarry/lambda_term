@@ -11,16 +11,20 @@ def shift(ast, amount, minimum):
 
     """
 
-    if ast["kind"] == term.Term.NAME:
-        if ast["index"] >= minimum:
-            ast["index"] += amount
-    elif ast["kind"] == term.Term.ABSTRACTION:
-        shift(ast["body"], amount, minimum + 1)
-    elif ast["kind"] == term.Term.APPLICATION:
-        shift(ast["left"], amount, minimum)
-        shift(ast["right"], amount, minimum)
-    else:
-        raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
+    match ast["kind"]:
+        case term.Term.NAME:
+            if ast["index"] >= minimum:
+                ast["index"] += amount
+
+        case term.Term.ABSTRACTION:
+            shift(ast["body"], amount, minimum + 1)
+
+        case term.Term.APPLICATION:
+            shift(ast["left"], amount, minimum)
+            shift(ast["right"], amount, minimum)
+
+        case _:
+            raise ValueError(f"Fatal: invalid ast-kind: {ast["kind"]}")
 
 
 def inc(ast, minimum):
