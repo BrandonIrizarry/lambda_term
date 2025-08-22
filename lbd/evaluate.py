@@ -1,11 +1,11 @@
 import lbd.beta as beta
 import lbd.error as err
+import lbd.gamma as g
 import lbd.parse as parse
+import lbd.term as term
+import lbd.token_defs as tdef
 import lbd.tokenize as tkz
 from lbd.error import LambdaError
-import lbd.term as term
-import lbd.gamma as g
-from lbd.token_defs import Tk
 
 
 def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
