@@ -66,6 +66,22 @@ def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
     return False
 
 
+def sym_find(sym_name: str) -> tuple[AST | None, bool]:
+    """Find the AST value associated with SYM_NAME.
+
+    In addition to the AST, return a flag signifying whether the
+    variable is missing, or else present but simply unassigned
+    (corresponding to False and True, respectively.)
+
+    """
+
+    for sym in _gamma:
+        if sym["name"] == sym_name:
+            return sym["ast"], True
+
+    return None, False
+
+
 def sym_clear(sym_name: str) -> bool:
     """Clear the AST-defintion of SYM_NAME.
 
