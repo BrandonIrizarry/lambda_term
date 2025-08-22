@@ -54,8 +54,6 @@ def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
 
     """
 
-    found = False
-
     for i in range(len(_gamma)):
         if _gamma[i]["name"] == sym_name:
             if delete:
@@ -63,9 +61,9 @@ def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
             else:
                 _gamma[i]["ast"] = ast
 
-            found = True
+            return True
 
-    return found
+    return False
 
 
 def sym_clear(sym_name: str) -> bool:
