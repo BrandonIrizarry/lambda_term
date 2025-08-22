@@ -17,11 +17,11 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
     # If the first token is SYM, scan the given list of names and add
     # them to gamma.
     match tokens[0]["kind"]:
-        case Tk.SYM:
+        case tdef.Tk.SYM:
             last = 0
 
             for i, t in enumerate(tokens[1:], start=1):
-                if t["kind"] != tkz.Tk.NAME:
+                if t["kind"] != tdef.Tk.NAME:
                     return err.error(tokens, i, err.Err.INVALID_SYM_DECL)
 
                 last = g.sym_declare(t["value"])

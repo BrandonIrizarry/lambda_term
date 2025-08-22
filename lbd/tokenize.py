@@ -2,19 +2,19 @@ import re
 from typing import TypedDict
 
 import lbd.error as err
-from lbd.token_defs import Tk
+import lbd.token_defs as tdef
 
 IDENT = r"[A-Za-z_]\w*"
 
 
 class Token(TypedDict):
-    kind: Tk
+    kind: tdef.Tk
     name: str
     value: str
     regex: str
 
 
-def new_token(kind: Tk, value: str, regex: str | None = None) -> Token:
+def new_token(kind: tdef.Tk, value: str, regex: str | None = None) -> Token:
     if regex is None:
         regex = re.escape(value)
 
@@ -27,7 +27,7 @@ def new_token(kind: Tk, value: str, regex: str | None = None) -> Token:
 
 
 def name_t(value: str):
-    return new_token(Tk.NAME, value, IDENT)
+    return new_token(tdef.Tk.NAME, value, IDENT)
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:
@@ -63,7 +63,7 @@ def find(tokens: list[Token], token: Token) -> int:
 def define_spec() -> dict[str, Token]:
     spec: dict[str, Token] = dict()
 
-    for tk in Tk:
+    for tk in tdef.Tk:
         enum_name = tk.name.lower()
         enum_value = tk.value
 
@@ -73,9 +73,9 @@ def define_spec() -> dict[str, Token]:
     # Singleton cases. These must be added after spec is initialized with
     # the other, constant tokens. This is because the order in which
     # entries are added to spec affects the regex-based tokenization used.
-    spec["space"] = new_token(Tk.SPACE, " ", r"[\t ]")
-    spec["name"] = new_token(Tk.NAME, "", IDENT)
-    spec["error"] = new_token(Tk.ERROR, "", r".")
+    spec["space"] = new_token(tdef.Tk.SPACE, " ", r"[\t ]")
+    spec["name"] = new_token(tdef.Tk.NAME, "", IDENT)
+    spec["error"] = new_token(tdef.Tk.ERROR, "", r".")
 
     return spec
 
