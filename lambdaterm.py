@@ -26,8 +26,6 @@ ap.add_argument(
 args = ap.parse_args()
 
 
-# FIXME: This might have to return a tuple of the last evaluation,
-# coupled with the genv.
 def process_filename(filename: str) -> AST | LambdaError:
     """Process filename.
 
