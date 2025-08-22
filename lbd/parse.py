@@ -1,6 +1,7 @@
 import lbd.error as err
 import lbd.gamma as gamma
 import lbd.term as term
+import lbd.token_defs as tdef
 import lbd.tokenize as tkz
 
 # What follows is a series of parse functions for a recursive-descent
@@ -90,7 +91,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if param["kind"] != tkz.Tk.NAME:
+    if param["kind"] != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
     env.append(param["value"])
@@ -131,7 +132,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if t["kind"] != tkz.Tk.NAME:
+    if t["kind"] != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
     value = t["value"]
@@ -160,11 +161,11 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
     match tokens[i]["kind"]:
-        case tkz.Tk.LEFT_PAREN:
+        case tdef.Tk.LEFT_PAREN:
             return parse_application(tokens, i, env[:])
-        case tkz.Tk.LAMBDA:
+        case tdef.Tk.LAMBDA:
             return parse_abstraction(tokens, i, env[:])
-        case tkz.Tk.NAME:
+        case tdef.Tk.NAME:
             return parse_name(tokens, i, env[:])
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)
