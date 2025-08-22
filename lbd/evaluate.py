@@ -28,14 +28,20 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
 
             return term.new_name(last)
         case _:
-            _parsed = parse.parse_term(tokens, 0, [])
+            return evaluate(tokens)
 
-            if isinstance(_parsed, LambdaError):
-                return _parsed
 
-            ast, num_tokens = _parsed
+def evaluate(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
+    """A shortcut to get an AST right away from some tokens."""
 
-            if num_tokens < len(tokens):
-                return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
+    _parsed = parse.parse_term(tokens, 0, [])
 
-            return beta.beta_reduce(ast)
+    if isinstance(_parsed, err.LambdaError):
+        return _parsed
+
+    ast, num_tokens = _parsed
+
+    if num_tokens < len(tokens):
+        return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
+
+    return beta.beta_reduce(ast)
