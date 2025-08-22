@@ -18,3 +18,4 @@ class Tk(enum.StrEnum):
     SPACE = ""
     NAME = ""
     ERROR = ""
+    SET = "set"
