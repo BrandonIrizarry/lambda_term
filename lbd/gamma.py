@@ -6,7 +6,7 @@ from lbd.term import AST
 @dataclass
 class Symbol():
     """Associate a symbol name with its definition."""
-    name: str
+    label: str
     ast: AST | None
 
 
@@ -21,7 +21,7 @@ def gamma(free_name: str) -> int | None:
     """
 
     for i in range(len(_gamma)):
-        n = _gamma[i].name
+        n = _gamma[i].label
 
         if n == free_name:
             return i
@@ -39,7 +39,7 @@ def sym_get(index: int) -> Symbol | None:
 def sym_declare(free_name: str) -> int:
     """Add FREE_NAME to gamma."""
 
-    new_symbol = Symbol(name=free_name, ast=None)
+    new_symbol = Symbol(label=free_name, ast=None)
     _gamma.append(new_symbol)
 
     return len(_gamma) - 1
@@ -56,7 +56,7 @@ def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
     """
 
     for i in range(len(_gamma)):
-        if _gamma[i].name == sym_name:
+        if _gamma[i].label == sym_name:
             if delete:
                 del _gamma[i]
             else:
@@ -77,7 +77,7 @@ def sym_find(sym_name: str) -> tuple[AST | None, bool]:
     """
 
     for sym in _gamma:
-        if sym.name == sym_name:
+        if sym.label == sym_name:
             return sym.ast, True
 
     return None, False
