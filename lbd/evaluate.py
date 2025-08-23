@@ -26,7 +26,9 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
 
                 last = g.sym_declare(t["value"])
 
-            return term.new_name(last)
+            # Since there is no local scope, assign a depth of zero
+            # here.
+            return term.new_name(last, 0)
         case _:
             return evaluate(tokens)
 

@@ -7,18 +7,18 @@ A = term.new_application
 F = term.new_abstraction
 N = term.new_name
 
-identity = F(N(0))
-self_apply = F(A(N(0), N(0)))
+identity = F(N(0, 1))
+self_apply = F(A(N(0, 1), N(0, 1)))
 
 # I want to call this simply "apply", but Python has already taken the
 # name.
-applyfn = F(F(A(N(1), N(0))))
+applyfn = F(F(A(N(1, 2), N(0, 2))))
 
-select_first = F(F(N(1)))
-select_second = F(F(N(0)))
-make_pair = F(F(F(A(A(N(0),
-                      N(2)),
-                    N(1)))))
+select_first = F(F(N(1, 2)))
+select_second = F(F(N(0, 2)))
+make_pair = F(F(F(A(A(N(0, 3),
+                      N(2, 3)),
+                    N(1, 3)))))
 
 
 class TestBetaReduction(unittest.TestCase):
@@ -30,7 +30,7 @@ class TestBetaReduction(unittest.TestCase):
         self.assertEqual(reduced_term, self_apply)
 
     def test_2_10_example(self):
-        term = A(F(A(N(0), identity)),
+        term = A(F(A(N(0, 1), identity)),
                  self_apply)
 
         reduced_term = beta.beta_reduce(term)

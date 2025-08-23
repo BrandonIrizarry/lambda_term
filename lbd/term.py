@@ -14,12 +14,13 @@ class Term(enum.StrEnum):
 type AST = dict[str, Any]
 
 
-def new_name(index: int) -> AST:
+def new_name(index: int, depth: int) -> AST:
     """Construct and return a name with the given INDEX."""
 
     return {
         "kind": Term.NAME,
         "index": index,
+        "depth": depth,
     }
 
 
