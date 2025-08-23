@@ -1,9 +1,10 @@
-from typing import TypedDict
+from dataclasses import dataclass
 
 from lbd.term import AST
 
 
-class Symbol(TypedDict):
+@dataclass
+class Symbol():
     """Associate a symbol name with its definition."""
     name: str
     ast: AST | None
@@ -20,7 +21,7 @@ def gamma(free_name: str) -> int | None:
     """
 
     for i in range(len(_gamma)):
-        n = _gamma[i]["name"]
+        n = _gamma[i].name
 
         if n == free_name:
             return i
@@ -38,7 +39,7 @@ def sym_get(index: int) -> Symbol | None:
 def sym_declare(free_name: str) -> int:
     """Add FREE_NAME to gamma."""
 
-    new_symbol: Symbol = {"name": free_name, "ast": None}
+    new_symbol = Symbol(name=free_name, ast=None)
     _gamma.append(new_symbol)
 
     return len(_gamma) - 1
@@ -55,11 +56,11 @@ def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
     """
 
     for i in range(len(_gamma)):
-        if _gamma[i]["name"] == sym_name:
+        if _gamma[i].name == sym_name:
             if delete:
                 del _gamma[i]
             else:
-                _gamma[i]["ast"] = ast
+                _gamma[i].ast = ast
 
             return True
 
@@ -76,8 +77,8 @@ def sym_find(sym_name: str) -> tuple[AST | None, bool]:
     """
 
     for sym in _gamma:
-        if sym["name"] == sym_name:
-            return sym["ast"], True
+        if sym.name == sym_name:
+            return sym.ast, True
 
     return None, False
 
