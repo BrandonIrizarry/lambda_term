@@ -50,7 +50,7 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
 
             readable_name = "?"
 
-            if abs(depth) <= len(env):
+            if abs(depth) < len(env):
                 readable_name = env[depth]
             else:
                 gindex = ast["index"] - len(env)
