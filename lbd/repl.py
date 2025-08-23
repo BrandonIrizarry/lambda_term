@@ -59,7 +59,7 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
                 if free_sym is None:
                     raise ValueError(f"Fatal: sym_get({gindex}) failed")
 
-                readable_name = free_sym["name"].upper()
+                readable_name = free_sym.label.upper()
 
             print(readable_name, end="")
         case term.Term.ABSTRACTION:
