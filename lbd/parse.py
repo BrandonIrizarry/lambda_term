@@ -148,7 +148,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
         return term.new_name(index, len(env)), i + 1
 
     if (free_index := gamma.gamma(value)) is not None:
-        return term.new_name(free_index + len(env), len(env)), i + 1
+        return term.new_free_name(free_index, len(env)), i + 1
 
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 

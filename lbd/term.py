@@ -24,6 +24,12 @@ def new_name(index: int, depth: int) -> AST:
     }
 
 
+def new_free_name(index: int, depth: int) -> AST:
+    """Shortcut to define a free name with the given INDEX and DEPTH."""
+
+    return new_name(index + depth, depth)
+
+
 def new_abstraction(body: AST) -> AST:
     """Construct and return an abstraction with the given BODY."""
 
