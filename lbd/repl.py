@@ -95,5 +95,6 @@ def repl():
             print(ast)
             continue
 
+        print(ast)
         pretty_print_term_ast(ast, [])
         print()
