@@ -15,6 +15,7 @@ def shift(ast, amount, minimum):
         case term.Term.NAME:
             if ast["index"] >= minimum:
                 ast["index"] += amount
+                ast["depth"] += amount
 
         case term.Term.ABSTRACTION:
             shift(ast["body"], amount, minimum + 1)
