@@ -28,6 +28,9 @@ class LambdaError(Exception):
         return self.message
 
 
+TOKEN_JOIN = " "
+
+
 def error(tokens: list["tkz.Token"], pos: int, kind: Err) -> LambdaError:
     """Report a parsing error."""
 
@@ -50,6 +53,6 @@ def error(tokens: list["tkz.Token"], pos: int, kind: Err) -> LambdaError:
     if outside:
         view.append("???")
 
-    what += f"\n{''.join(view)}"
+    what += f"\n{TOKEN_JOIN.join(view)}"
 
     return LambdaError(kind, what)
