@@ -39,6 +39,13 @@ def sym_get(index: int) -> Symbol | None:
 def sym_declare(free_name: str) -> int:
     """Add FREE_NAME to gamma."""
 
+    idx = gamma(free_name)
+
+    # If the symbol has already been declared, do nothing; simply
+    # return the index where the symbol was found.
+    if idx is not None:
+        return idx
+
     new_symbol = Symbol(label=free_name, ast=None)
     _gamma.append(new_symbol)
 
