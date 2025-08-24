@@ -34,6 +34,18 @@ def new_free_name(index: int, depth: int) -> AST:
     return new_name(index + depth, depth)
 
 
+def freeness(name: AST) -> int:
+    """For NAME, return index - depth.
+
+    Local variables have a negative freeness, while free symbols have
+    a non-negative freeness. For free symbols, their freeness value is
+    their index into gamma.
+
+    """
+
+    return name["index"] - name["depth"]
+
+
 def new_abstraction(body: AST) -> AST:
     """Construct and return an abstraction with the given BODY."""
 

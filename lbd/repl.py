@@ -46,18 +46,19 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
         case term.Term.NAME:
             # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
             # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-            depth = -(ast["index"] + 1)
+            fness = term.freeness(ast)
 
             readable_name = "?"
 
-            if abs(depth) < len(env):
-                readable_name = env[depth]
+            if fness < 0:
+                idx = ast["index"]
+                env_depth = -(idx + 1)
+                readable_name = env[env_depth]
             else:
-                gindex = ast["index"] - len(env)
-                free_sym = g.sym_get(gindex)
+                free_sym = g.sym_get(fness)
 
                 if free_sym is None:
-                    raise ValueError(f"Fatal: sym_get({gindex}) failed")
+                    raise ValueError(f"Fatal: sym_get({fness}) failed")
 
                 readable_name = free_sym.label.upper()
 
