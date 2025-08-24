@@ -52,26 +52,23 @@ def sym_declare(free_name: str) -> int:
     return len(_gamma) - 1
 
 
-def sym_set(sym_name: str, ast: AST | None, delete: bool = False) -> bool:
+def sym_set(sym_name: str, ast: AST | None) -> bool:
     """Set the definition of SYM_NAME to AST.
 
-    An AST of 'None' instructs to clear the definition; the DELETE
-    flag instructs to remove the free symbol entirely from _gamma.
+    An AST of 'None' instructs to clear the definition.
 
     Return whether the symbol was found.
 
     """
 
-    for i in range(len(_gamma)):
-        if _gamma[i].label == sym_name:
-            if delete:
-                del _gamma[i]
-            else:
-                _gamma[i].ast = ast
+    idx = gamma(sym_name)
 
-            return True
+    if idx is None:
+        return False
 
-    return False
+    _gamma[idx].ast = ast
+
+    return True
 
 
 def sym_find(sym_name: str) -> tuple[AST | None, bool]:
@@ -83,11 +80,12 @@ def sym_find(sym_name: str) -> tuple[AST | None, bool]:
 
     """
 
-    for sym in _gamma:
-        if sym.label == sym_name:
-            return sym.ast, True
+    idx = gamma(sym_name)
 
-    return None, False
+    if idx is None:
+        return None, False
+
+    return _gamma[idx].ast, True
 
 
 def sym_clear(sym_name: str) -> bool:
@@ -107,4 +105,11 @@ def sym_delete(sym_name: str) -> bool:
 
     """
 
-    return sym_set(sym_name, None, True)
+    idx = gamma(sym_name)
+
+    if idx is None:
+        return False
+
+    del _gamma[idx]
+
+    return True
