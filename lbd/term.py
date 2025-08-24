@@ -25,7 +25,11 @@ def new_name(index: int, depth: int) -> AST:
 
 
 def new_free_name(index: int, depth: int) -> AST:
-    """Shortcut to define a free name with the given INDEX and DEPTH."""
+    """Shortcut to define a free name.
+
+    INDEX is passed down to new_name with an offset of DEPTH.
+
+    """
 
     return new_name(index + depth, depth)
 
