@@ -39,7 +39,7 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
 
         case term.Term.ABSTRACTION:
             # Generate a random word to use as the function parameter.
-            param: str = rword.word()
+            param: str = rword.word(regex=r"\w+")
             env.append(param)
 
             body = prettify(ast["body"], env[:])
