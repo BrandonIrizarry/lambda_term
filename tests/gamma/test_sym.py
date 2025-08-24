@@ -36,3 +36,9 @@ class TestDepth(unittest.TestCase):
 
         self.assertEqual(ast, F(A(G(y_index, 1),
                                   G(x_index, 1))))
+
+        # We must clear these global definitions - otherwise, the
+        # other tests will take these free symbols as having been
+        # declared!
+        g.sym_delete("x")
+        g.sym_delete("y")
