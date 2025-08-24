@@ -44,13 +44,13 @@ def pretty_print_term_ast(ast: term.AST, env: list[str]):
     """
     match ast["kind"]:
         case term.Term.NAME:
-            # A depth of -1 corresponds to TOS, -2 t one underneath, etc.
-            # Ex: index = 0 -> -1, index = 1 -> -2, etc.
             fness = term.freeness(ast)
 
             readable_name = "?"
 
             if fness < 0:
+                # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
+                # Ex: index = 0 -> -1, index = 1 -> -2, etc.
                 idx = ast["index"]
                 env_depth = -(idx + 1)
                 readable_name = env[env_depth]
