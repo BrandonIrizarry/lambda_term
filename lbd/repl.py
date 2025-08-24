@@ -34,7 +34,7 @@ See the TUTORIAL file accompanying this project for details.
 rword = RandomWord()
 
 
-def prettify(ast: term.AST, env: list[str]) -> str:
+def prettify(ast: term.AST, env: list[str] = []) -> str:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -101,5 +101,5 @@ def repl():
             continue
 
         print(ast)
-        print(prettify(ast, []))
+        print(prettify(ast))
         print()
