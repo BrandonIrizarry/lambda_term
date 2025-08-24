@@ -13,17 +13,17 @@ class Symbol():
 _gamma: list[Symbol] = []
 
 
-def gamma(free_name: str) -> int | None:
+def gamma(target: str) -> int | None:
     """Return the index of FREE_NAME inside gamma.
 
     If not found, return None.
 
     """
 
-    for i in range(len(_gamma)):
-        n = _gamma[i].label
+    for i, sym in enumerate(_gamma):
+        label = sym.label
 
-        if n == free_name:
+        if label == target:
             return i
 
     return None
