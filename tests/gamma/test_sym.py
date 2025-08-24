@@ -19,7 +19,7 @@ class TestDepth(unittest.TestCase):
 
     """
 
-    def test_basic(self):
+    def test_parse(self):
         decl = "sym x y"
         term = "(\\u.\\v.(u x) y)"
 
