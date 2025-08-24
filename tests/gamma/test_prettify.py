@@ -3,7 +3,7 @@ import unittest
 
 import lbd.evaluate as evl
 import lbd.gamma as g
-import lbd.repl as repl
+import lbd.prettify as prettify
 import lbd.term as term
 
 N = term.new_name
@@ -24,7 +24,7 @@ class TestPrettify(unittest.TestCase):
     def test_identity(self):
         """Test prettified identity function."""
 
-        pretty_id = repl.prettify(identity)
+        pretty_id = prettify.prettify(identity)
 
         mobj = re.fullmatch(r"\\(\w+)\.\1", pretty_id)
 
@@ -34,7 +34,7 @@ class TestPrettify(unittest.TestCase):
         """Test 'select_first', 'select_second', and 'select_third'."""
 
         for i, (ordinal, _) in enumerate(selectors.items()):
-            pretty = repl.prettify(selectors[ordinal])
+            pretty = prettify.prettify(selectors[ordinal])
             mobj = re.fullmatch(
                 rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)
 
@@ -55,7 +55,7 @@ class TestPrettify(unittest.TestCase):
                        G(x_index, 2)))),
                  G(y_index, 0))
 
-        pretty = repl.prettify(term)
+        pretty = prettify.prettify(term)
         pattern = r"\(\\(\w+)\.\\(\w+)\.\(\1 X\) Y\)"
 
         mobj = re.fullmatch(pattern, pretty)
