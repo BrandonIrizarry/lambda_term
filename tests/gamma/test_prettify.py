@@ -10,9 +10,12 @@ F = term.new_abstraction
 A = term.new_application
 
 identity = F(N(0, 1))
-first = F(F(F(N(2, 3))))
-second = F(F(F(N(1, 3))))
-third = F(F(F(N(0, 3))))
+
+selectors = {
+    "first": F(F(F(N(2, 3)))),
+    "second": F(F(F(N(1, 3)))),
+    "third": F(F(F(N(0, 3)))),
+}
 
 
 class TestPrettify(unittest.TestCase):
@@ -25,11 +28,12 @@ class TestPrettify(unittest.TestCase):
 
         self.assertIsNotNone(mobj)
 
-    def test_first(self):
-        """Test 'select_first'."""
+    def test_selectors(self):
+        """Test 'select_first', 'select_second', and 'select_third'."""
 
-        pretty_first = repl.prettify(first, [])
+        for i, (ordinal, _) in enumerate(selectors.items()):
+            pretty = repl.prettify(selectors[ordinal], [])
+            mobj = re.fullmatch(
+                rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)
 
-        mobj = re.fullmatch(r"\\(\w+)\.\\(\w+)\.\\(\w+)\.\1", pretty_first)
-
-        self.assertIsNotNone(mobj)
+            self.assertIsNotNone(mobj)
