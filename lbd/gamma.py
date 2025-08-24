@@ -98,18 +98,7 @@ def sym_clear(sym_name: str) -> bool:
     return sym_set(sym_name, None)
 
 
-def sym_delete(sym_name: str) -> bool:
-    """Remove SYM_NAME's status as a free symbol.
+def clear_gamma() -> None:
+    """Reset gamma to an empty list."""
 
-    Return whether the symbol was found.
-
-    """
-
-    idx = gamma(sym_name)
-
-    if idx is None:
-        return False
-
-    del _gamma[idx]
-
-    return True
+    _gamma.clear()
