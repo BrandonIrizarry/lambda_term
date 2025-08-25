@@ -56,3 +56,14 @@ class TestTokenizer(unittest.TestCase):
         ]
 
         self.assertEqual(tokens, expected)
+
+    def test_hypothetical_dot_syntax(self):
+        term = ".gamma"
+
+        tokens = tkz.tokenize(term)
+        expected = [
+            tkz.spec["dot"],
+            tkz.spec["gamma"],
+        ]
+
+        self.assertEqual(tokens, expected)
