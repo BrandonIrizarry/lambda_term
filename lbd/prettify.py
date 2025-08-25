@@ -18,14 +18,14 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
 
     """
 
-    match ast["kind"]:
-        case term.Term.NAME:
-            fness = term.freeness(ast)
+    match ast:
+        case term.Name():
+            fness = ast.freeness()
 
             if fness < 0:
                 # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
                 # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-                idx = ast["index"]
+                idx = ast.index
                 env_depth = -(idx + 1)
 
                 return env[env_depth]
@@ -37,17 +37,17 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
 
                 return free_sym.label.upper()
 
-        case term.Term.ABSTRACTION:
+        case term.Abstraction():
             # Generate a random word to use as the function parameter.
             param: str = rword.word(regex=r"\w+")
             env.append(param)
 
-            body = prettify(ast["body"], env[:])
+            body = prettify(ast.body, env[:])
             return f"\\{param}.{body}"
 
-        case term.Term.APPLICATION:
-            left = prettify(ast["left"], env[:])
-            right = prettify(ast["right"], env[:])
+        case term.Application():
+            left = prettify(ast.left, env[:])
+            right = prettify(ast.right, env[:])
 
             return f"({left} {right})"
 

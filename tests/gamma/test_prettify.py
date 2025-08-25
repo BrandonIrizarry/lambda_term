@@ -4,12 +4,7 @@ import unittest
 import lbd.evaluate as evl
 import lbd.gamma as g
 import lbd.prettify as prettify
-import lbd.term as term
-
-N = term.new_name
-G = term.new_free_name
-F = term.new_abstraction
-A = term.new_application
+from tests.aux import A, F, G, N
 
 identity = F(N(0, 1))
 

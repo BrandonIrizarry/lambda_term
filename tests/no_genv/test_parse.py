@@ -4,10 +4,7 @@ import lbd.error as err
 import lbd.parse as parse
 import lbd.term as term
 import lbd.tokenize as tkz
-
-A = term.new_application
-F = term.new_abstraction
-N = term.new_name
+from tests.aux import A, F, N
 
 
 def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
@@ -27,28 +24,6 @@ def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
         return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
     return ast, num_tokens
-
-
-class TestShorthand(unittest.TestCase):
-    def test(self):
-        ast = A(A(F(F(A(N(0, 2),
-                        N(1, 2)))),
-                  F(F(N(1, 2)))),
-                F(N(0, 1)))
-
-        ast_longhand = {'kind': 'application',
-                        'left': {'kind': 'application',
-                                 'left': {'body': {'body': {'kind': 'application',
-                                                            'left': {'index': 0, 'kind': 'name', 'depth': 2},
-                                                            'right': {'index': 1, 'kind': 'name', 'depth': 2}},
-                                                   'kind': 'abstraction'},
-                                          'kind': 'abstraction'},
-                                 'right': {'body': {'body': {'index': 1, 'kind': 'name', 'depth': 2},
-                                                    'kind': 'abstraction'},
-                                           'kind': 'abstraction'}},
-                        'right': {'body': {'index': 0, 'kind': 'name', 'depth': 1}, 'kind': 'abstraction'}}
-
-        self.assertEqual(ast, ast_longhand)
 
 
 class TestLegalTerms(unittest.TestCase):

@@ -49,7 +49,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     # the accumulator variable.
 
     # Start with (a b).
-    partial = term.new_application(first_term, second_term)
+    partial = term.Application(label=None, left=first_term, right=second_term)
 
     while True:
         # Get the next token in the application-expression list, or
@@ -73,7 +73,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         next_term, i = _next
 
         # The accumulation step.
-        partial = term.new_application(partial, next_term)
+        partial = term.Application(label=None, left=partial, right=next_term)
 
     # Skip the closing parenthesis.
     i += 1
@@ -117,7 +117,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
     body, i = _body
 
-    return term.new_abstraction(body), i
+    return term.Abstraction(label=None, body=body), i
 
 
 def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
@@ -144,11 +144,13 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
         index += 1
 
+    depth = len(env)
+
     if is_local:
-        return term.new_name(index, len(env)), i + 1
+        return term.Name(label=None, index=index, depth=depth), i + 1
 
     if (free_index := gamma.gamma(value)) is not None:
-        return term.new_free_name(free_index, len(env)), i + 1
+        return term.Name(label=None, index=free_index + depth, depth=depth), i + 1
 
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 

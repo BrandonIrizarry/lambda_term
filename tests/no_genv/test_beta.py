@@ -1,11 +1,7 @@
 import unittest
 
 import lbd.beta as beta
-import lbd.term as term
-
-A = term.new_application
-F = term.new_abstraction
-N = term.new_name
+from tests.aux import A, F, N
 
 identity = F(N(0, 1))
 self_apply = F(A(N(0, 1), N(0, 1)))

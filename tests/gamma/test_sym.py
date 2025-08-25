@@ -2,12 +2,7 @@ import unittest
 
 import lbd.evaluate as evl
 import lbd.gamma as g
-import lbd.term as term
-
-N = term.new_name
-G = term.new_free_name
-F = term.new_abstraction
-A = term.new_application
+from tests.aux import A, F, G
 
 
 class TestDepth(unittest.TestCase):
