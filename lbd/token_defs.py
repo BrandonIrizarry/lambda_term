@@ -19,3 +19,4 @@ class Tk(enum.Enum):
     NAME = (enum.auto(), "")
     ERROR = (enum.auto(), "")
     SET = (enum.auto(), "set")
+    GAMMA = (enum.auto(), "gamma")
