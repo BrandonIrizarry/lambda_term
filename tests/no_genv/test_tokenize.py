@@ -7,12 +7,7 @@ import lbd.tokenize as tkz
 class TestTokenizer(unittest.TestCase):
     def test_new_token(self):
         error = tkz.new_token(tdef.Tk.ERROR, "", r".")
-        raw_error = {
-            "kind": tdef.Tk.ERROR,
-            "name": "error",
-            "value": "",
-            "regex": r"."
-        }
+        raw_error = tkz.Token(tdef.Tk.ERROR, "error", "", r".")
 
         self.assertEqual(raw_error, error)
 

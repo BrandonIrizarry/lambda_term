@@ -91,10 +91,10 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if param["kind"] != tdef.Tk.NAME:
+    if param.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    env.append(param["value"])
+    env.append(param.value)
 
     # Advance; we should then be on the dot.
     i += 1
@@ -132,10 +132,10 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if t["kind"] != tdef.Tk.NAME:
+    if t.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
-    value = t["value"]
+    value = t.value
 
     for local_name in reversed(env):
         if local_name == value:
@@ -160,7 +160,7 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     if len(tokens[i:]) == 0:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    match tokens[i]["kind"]:
+    match tokens[i].kind:
         case tdef.Tk.LEFT_PAREN:
             return parse_application(tokens, i, env[:])
         case tdef.Tk.LAMBDA:

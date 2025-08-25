@@ -1,5 +1,5 @@
 import re
-from typing import TypedDict
+from dataclasses import dataclass
 
 import lbd.error as err
 import lbd.token_defs as tdef
@@ -7,7 +7,8 @@ import lbd.token_defs as tdef
 IDENT = r"[A-Za-z_]\w*"
 
 
-class Token(TypedDict):
+@dataclass
+class Token():
     kind: tdef.Tk
     name: str
     value: str
@@ -18,12 +19,7 @@ def new_token(kind: tdef.Tk, value: str, regex: str | None = None) -> Token:
     if regex is None:
         regex = re.escape(value)
 
-    return {
-        "kind": kind,
-        "name": kind.name.lower(),
-        "value": value,
-        "regex": regex
-    }
+    return Token(kind, kind.name.lower(), value, regex)
 
 
 def name_t(value: str):
@@ -84,7 +80,7 @@ spec = define_spec()
 
 
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
-    pats = [f"(?P<{label}>{t["regex"]})" for (label, t) in spec.items()]
+    pats = [f"(?P<{label}>{t.regex})" for (label, t) in spec.items()]
     token_pattern = "|".join(pats)
 
     tokens: list[Token] = []
