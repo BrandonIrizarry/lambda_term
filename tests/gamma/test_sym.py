@@ -26,6 +26,9 @@ class TestDepth(unittest.TestCase):
         x_index = g.gamma("x")
         y_index = g.gamma("y")
 
+        self.assertEqual(x_index, 0)
+        self.assertEqual(y_index, 1)
+
         assert x_index is not None
         assert y_index is not None
 
