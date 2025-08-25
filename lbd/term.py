@@ -22,13 +22,22 @@ class Name(AST):
 
         return self.index - self.depth
 
+    def __str__(self):
+        return f"N({self.index}, {self.depth})"
+
 
 @dataclass
 class Abstraction(AST):
     body: AST
+
+    def __str__(self):
+        return f"F({self.body})"
 
 
 @dataclass
 class Application(AST):
     left: AST
     right: AST
+
+    def __str__(self):
+        return f"A({self.left} {self.right})"
