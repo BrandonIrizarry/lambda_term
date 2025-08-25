@@ -2,16 +2,16 @@ import lbd.term as term
 
 
 def A(left: term.AST, right: term.AST) -> term.Application:
-    return term.Application(label=None, left=left, right=right)
+    return term.Application(left, right)
 
 
 def F(body: term.AST) -> term.Abstraction:
-    return term.Abstraction(label=None, body=body)
+    return term.Abstraction(body)
 
 
 def N(index: int, depth: int) -> term.Name:
-    return term.Name(label=None, index=index, depth=depth)
+    return term.Name(index, depth)
 
 
 def G(index: int, depth: int) -> term.Name:
-    return term.Name(label=None, index=index + depth, depth=depth)
+    return term.Name(index + depth, depth)

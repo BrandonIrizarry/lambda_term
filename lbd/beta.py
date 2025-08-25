@@ -54,13 +54,13 @@ def replace(ast: term.AST, argument: term.AST, target_index: int):
             inc(argument, 0)
             new_body = replace(ast.body, argument, target_index + 1)
 
-            return term.Abstraction(label=None, body=new_body)
+            return term.Abstraction(new_body)
 
         case term.Application():
             new_left = replace(ast.left, argument, target_index)
             new_right = replace(ast.right, argument, target_index)
 
-            return term.Application(label=None, left=new_left, right=new_right)
+            return term.Application(new_left, new_right)
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
@@ -83,7 +83,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
             if not isinstance(beta_left, term.Abstraction):
                 beta_right = beta_reduce(ast.right)
 
-                return term.Application(label=None, left=beta_left, right=beta_right)
+                return term.Application(beta_left, beta_right)
 
             fn = beta_left
             arg = ast.right

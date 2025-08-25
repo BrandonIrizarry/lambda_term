@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(kw_only=True)
 class AST():
-    label: str | None
+    label: str | None = None
 
 
 @dataclass
