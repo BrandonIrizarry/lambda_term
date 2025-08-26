@@ -29,6 +29,7 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
             # Since there is no local scope, assign a depth of zero
             # here.
             return term.Name(last, 0)
+
         case _:
             return evaluate(tokens)
 

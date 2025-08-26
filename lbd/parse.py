@@ -165,9 +165,12 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
     match tokens[i].kind:
         case tdef.Tk.LEFT_PAREN:
             return parse_application(tokens, i, env[:])
+
         case tdef.Tk.LAMBDA:
             return parse_abstraction(tokens, i, env[:])
+
         case tdef.Tk.NAME:
             return parse_name(tokens, i, env[:])
+
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)
