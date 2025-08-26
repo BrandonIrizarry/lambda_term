@@ -16,7 +16,10 @@ class Name(AST):
         self.freeness = self.index - self.depth
 
     def __str__(self):
-        return f"N({self.index}, {self.depth})"
+        if self.freeness < 0:
+            return f"N({self.index}, {self.depth})"
+
+        return f"G({self.freeness})"
 
 
 @dataclass
