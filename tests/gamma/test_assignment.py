@@ -56,3 +56,28 @@ class TestAssignment(unittest.TestCase):
         self.assertEqual(ast, identity)
 
         g.clear_gamma()
+
+    def test_nested_assignment(self):
+        """Perform assignments that then get used later in the same
+        reduction.
+
+        """
+
+        decl = "sym first second a b"
+
+        evl.eval_raw_term(decl)
+
+        terms = [
+            "(<first \\x.\\y.x> <second \\x.\\y.y> <a \\x.x> b a)",
+        ]
+
+        ast = None
+        identity = F(N(0, 1))
+
+        for t in terms:
+            ast = evl.eval_raw_term(t)
+            self.assertNotIsInstance(ast, err.LambdaError)
+
+        self.assertEqual(ast, identity)
+
+        g.clear_gamma()
