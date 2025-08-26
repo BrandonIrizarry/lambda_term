@@ -1,3 +1,5 @@
+import lbd.error as err
+import lbd.gamma as g
 import lbd.term as term
 
 
@@ -74,7 +76,21 @@ def beta_reduce(ast: term.AST) -> term.AST:
     """
 
     match ast:
-        case term.Name() | term.Abstraction():
+        case term.Name():
+            if (fness := ast.freeness()) < 0:
+                return ast
+
+            sym = g.sym_get(fness)
+
+            if sym is None:
+                raise ValueError(f"Undefined free symbol (freeness {fness})")
+
+            if (sast := sym.ast) is None:
+                raise ValueError(f"Valueless free symbol {sym.label}")
+            else:
+                return sast
+
+        case term.Abstraction():
             return ast
 
         case term.Application():
