@@ -37,3 +37,12 @@ class Application(AST):
 
     def __str__(self):
         return f"A({self.left} {self.right})"
+
+
+@dataclass
+class Assignment(AST):
+    name: Name
+    value: AST
+
+    def __str__(self):
+        return f"<{self.name}, {self.value}>"
