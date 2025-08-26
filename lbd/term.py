@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(kw_only=True)
@@ -10,17 +10,10 @@ class AST():
 class Name(AST):
     index: int
     depth: int
+    freeness: int = field(init=False)
 
-    def freeness(self) -> int:
-        """For NAME, return index - depth.
-
-        Local variables have a negative freeness, while free symbols have
-        a non-negative freeness. For free symbols, their freeness value is
-        their index into gamma.
-
-        """
-
-        return self.index - self.depth
+    def __post_init__(self):
+        self.freeness = self.index - self.depth
 
     def __str__(self):
         return f"N({self.index}, {self.depth})"

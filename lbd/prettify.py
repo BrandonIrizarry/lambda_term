@@ -20,7 +20,7 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
 
     match ast:
         case term.Name():
-            fness = ast.freeness()
+            fness = ast.freeness
 
             if fness < 0:
                 # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.

@@ -177,7 +177,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     name, i = _name
 
-    if name.freeness() < 0:
+    if name.freeness < 0:
         return err.error(tokens, i, err.Err.SHADOWED_FREE_NAME)
 
     # Parse the right hand side.
