@@ -45,6 +45,8 @@ def repl():
             print(ast)
             continue
 
+        print()
         print(ast)
+        print()
         print(prettify.prettify(ast))
         print()
