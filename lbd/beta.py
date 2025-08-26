@@ -1,4 +1,3 @@
-import lbd.error as err
 import lbd.gamma as g
 import lbd.term as term
 
@@ -77,7 +76,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
     match ast:
         case term.Name():
-            if (fness := ast.freeness()) < 0:
+            if (fness := ast.freeness) < 0:
                 return ast
 
             sym = g.sym_get(fness)
