@@ -20,3 +20,5 @@ class Tk(enum.Enum):
     ERROR = (enum.auto(), "")
     SET = (enum.auto(), "set")
     GAMMA = (enum.auto(), "gamma")
+    LEFT_ANGLE = (enum.auto(), "<")
+    RIGHT_ANGLE = (enum.auto(), ">")

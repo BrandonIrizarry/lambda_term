@@ -155,6 +155,47 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 
 
+def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
+    """Parse global assignment of the form <Name Term>.
+
+    Return the parsed Term.
+
+    As a side-effect, assign the parsed term to the global 'Name'.
+
+    """
+
+    # Skip the left angle bracket.
+    i += 1
+
+    # Save this for later.
+    name_t = tokens[i]
+
+    _name = parse_name(tokens, i, env[:])
+
+    if isinstance(_name, err.LambdaError):
+        return _name
+
+    name, i = _name
+
+    if name.freeness() < 0:
+        return err.error(tokens, i, err.Err.SHADOWED_FREE_NAME)
+
+    # Parse the right hand side.
+    _term = parse_term(tokens, i, env[:])
+
+    if isinstance(_term, err.LambdaError):
+        return _term
+
+    term, i = _term
+
+    gamma.sym_set(name_t.value, term)
+
+    # Advance past the closing angle bracket
+    i += 1
+
+    return term, i
+
+
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Parse TOKENS and return a parse tree (along with the current
     index into TOKENS.)"""
@@ -171,6 +212,9 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
         case tdef.Tk.NAME:
             return parse_name(tokens, i, env[:])
+
+        case tdef.Tk.LEFT_ANGLE:
+            return parse_assignment(tokens, i, env[:])
 
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)

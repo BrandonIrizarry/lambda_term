@@ -17,6 +17,7 @@ class Err(enum.StrEnum):
     MISSING_PARAM = "Missing parameter"
     TRAILING_GARBAGE = "Trailing garbage"
     UNDECLARED_SYMBOL = "Undeclared free symbol"
+    SHADOWED_FREE_NAME = "Shadowed free name"
 
 
 @dataclass
