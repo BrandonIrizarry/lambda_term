@@ -175,7 +175,9 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     name, i = _name
 
     if name.freeness < 0:
-        return err.error(tokens, i, err.Err.SHADOWED_FREE_NAME)
+        # i - 1 should be the index of the name we just parsed, since
+        # i by now points to the token just after it.
+        return err.error(tokens, i - 1, err.Err.ASSIGN_TO_LOCAL)
 
     # Parse the right hand side.
     _ast = parse_term(tokens, i, env[:])

@@ -18,7 +18,7 @@ class Err(enum.StrEnum):
     TRAILING_GARBAGE = "Trailing garbage"
     UNDECLARED_SYMBOL = "Undeclared free symbol"
     UNSPECIFIED = "Unspecified error"
-    SHADOWED_FREE_NAME = "Shadowed free name"
+    ASSIGN_TO_LOCAL = "Cannot assign to local variable"
 
 
 @dataclass
