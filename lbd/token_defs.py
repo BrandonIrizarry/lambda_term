@@ -16,5 +16,6 @@ class Tk(enum.Enum):
     NAME = (enum.auto(), "")
     RIGHT_ANGLE = (enum.auto(), ">")
     RIGHT_PAREN = (enum.auto(), ")")
+    SEMICOLON = (enum.auto(), ";")
     SPACE = (enum.auto(), "")
     SYM = (enum.auto(), "sym")
