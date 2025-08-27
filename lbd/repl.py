@@ -5,6 +5,7 @@ import readline
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.prettify as prettify
+import lbd.token_defs as tdef
 import lbd.tokenize as tkz
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
@@ -47,8 +48,32 @@ def repl():
             print(tokens)
             continue
 
-        ast = evl.eval_tokens(tokens)
+        # Here we support chaining multiple lambda terms on the same
+        # line using ';' - useful, since we now support assignment as
+        # a side-effect.
+        ast = None
+        i = 0
+        buf: list[tkz.Token] = []
 
+        while i < len(tokens):
+            t = tokens[i]
+            kind = t.kind
+
+            if kind != tdef.Tk.SEMICOLON:
+                buf.append(t)
+            else:
+                ast = evl.eval_tokens(buf)
+                buf.clear()
+
+            i += 1
+
+        if len(buf) != 0:
+            ast = evl.eval_tokens(buf)
+            buf.clear()
+
+        assert ast is not None
+
+        # Back to our regularly scheduled program.
         if isinstance(ast, Exception):
             print(ast)
             continue
