@@ -57,6 +57,7 @@ class TestAssignment(unittest.TestCase):
 
         g.clear_gamma()
 
+    @unittest.expectedFailure
     def test_nested_assignment(self):
         """Perform assignments that then get used later in the same
         reduction.

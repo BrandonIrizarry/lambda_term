@@ -23,6 +23,10 @@ def shift(ast: term.AST, amount: int, minimum: int) -> None:
             shift(ast.left, amount, minimum)
             shift(ast.right, amount, minimum)
 
+        case term.Assignment():
+            shift(ast.name, amount, minimum)
+            shift(ast.value, amount, minimum)
+
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
@@ -62,6 +66,11 @@ def replace(ast: term.AST, argument: term.AST, target_index: int):
             new_right = replace(ast.right, argument, target_index)
 
             return term.Application(new_left, new_right)
+
+        case term.Assignment():
+            new_value = replace(ast.value, argument, target_index)
+
+            return term.Assignment(ast.name, new_value)
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
@@ -109,6 +118,18 @@ def beta_reduce(ast: term.AST) -> term.AST:
             dec(replaced_body, 0)
 
             return beta_reduce(replaced_body)
+
+        case term.Assignment():
+            sym = g.sym_get(ast.name.freeness)
+
+            if sym is None:
+                raise ValueError(f"Fatal: '{ast.name}' isn't a free symbol")
+
+            beta_value = beta_reduce(ast.value)
+
+            g.sym_set(sym.label, beta_value)
+
+            return beta_value
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")

@@ -155,7 +155,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
 
 
-def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
+def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
     """Parse global assignment of the form <Name Term>.
 
     Return the parsed Term.
@@ -166,9 +166,6 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     # Skip the left angle bracket.
     i += 1
-
-    # Save this for later.
-    name_t = tokens[i]
 
     _name = parse_name(tokens, i, env[:])
 
@@ -181,19 +178,17 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
         return err.error(tokens, i, err.Err.SHADOWED_FREE_NAME)
 
     # Parse the right hand side.
-    _term = parse_term(tokens, i, env[:])
+    _ast = parse_term(tokens, i, env[:])
 
-    if isinstance(_term, err.LambdaError):
-        return _term
+    if isinstance(_ast, err.LambdaError):
+        return _ast
 
-    term, i = _term
-
-    gamma.sym_set(name_t.value, term)
+    ast, i = _ast
 
     # Advance past the closing angle bracket
     i += 1
 
-    return term, i
+    return term.Assignment(name, ast), i
 
 
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:

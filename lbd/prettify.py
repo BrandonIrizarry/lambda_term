@@ -51,5 +51,11 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
 
             return f"({left} {right})"
 
+        case term.Assignment():
+            name = prettify(ast.name, env[:])
+            value = prettify(ast.value, env[:])
+
+            return f"<{name}, {value}>"
+
         case _:
             raise ValueError("Fatal: wrong AST 'kind' field")
