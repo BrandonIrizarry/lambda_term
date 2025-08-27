@@ -13,14 +13,13 @@ class TestSemicolon(unittest.TestCase):
 
     """
 
-    @unittest.expectedFailure
     def test_simple_sym(self):
         term = "sym u; \\x.u"
         tokens = tkz.tokenize(term)
 
         assert not isinstance(tokens, err.LambdaError)
 
-        ast = evl.eval_tokens(tokens)
+        ast = evl.eval_line(tokens)
 
         assert not isinstance(ast, err.LambdaError)
 
