@@ -56,3 +56,5 @@ class TestPrettify(unittest.TestCase):
         mobj = re.fullmatch(pattern, pretty)
 
         self.assertIsNotNone(mobj)
+
+        g.clear_gamma()
