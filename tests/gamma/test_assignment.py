@@ -3,7 +3,7 @@ import unittest
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
-from tests.aux import F, N
+from tests.aux import F, G, N, S
 
 
 class TestAssignment(unittest.TestCase):
@@ -57,28 +57,32 @@ class TestAssignment(unittest.TestCase):
 
         g.clear_gamma()
 
-    @unittest.expectedFailure
     def test_nested_assignment(self):
         """Perform assignments that then get used later in the same
         reduction.
 
         """
 
-        decl = "sym first second a b"
+        decl = "sym first second"
 
         evl.eval_raw_term(decl)
 
-        terms = [
-            "(<first \\x.\\y.x> <second \\x.\\y.y> <a \\x.x> b a)",
-        ]
+        term = "(<first \\x.\\y.x> <second \\x.\\y.y>)"
+        ast = evl.eval_raw_term(term)
 
-        ast = None
-        identity = F(N(0, 1))
+        self.assertNotIsInstance(ast, err.LambdaError)
+        second_index = g.gamma("second")
 
-        for t in terms:
-            ast = evl.eval_raw_term(t)
-            self.assertNotIsInstance(ast, err.LambdaError)
+        assert second_index is not None
 
-        self.assertEqual(ast, identity)
+        # Let this variable stand for the AST we _know_ to be the
+        # canonical value of second, for convenience.
+        #
+        # It hasn't been assigned yet in gamma, though, which is
+        # partly the point of this test.
+        SECOND = F(F(N(0, 2)))
+
+        expected = F(S(G(second_index, 1), SECOND))
+        self.assertEqual(ast, expected)
 
         g.clear_gamma()

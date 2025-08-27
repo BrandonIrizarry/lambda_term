@@ -15,3 +15,7 @@ def N(index: int, depth: int) -> term.Name:
 
 def G(index: int, depth: int) -> term.Name:
     return term.Name(index + depth, depth)
+
+
+def S(name: term.Name, value: term.AST) -> term.Assignment:
+    return term.Assignment(name, value)
