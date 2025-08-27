@@ -51,3 +51,8 @@ class Assignment(AST):
 
     def __str__(self):
         return f"<{self.name}, {self.value}>"
+
+
+# Let's hard-code this for now as the default value for unassigned
+# global names.
+IDENTITY = Abstraction(Name(0, 1))

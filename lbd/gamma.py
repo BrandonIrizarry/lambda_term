@@ -1,13 +1,13 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from lbd.term import AST
+import lbd.term as term
 
 
 @dataclass
 class Symbol():
     """Associate a symbol name with its definition."""
     label: str
-    ast: AST | None
+    ast: term.AST = field(default_factory=lambda: term.IDENTITY)
 
 
 _gamma: list[Symbol] = []
@@ -46,16 +46,14 @@ def sym_declare(free_name: str) -> int:
     if idx is not None:
         return idx
 
-    new_symbol = Symbol(label=free_name, ast=None)
+    new_symbol = Symbol(free_name)
     _gamma.append(new_symbol)
 
     return len(_gamma) - 1
 
 
-def sym_set(sym_name: str, ast: AST | None) -> bool:
+def sym_set(sym_name: str, ast: term.AST) -> bool:
     """Set the definition of SYM_NAME to AST.
-
-    An AST of 'None' instructs to clear the definition.
 
     Return whether the symbol was found.
 
@@ -71,31 +69,15 @@ def sym_set(sym_name: str, ast: AST | None) -> bool:
     return True
 
 
-def sym_find(sym_name: str) -> tuple[AST | None, bool]:
-    """Find the AST value associated with SYM_NAME.
-
-    In addition to the AST, return a flag signifying whether the
-    variable is missing, or else present but simply unassigned
-    (corresponding to False and True, respectively.)
-
-    """
+def sym_find(sym_name: str) -> term.AST | None:
+    """Find the AST value associated with SYM_NAME."""
 
     idx = gamma(sym_name)
 
     if idx is None:
-        return None, False
+        return idx
 
-    return _gamma[idx].ast, True
-
-
-def sym_clear(sym_name: str) -> bool:
-    """Clear the AST-defintion of SYM_NAME.
-
-    Return whether the symbol was found.
-
-    """
-
-    return sym_set(sym_name, None)
+    return _gamma[idx].ast
 
 
 def clear_gamma() -> None:
