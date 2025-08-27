@@ -18,20 +18,24 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
     # them to gamma.
     match tokens[0].kind:
         case tdef.Tk.SYM:
-            last = 0
-
-            for i, t in enumerate(tokens[1:], start=1):
-                if t.kind != tdef.Tk.NAME:
-                    return err.error(tokens, i, err.Err.INVALID_SYM_DECL)
-
-                last = g.sym_declare(t.value)
-
-            # Since there is no local scope, assign a depth of zero
-            # here.
-            return term.Name(last, 0)
+            return process_sym_decl(tokens)
 
         case _:
             return evaluate(tokens)
+
+
+def process_sym_decl(tokens: list[tkz.Token]) -> term.Name | LambdaError:
+    last = 0
+
+    for i, t in enumerate(tokens[1:], start=1):
+        if t.kind != tdef.Tk.NAME:
+            return err.error(tokens, i, err.Err.INVALID_SYM_DECL)
+
+        last = g.sym_declare(t.value)
+
+    # Since there is no local scope, assign a depth of zero
+    # here.
+    return term.Name(last, 0)
 
 
 def evaluate(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
