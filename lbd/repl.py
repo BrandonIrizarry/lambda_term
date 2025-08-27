@@ -51,27 +51,7 @@ def repl():
         # Here we support chaining multiple lambda terms on the same
         # line using ';' - useful, since we now support assignment as
         # a side-effect.
-        ast = None
-        i = 0
-        buf: list[tkz.Token] = []
-
-        while i < len(tokens):
-            t = tokens[i]
-            kind = t.kind
-
-            if kind != tdef.Tk.SEMICOLON:
-                buf.append(t)
-            else:
-                ast = evl.eval_tokens(buf)
-                buf.clear()
-
-            i += 1
-
-        if len(buf) != 0:
-            ast = evl.eval_tokens(buf)
-            buf.clear()
-
-        assert ast is not None
+        ast = evl.eval_line(tokens)
 
         # Back to our regularly scheduled program.
         if isinstance(ast, Exception):

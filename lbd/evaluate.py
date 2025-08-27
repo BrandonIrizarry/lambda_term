@@ -24,6 +24,50 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
             return evaluate(tokens)
 
 
+def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
+    """Evaluate a line.
+
+    A line is one or more terms, where semicolon is the separator.
+
+    """
+
+    ast = None
+    i = 0
+    buf: list[tkz.Token] = []
+
+    while i < len(tokens):
+        t = tokens[i]
+        kind = t.kind
+
+        if kind != tdef.Tk.SEMICOLON:
+            buf.append(t)
+
+        else:
+            ast = eval_tokens(buf)
+
+            if isinstance(ast, err.LambdaError):
+                return ast
+
+            buf.clear()
+
+        i += 1
+
+    # If buf has elements, then the line has ended without a semicolon
+    # (which is naturally allowed.) So we must therefore evaluate
+    # what's left in buf.
+    if len(buf) != 0:
+        ast = eval_tokens(buf)
+
+        if isinstance(ast, err.LambdaError):
+            return ast
+
+        buf.clear()
+
+    assert ast is not None
+
+    return ast
+
+
 def eval_tokens(tokens: list[tkz.Token]) -> term.AST | LambdaError:
     """Like EVAL_RAW_TERM, except start with the tokenized form
     already.
