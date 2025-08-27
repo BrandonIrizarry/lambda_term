@@ -14,6 +14,12 @@ def N(index: int, depth: int) -> term.Name:
 
 
 def G(index: int, depth: int) -> term.Name:
+    """Return a new free name.
+
+    By construction, INDEX is the given name's gamma value.
+
+    """
+
     return term.Name(index + depth, depth)
 
 
