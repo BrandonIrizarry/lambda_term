@@ -3,6 +3,7 @@ import unittest
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
+import lbd.tokenize as tkz
 from tests.aux import F, G, N, S
 
 
@@ -83,3 +84,27 @@ class TestAssignment(unittest.TestCase):
 
         expected = F(S(G(second_index, 1), SECOND))
         self.assertEqual(ast, expected)
+
+    def test_assignment_to_local(self):
+        """Verify that assignment to a local returns an error."""
+
+        # Note that 'a' need not be even declared; the parser itself
+        # will catch this error.
+        term = "\\x.<x a>"
+        ast = evl.eval_raw_term(term)
+
+        assert isinstance(ast, err.LambdaError)
+        self.assertEqual(ast.kind, err.Err.ASSIGN_TO_LOCAL)
+
+    def test_shadowed_global(self):
+        """The invalid assignment involves a shadowed global."""
+
+        term = "sym a; \\f.\\a.<a \\x.x>"
+        tokens = tkz.tokenize(term)
+
+        assert not isinstance(tokens, err.LambdaError)
+
+        ast = evl.eval_line(tokens)
+
+        assert isinstance(ast, err.LambdaError)
+        self.assertEqual(ast.kind, err.Err.ASSIGN_TO_LOCAL)
