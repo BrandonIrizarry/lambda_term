@@ -14,6 +14,12 @@ class Token():
     value: str
     regex: str
 
+    def __str__(self):
+        if self.kind == tdef.Tk.NAME:
+            return f"name({self.value})"
+
+        return f"{self.name}"
+
 
 def new_token(kind: tdef.Tk, value: str, regex: str | None = None) -> Token:
     if regex is None:
