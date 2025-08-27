@@ -7,6 +7,9 @@ from tests.aux import F, G, N, S
 
 
 class TestAssignment(unittest.TestCase):
+    def tearDown(self):
+        g.clear_gamma()
+
     def test_top_level_assignment(self):
         decl = "sym x"
         term = "<x \\x.x>"
@@ -31,8 +34,6 @@ class TestAssignment(unittest.TestCase):
         self.assertEqual(sym.label, "x")
         self.assertEqual(sym.ast, identity)
 
-        g.clear_gamma()
-
     def test_inner_assignment(self):
         decl = "sym select_first a b c"
 
@@ -54,8 +55,6 @@ class TestAssignment(unittest.TestCase):
             self.assertNotIsInstance(ast, err.LambdaError)
 
         self.assertEqual(ast, identity)
-
-        g.clear_gamma()
 
     def test_nested_assignment(self):
         """Perform assignments that then get used later in the same
@@ -84,5 +83,3 @@ class TestAssignment(unittest.TestCase):
 
         expected = F(S(G(second_index, 1), SECOND))
         self.assertEqual(ast, expected)
-
-        g.clear_gamma()

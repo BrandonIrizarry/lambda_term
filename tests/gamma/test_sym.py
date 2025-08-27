@@ -14,6 +14,11 @@ class TestDepth(unittest.TestCase):
 
     """
 
+    def tearDown(self):
+        # We must clear gamma - otherwise, the other tests will take
+        # these free symbols as having been declared!
+        g.clear_gamma()
+
     def test_parse(self):
         decl = "sym x y"
         term = "(\\u.\\v.(u x) y)"
@@ -34,7 +39,3 @@ class TestDepth(unittest.TestCase):
 
         self.assertEqual(ast, F(A(G(y_index, 1),
                                   G(x_index, 1))))
-
-        # We must clear gamma - otherwise, the other tests will take
-        # these free symbols as having been declared!
-        g.clear_gamma()

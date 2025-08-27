@@ -13,6 +13,9 @@ class TestSemicolon(unittest.TestCase):
 
     """
 
+    def tearDown(self):
+        g.clear_gamma()
+
     def test_simple_sym(self):
         term = "sym u; \\x.u"
         tokens = tkz.tokenize(term)
@@ -26,5 +29,3 @@ class TestSemicolon(unittest.TestCase):
         expected = F(G(0, 1))
 
         self.assertEqual(ast, expected)
-
-        g.clear_gamma()
