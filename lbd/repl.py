@@ -2,8 +2,10 @@ import atexit
 import os
 import readline
 
+import lbd.error as err
 import lbd.evaluate as evl
 import lbd.prettify as prettify
+import lbd.tokenize as tkz
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -39,7 +41,13 @@ def repl():
 
         readline.add_history(repl_input)
 
-        ast = evl.eval_raw_term(repl_input)
+        tokens = tkz.tokenize(repl_input)
+
+        if isinstance(tokens, err.LambdaError):
+            print(tokens)
+            continue
+
+        ast = evl.eval_tokens(tokens)
 
         if isinstance(ast, Exception):
             print(ast)
