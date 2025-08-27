@@ -24,6 +24,22 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
             return evaluate(tokens)
 
 
+def eval_tokens(tokens: list[tkz.Token]) -> term.AST | LambdaError:
+    """Like EVAL_RAW_TERM, except start with the tokenized form
+    already.
+
+    """
+
+    # If the first token is SYM, scan the given list of names and add
+    # them to gamma.
+    match tokens[0].kind:
+        case tdef.Tk.SYM:
+            return process_sym_decl(tokens)
+
+        case _:
+            return evaluate(tokens)
+
+
 def process_sym_decl(tokens: list[tkz.Token]) -> term.Name | LambdaError:
     last = 0
 
