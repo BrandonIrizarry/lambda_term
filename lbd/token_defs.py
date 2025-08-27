@@ -8,17 +8,13 @@ class Tk(enum.Enum):
 
     """
 
-    ASSIGN = (enum.auto(), ":=")
     LEFT_PAREN = (enum.auto(), "(")
     RIGHT_PAREN = (enum.auto(), ")")
     DOT = (enum.auto(), ".")
     LAMBDA = (enum.auto(), "\\")
-    DEF = (enum.auto(), "def")
     SYM = (enum.auto(), "sym")
     SPACE = (enum.auto(), "")
     NAME = (enum.auto(), "")
     ERROR = (enum.auto(), "")
-    SET = (enum.auto(), "set")
-    GAMMA = (enum.auto(), "gamma")
     LEFT_ANGLE = (enum.auto(), "<")
     RIGHT_ANGLE = (enum.auto(), ">")

@@ -24,20 +24,6 @@ class TestTokenizer(unittest.TestCase):
 
         self.assertEqual(tokens,  expected)
 
-    def test_def(self):
-        raw_term = "def id x := x"
-
-        tokens = tkz.tokenize(raw_term)
-        expected = [
-            tkz.spec["def"],
-            tkz.name_t("id"),
-            tkz.name_t("x"),
-            tkz.spec["assign"],
-            tkz.name_t("x"),
-        ]
-
-        self.assertEqual(tokens, expected)
-
     def test_application(self):
         raw_term = "(select_first x y)"
 
@@ -48,17 +34,6 @@ class TestTokenizer(unittest.TestCase):
             tkz.name_t("x"),
             tkz.name_t("y"),
             tkz.spec["right_paren"],
-        ]
-
-        self.assertEqual(tokens, expected)
-
-    def test_hypothetical_dot_syntax(self):
-        term = ".gamma"
-
-        tokens = tkz.tokenize(term)
-        expected = [
-            tkz.spec["dot"],
-            tkz.spec["gamma"],
         ]
 
         self.assertEqual(tokens, expected)
