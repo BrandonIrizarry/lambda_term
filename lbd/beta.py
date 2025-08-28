@@ -103,20 +103,22 @@ def beta_reduce(ast: term.AST) -> term.AST:
         case term.Application():
             beta_left = beta_reduce(ast.left)
 
-            if not isinstance(beta_left, term.Abstraction):
-                beta_right = beta_reduce(ast.right)
+            match beta_left:
+                case term.Abstraction():
+                    fn = beta_left
+                    arg = ast.right
 
-                return term.Application(beta_left, beta_right)
+                    # Actual beta redux algorithm.
+                    inc(arg, 0)
+                    replaced_body = replace(fn.body, arg, 0)
+                    dec(replaced_body, 0)
 
-            fn = beta_left
-            arg = ast.right
+                    return beta_reduce(replaced_body)
 
-            # Actual beta redux algorithm.
-            inc(arg, 0)
-            replaced_body = replace(fn.body, arg, 0)
-            dec(replaced_body, 0)
+                case _:
+                    beta_right = beta_reduce(ast.right)
 
-            return beta_reduce(replaced_body)
+                    return term.Application(beta_left, beta_right)
 
         case term.Assignment():
             sym = g.sym_get(ast.name.freeness)
