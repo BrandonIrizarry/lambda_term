@@ -85,26 +85,33 @@ class TestAssignmentBasics(unittest.TestCase):
         expected = F(S(G(second_index, 1), SECOND))
         self.assertEqual(ast, expected)
 
-    def test_assignment_to_local(self):
-        """Verify that assignment to a local returns an error."""
 
-        # Note that 'a' need not be even declared; the parser itself
-        # will catch this error.
-        term = "\\x.<x a>"
-        ast = evl.eval_raw_term(term)
+class TestConfiguredAssignment(unittest.TestCase):
+    """Configure target free name via lambda application."""
 
-        assert isinstance(ast, err.LambdaError)
-        self.assertEqual(ast.kind, err.Err.ASSIGN_TO_LOCAL)
+    def test_configure_x_as_first(self):
+        """Configure parameter x as 'select_first'."""
 
-    def test_shadowed_global(self):
-        """The invalid assignment involves a shadowed global."""
+        program = [
+            "sym _first select_first configure_x foobar",
+            "<_first \\x.\\y.x>",
+            "<configure_x \\x.\\y.<x _first>",
+            "(configure_x select_first)",
+        ]
 
-        term = "sym a; \\f.\\a.<a \\x.x>"
-        tokens = tkz.tokenize(term)
+        ast = None
 
-        assert not isinstance(tokens, err.LambdaError)
+        for line in program:
+            ast = evl.eval_raw_term(line)
+            assert not isinstance(ast, err.LambdaError)
 
-        ast = evl.eval_line(tokens)
+        assert ast is not None
 
-        assert isinstance(ast, err.LambdaError)
-        self.assertEqual(ast.kind, err.Err.ASSIGN_TO_LOCAL)
+        _first_idx = g.gamma("_first")
+        select_first_idx = g.gamma("select_first")
+
+        assert _first_idx is not None
+        assert select_first_idx is not None
+
+        expected = F(S(G(select_first_idx, 1), G(_first_idx, 1)))
+        self.assertEqual(expected, ast)
