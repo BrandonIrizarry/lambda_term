@@ -7,7 +7,7 @@ import lbd.tokenize as tkz
 from tests.aux import F, G, N, S
 
 
-class TestAssignment(unittest.TestCase):
+class TestAssignmentBasics(unittest.TestCase):
     def tearDown(self):
         g.clear_gamma()
 
