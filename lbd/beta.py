@@ -94,10 +94,8 @@ def beta_reduce(ast: term.AST) -> term.AST:
             if sym is None:
                 raise ValueError(f"Undefined free symbol (freeness {fness})")
 
-            if (sast := sym.ast) is None:
-                raise ValueError(f"Valueless free symbol {sym.label}")
             else:
-                return sast
+                return sym.ast
 
         case term.Abstraction():
             return ast
