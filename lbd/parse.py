@@ -149,7 +149,9 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     if is_local:
         return term.Name(index, depth), i + 1
 
-    if (free_index := gamma.gamma(value)) is not None:
+    free_index = gamma.gamma(value)
+
+    if free_index is not None:
         return term.Name(free_index + depth, depth), i + 1
 
     return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
