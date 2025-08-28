@@ -68,9 +68,10 @@ def replace(ast: term.AST, argument: term.AST, target_index: int):
             return term.Application(new_left, new_right)
 
         case term.Assignment():
+            new_name = replace(ast.name, argument, target_index)
             new_value = replace(ast.value, argument, target_index)
 
-            return term.Assignment(ast.name, new_value)
+            return term.Assignment(new_name, new_value)
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")

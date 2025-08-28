@@ -13,6 +13,9 @@ class Name(AST):
     freeness: int = field(init=False)
 
     def __post_init__(self):
+        if self.index < 0:
+            raise ValueError(f"Negative index: {self.index}")
+
         self.freeness = self.index - self.depth
 
     def __str__(self):
@@ -43,11 +46,6 @@ class Application(AST):
 class Assignment(AST):
     name: Name
     value: AST
-
-    def __post_init__(self):
-        if self.name.freeness < 0:
-            message = f"Fatal: assignment can't involve local name: {self.name}"
-            raise ValueError(message)
 
     def __str__(self):
         return f"<{self.name}, {self.value}>"
