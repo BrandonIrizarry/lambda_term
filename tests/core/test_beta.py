@@ -1,7 +1,7 @@
 import unittest
 
 import lbd.beta as beta
-from tests.aux import A, F, N
+from tests.core.aux import A, F, N
 
 identity = F(N(0, 1))
 self_apply = F(A(N(0, 1), N(0, 1)))

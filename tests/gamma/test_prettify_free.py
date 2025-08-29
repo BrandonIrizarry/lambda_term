@@ -4,7 +4,7 @@ import unittest
 import lbd.evaluate as evl
 import lbd.gamma as g
 import lbd.prettify as prettify
-from tests.aux import A, F, G, N
+from tests.gamma.aux import A, F, G, N
 
 
 class TestPrettifyFree(unittest.TestCase):

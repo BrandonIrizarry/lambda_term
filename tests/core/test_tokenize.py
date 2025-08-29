@@ -37,19 +37,3 @@ class TestTokenizer(unittest.TestCase):
         ]
 
         self.assertEqual(tokens, expected)
-
-    def test_semicolon(self):
-        term = "sym u; \\x.u"
-        tokens = tkz.tokenize(term)
-
-        expected = [
-            tkz.spec["sym"],
-            tkz.name_t("u"),
-            tkz.spec["semicolon"],
-            tkz.spec["lambda"],
-            tkz.name_t("x"),
-            tkz.spec["dot"],
-            tkz.name_t("u"),
-        ]
-
-        self.assertEqual(tokens, expected)

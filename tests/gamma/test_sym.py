@@ -2,7 +2,7 @@ import unittest
 
 import lbd.evaluate as evl
 import lbd.gamma as g
-from tests.aux import A, F, G
+from tests.gamma.aux import A, F, G
 
 
 class TestDepth(unittest.TestCase):

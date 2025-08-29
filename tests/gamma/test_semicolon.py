@@ -4,7 +4,7 @@ import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
 import lbd.tokenize as tkz
-from tests.aux import F, G, N, S
+from tests.gamma.aux import F, G
 
 
 class TestSemicolon(unittest.TestCase):

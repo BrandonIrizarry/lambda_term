@@ -4,7 +4,7 @@ import lbd.error as err
 import lbd.parse as parse
 import lbd.term as term
 import lbd.tokenize as tkz
-from tests.aux import A, F, N
+from tests.core.aux import A, F, N
 
 
 def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:

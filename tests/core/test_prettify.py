@@ -2,7 +2,7 @@ import re
 import unittest
 
 import lbd.prettify as prettify
-from tests.aux import F, N
+from tests.core.aux import F, N
 
 identity = F(N(0, 1))
 
