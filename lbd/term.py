@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass(kw_only=True)
 class AST():
-    label: str | None = None
+    pass
 
 
 @dataclass
