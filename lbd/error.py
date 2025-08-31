@@ -5,6 +5,7 @@ import lbd.tokenize as tkz
 
 
 class Err(enum.StrEnum):
+    ASSIGN_TO_LOCAL = "Cannot assign to local variable"
     ILLEGAL_TOKEN = "Illegal token"
     INCOMPLETE = "Incomplete term"
     INVALID_NAME = "Invalid name"
@@ -18,7 +19,6 @@ class Err(enum.StrEnum):
     TRAILING_GARBAGE = "Trailing garbage"
     UNDECLARED_SYMBOL = "Undeclared free symbol"
     UNSPECIFIED = "Unspecified error"
-    ASSIGN_TO_LOCAL = "Cannot assign to local variable"
 
 
 @dataclass
