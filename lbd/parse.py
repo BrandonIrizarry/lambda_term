@@ -190,13 +190,33 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # 'parse_name' to obtain it.
     i += 1
 
-    # Skip the assignment token for now (but validate it first.)
-    if tokens[i] != tkz.spec["assign"]:
-        return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
+    # Scan for any parameters given.
+    params = []
 
+    while (p := tkz.get(tokens, i)) != tkz.spec["assign"]:
+        if p is None:
+            return err.error(tokens, i, err.Err.INCOMPLETE)
+
+        if p.kind != tdef.Tk.NAME:
+            return err.error(tokens, i, err.Err.INVALID_PARAM)
+
+        params.append(p)
+
+        i += 1
+
+    # Preemptively create a subenv. Note that, if params is empty,
+    # subenv will be empty, and consequently [*env, *subenv] will
+    # equal simply env, corresponding to the parameterless case, as
+    # desired.
+    subenv = [p.value for p in params]
+
+    # Skip the assignment token.
     i += 1
 
-    _ast = parse_term(tokens, i, env)
+    # We should proceed with caution here, since, if subenv is
+    # non-empty, it _must_ be wrapped accordingly with Abstractions,
+    # else all the inner names will have the wrong depth values.
+    _ast = parse_term(tokens, i, [*env, *subenv])
 
     if isinstance(_ast, err.LambdaError):
         return _ast
@@ -205,6 +225,11 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     # Advance past the closing angle bracket
     i += 1
+
+    # If params is non-empty, then by now, the environment of the
+    # assigned value will have conveniently been extended.
+    for p in params:
+        ast = term.Abstraction(ast)
 
     return term.Assignment(name, ast), i
 
