@@ -48,10 +48,10 @@ def get(tokens: list[Token], pos: int) -> Token | None:
     return tokens[pos]
 
 
-def find(tokens: list[Token], token: Token) -> int:
+def find(tokens: list[Token], token: Token) -> int | None:
     """Return the first index where TOKEN is found in TOKENS.
 
-    If not found, return -1.
+    If not found, return None.
 
     """
 
@@ -59,7 +59,7 @@ def find(tokens: list[Token], token: Token) -> int:
         if tokens[i] == token:
             return i
 
-    return -1
+    return None
 
 
 def define_spec() -> dict[str, Token]:
