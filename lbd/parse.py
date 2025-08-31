@@ -25,14 +25,14 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     i += 1
 
     # Bootstrap the left-fold.
-    _first = parse_term(tokens, i, env[:])
+    _first = parse_term(tokens, i, env)
 
     if isinstance(_first, err.LambdaError):
         return _first
 
     first_term, i = _first
 
-    _second = parse_term(tokens, i, env[:])
+    _second = parse_term(tokens, i, env)
 
     if isinstance(_second, err.LambdaError):
         return _second
@@ -64,7 +64,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
         # The next token signifies the beginning of the next _term_ in
         # the list, so parse that.
-        _next = parse_term(tokens, i, env[:])
+        _next = parse_term(tokens, i, env)
 
         if isinstance(_next, err.LambdaError):
             return _next
@@ -189,7 +189,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Parse the right hand side.
     i += 1
 
-    _ast = parse_term(tokens, i, env[:])
+    _ast = parse_term(tokens, i, env)
 
     if isinstance(_ast, err.LambdaError):
         return _ast
@@ -211,16 +211,16 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
     match tokens[i].kind:
         case tdef.Tk.LEFT_PAREN:
-            return parse_application(tokens, i, env[:])
+            return parse_application(tokens, i, env)
 
         case tdef.Tk.LAMBDA:
-            return parse_abstraction(tokens, i, env[:])
+            return parse_abstraction(tokens, i, env)
 
         case tdef.Tk.NAME:
-            return parse_name(tokens, i, env[:])
+            return parse_name(tokens, i, env)
 
         case tdef.Tk.LEFT_ANGLE:
-            return parse_assignment(tokens, i, env[:])
+            return parse_assignment(tokens, i, env)
 
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)
