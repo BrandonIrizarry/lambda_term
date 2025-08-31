@@ -149,6 +149,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     if is_local:
         return term.Name(index, depth), i + 1
 
+    # Treat the token as referring to a free name.
     free_index = gamma.gamma(value)
 
     if free_index is not None:
