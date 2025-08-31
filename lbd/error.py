@@ -13,6 +13,7 @@ class Err(enum.StrEnum):
     INVALID_SYM_DECL = "Invalid free-variable declaration"
     MALFORMED_DEF = "Malformed def statement"
     MEANINGLESS = "Meaningless token"
+    MISSING = "Missing token"
     MISSING_ASSIGN_OP = "Missing assignment operator"
     MISSING_DOT = "Missing dot after parameter name"
     MISSING_PARAM = "Missing parameter"
