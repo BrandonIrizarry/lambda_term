@@ -159,17 +159,18 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
 
 
 def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
-    """Parse global assignment of the form <Name Term>.
+    """Parse an assignment statement.
+
+    Assignments are of the form <Name Term>.
 
     Return the parsed Term.
-
-    As a side-effect, assign the parsed term to the global 'Name'.
 
     """
 
     # Skip the left angle bracket.
     i += 1
 
+    # Get the token corresponding to the assignee.
     name_t = tkz.get(tokens, i)
 
     if name_t is None:
@@ -178,8 +179,9 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     if name_t.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
-    # Assignment expressions now declare their assigned-to free names
-    # on the spot.
+    # Declare the new free name at parse time, since its DeBruijn
+    # index, which depends on its gamma value, needs to be known
+    # before beta reduction occurs.
     idx = gamma.sym_declare(name_t.value)
     depth = len(env)
     name = term.Name(depth + idx, depth)
