@@ -3,7 +3,9 @@ import unittest
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
-from tests.gamma.aux import F, G, N, S
+import lbd.tokenize as tkz
+from lbd.error import LambdaError
+from tests.gamma.aux import A, F, G, N, S
 
 
 class TestAssignmentBasics(unittest.TestCase):
@@ -11,10 +13,8 @@ class TestAssignmentBasics(unittest.TestCase):
         g.clear_gamma()
 
     def test_top_level_assignment(self):
-        decl = "sym x"
         term = "<x \\x.x>"
 
-        evl.eval_raw_term(decl)
         ast = evl.eval_raw_term(term)
 
         x_index = g.gamma("x")
@@ -35,10 +35,6 @@ class TestAssignmentBasics(unittest.TestCase):
         self.assertEqual(sym.ast, identity)
 
     def test_inner_assignment(self):
-        decl = "sym select_first a b c"
-
-        evl.eval_raw_term(decl)
-
         terms = [
             "<a \\x.x>",
             "<b \\f.\\a.(f a)>",
@@ -62,10 +58,6 @@ class TestAssignmentBasics(unittest.TestCase):
 
         """
 
-        decl = "sym first second"
-
-        evl.eval_raw_term(decl)
-
         term = "(<first \\x.\\y.x> <second \\x.\\y.y>)"
         ast = evl.eval_raw_term(term)
 
@@ -85,32 +77,39 @@ class TestAssignmentBasics(unittest.TestCase):
         self.assertEqual(ast, expected)
 
 
-class TestConfiguredAssignment(unittest.TestCase):
-    """Configure target free name via lambda application."""
+class TestDepth(unittest.TestCase):
+    """Test the depth field in name-ASTs.
 
-    def test_configure_x_as_first(self):
-        """Configure parameter x as 'select_first'."""
+    Mainly, we want to see if free symbols keep their indices into
+    gamma consistent after beta-reduction, as well as to simply check
+    if a given lambda term with free symbols parses correctly.
 
-        program = [
-            "sym _first select_first configure_x foobar",
-            "<_first \\x.\\y.x>",
-            "<configure_x \\x.\\y.<x _first>",
-            "(configure_x select_first)",
-        ]
+    """
 
-        ast = None
+    def tearDown(self):
+        g.clear_gamma()
 
-        for line in program:
-            ast = evl.eval_raw_term(line)
-            assert not isinstance(ast, err.LambdaError)
+    def test_parse(self):
+        decl = "<x \\x.x>; <y \\x.x>"
+        term = "(\\u.\\v.(u x) y)"
 
-        assert ast is not None
+        # Populate gamma.
+        tokens = tkz.tokenize(decl)
+        assert not isinstance(tokens, LambdaError)
 
-        _first_idx = g.gamma("_first")
-        select_first_idx = g.gamma("select_first")
+        evl.eval_line(tokens)
 
-        assert _first_idx is not None
-        assert select_first_idx is not None
+        # Evaluate the main term here.
+        ast = evl.eval_raw_term(term)
 
-        expected = F(S(G(select_first_idx, 1), G(_first_idx, 1)))
-        self.assertEqual(expected, ast)
+        x_index = g.gamma("x")
+        y_index = g.gamma("y")
+
+        self.assertEqual(x_index, 0)
+        self.assertEqual(y_index, 1)
+
+        assert x_index is not None
+        assert y_index is not None
+
+        self.assertEqual(ast, F(A(G(y_index, 1),
+                                  G(x_index, 1))))

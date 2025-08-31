@@ -4,6 +4,8 @@ import unittest
 import lbd.evaluate as evl
 import lbd.gamma as g
 import lbd.prettify as prettify
+import lbd.tokenize as tkz
+from lbd.error import LambdaError
 from tests.gamma.aux import A, F, G, N
 
 
@@ -16,7 +18,10 @@ class TestPrettifyFree(unittest.TestCase):
     def test_free_symbols(self):
         """Test prettification of free symbols."""
 
-        evl.eval_raw_term("sym x y")
+        decl_tokens = tkz.tokenize("<x \\x.x>; <y \\x.x>")
+        assert not isinstance(decl_tokens, LambdaError)
+
+        evl.eval_line(decl_tokens)
 
         x_index = g.gamma("x")
         y_index = g.gamma("y")

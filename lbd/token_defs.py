@@ -18,4 +18,3 @@ class Tk(enum.Enum):
     RIGHT_PAREN = (enum.auto(), ")")
     SEMICOLON = (enum.auto(), ";")
     SPACE = (enum.auto(), "")
-    SYM = (enum.auto(), "sym")

@@ -14,14 +14,7 @@ def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
     if isinstance(tokens, LambdaError):
         return tokens
 
-    # If the first token is SYM, scan the given list of names and add
-    # them to gamma.
-    match tokens[0].kind:
-        case tdef.Tk.SYM:
-            return process_sym_decl(tokens)
-
-        case _:
-            return evaluate(tokens)
+    return eval_tokens(tokens)
 
 
 def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
@@ -68,37 +61,7 @@ def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
     return ast
 
 
-def eval_tokens(tokens: list[tkz.Token]) -> term.AST | LambdaError:
-    """Like EVAL_RAW_TERM, except start with the tokenized form
-    already.
-
-    """
-
-    # If the first token is SYM, scan the given list of names and add
-    # them to gamma.
-    match tokens[0].kind:
-        case tdef.Tk.SYM:
-            return process_sym_decl(tokens)
-
-        case _:
-            return evaluate(tokens)
-
-
-def process_sym_decl(tokens: list[tkz.Token]) -> term.Name | LambdaError:
-    last = 0
-
-    for i, t in enumerate(tokens[1:], start=1):
-        if t.kind != tdef.Tk.NAME:
-            return err.error(tokens, i, err.Err.INVALID_SYM_DECL)
-
-        last = g.sym_declare(t.value)
-
-    # Since there is no local scope, assign a depth of zero
-    # here.
-    return term.Name(last, 0)
-
-
-def evaluate(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
+def eval_tokens(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
     """A shortcut to get an AST right away from some tokens."""
 
     _parsed = parse.parse_term(tokens, 0, [])

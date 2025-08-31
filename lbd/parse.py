@@ -170,14 +170,23 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Skip the left angle bracket.
     i += 1
 
-    _name = parse_name(tokens, i, env[:])
+    name_t = tkz.get(tokens, i)
 
-    if isinstance(_name, err.LambdaError):
-        return _name
+    if name_t is None:
+        return err.error(tokens, i, err.Err.MISSING)
 
-    name, i = _name
+    if name_t.kind != tdef.Tk.NAME:
+        return err.error(tokens, i, err.Err.INVALID_NAME)
+
+    # Assignment expressions now declare their assigned-to free names
+    # on the spot.
+    idx = gamma.sym_declare(name_t.value)
+    depth = len(env)
+    name = term.Name(depth + idx, depth)
 
     # Parse the right hand side.
+    i += 1
+
     _ast = parse_term(tokens, i, env[:])
 
     if isinstance(_ast, err.LambdaError):

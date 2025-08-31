@@ -51,6 +51,5 @@ class Assignment(AST):
         return f"<{self.name}, {self.value}>"
 
 
-# Let's hard-code this for now as the default value for unassigned
-# global names.
+# Keep this around for now, since some tests use it.
 IDENTITY = Abstraction(Name(0, 1))
