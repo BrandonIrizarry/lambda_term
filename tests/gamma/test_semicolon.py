@@ -17,7 +17,7 @@ class TestSemicolon(unittest.TestCase):
         g.clear_gamma()
 
     def test_simple_sym(self):
-        term = "<u \\x.x>; \\x.u"
+        term = "<u := \\x.x>; \\x.u"
         tokens = tkz.tokenize(term)
 
         assert not isinstance(tokens, err.LambdaError)

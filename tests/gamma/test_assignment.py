@@ -13,7 +13,7 @@ class TestAssignmentBasics(unittest.TestCase):
         g.clear_gamma()
 
     def test_top_level_assignment(self):
-        term = "<x \\x.x>"
+        term = "<x := \\x.x>"
 
         ast = evl.eval_raw_term(term)
 
@@ -36,10 +36,10 @@ class TestAssignmentBasics(unittest.TestCase):
 
     def test_inner_assignment(self):
         terms = [
-            "<a \\x.x>",
-            "<b \\f.\\a.(f a)>",
-            "<c \\x.\\y.y>",
-            "(<select_first \\x.\\y.x> c a)",
+            "<a := \\x.x>",
+            "<b := \\f.\\a.(f a)>",
+            "<c := \\x.\\y.y>",
+            "(<select_first := \\x.\\y.x> c a)",
             "(select_first a b)",
         ]
 
@@ -58,7 +58,7 @@ class TestAssignmentBasics(unittest.TestCase):
 
         """
 
-        term = "(<first \\x.\\y.x> <second \\x.\\y.y>)"
+        term = "(<first := \\x.\\y.x> <second := \\x.\\y.y>)"
         ast = evl.eval_raw_term(term)
 
         self.assertNotIsInstance(ast, err.LambdaError)
@@ -90,7 +90,7 @@ class TestDepth(unittest.TestCase):
         g.clear_gamma()
 
     def test_parse(self):
-        decl = "<x \\x.x>; <y \\x.x>"
+        decl = "<x := \\x.x>; <y := \\x.x>"
         term = "(\\u.\\v.(u x) y)"
 
         # Populate gamma.

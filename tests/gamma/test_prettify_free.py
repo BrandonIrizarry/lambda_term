@@ -18,7 +18,7 @@ class TestPrettifyFree(unittest.TestCase):
     def test_free_symbols(self):
         """Test prettification of free symbols."""
 
-        decl_tokens = tkz.tokenize("<x \\x.x>; <y \\x.x>")
+        decl_tokens = tkz.tokenize("<x := \\x.x>; <y := \\x.x>")
         assert not isinstance(decl_tokens, LambdaError)
 
         evl.eval_line(decl_tokens)

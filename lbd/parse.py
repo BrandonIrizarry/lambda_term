@@ -161,7 +161,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
 def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
     """Parse an assignment statement.
 
-    Assignments are of the form <Name Term>.
+    Assignments are of the form <Name := Term>.
 
     Return the parsed Term.
 
@@ -186,7 +186,14 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     depth = len(env)
     name = term.Name(depth + idx, depth)
 
-    # Parse the right hand side.
+    # Skip the name manually, since we didn't (nor couldn't) use
+    # 'parse_name' to obtain it.
+    i += 1
+
+    # Skip the assignment token for now (but validate it first.)
+    if tokens[i] != tkz.spec["assign"]:
+        return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
+
     i += 1
 
     _ast = parse_term(tokens, i, env)
