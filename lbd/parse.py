@@ -94,7 +94,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    env.append(param.value)
+    subenv = [param.value]
 
     # Advance; we should then be on the dot.
     i += 1
@@ -110,7 +110,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     # Advance; we should then be at the start of the body.
     i += 1
 
-    _body = parse_term(tokens, i, env[:])
+    _body = parse_term(tokens, i, [*env, *subenv])
 
     if isinstance(_body, err.LambdaError):
         return _body
