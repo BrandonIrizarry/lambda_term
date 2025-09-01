@@ -137,3 +137,13 @@ class TestAssignmentParameters(unittest.TestCase):
 
         self.assertEqual(ast, F(F(A(N(1, 2),
                                     N(0, 2)))))
+
+    def test_if(self):
+        term = "<if cond e1 e2 := (cond e1 e2)>"
+
+        ast = evl.eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(ast, F(F(F(A(A(N(2, 3),
+                                        N(1, 3)),
+                                      N(0, 3))))))
