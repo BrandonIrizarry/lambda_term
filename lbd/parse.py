@@ -223,6 +223,11 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     ast, i = _ast
 
+    # Check that we have, in fact, landed on the closing angle
+    # bracket.
+    if tkz.get(tokens, i) != tkz.spec["right_angle"]:
+        return err.error(tokens, i, err.Err.MISSING)
+
     # Advance past the closing angle bracket
     i += 1
 
