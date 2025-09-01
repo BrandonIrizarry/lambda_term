@@ -113,3 +113,27 @@ class TestDepth(unittest.TestCase):
 
         self.assertEqual(ast, F(A(G(y_index, 1),
                                   G(x_index, 1))))
+
+
+class TestAssignmentParameters(unittest.TestCase):
+    """*** Test assignment parameters."""
+
+    def tearDown(self):
+        g.clear_gamma()
+
+    def test_identity(self):
+        term = "<identity x := x>"
+
+        ast = evl.eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(ast, F(N(0, 1)))
+
+    def test_apply(self):
+        term = "<apply f a := (f a)>"
+
+        ast = evl.eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(ast, F(F(A(N(1, 2),
+                                    N(0, 2)))))
