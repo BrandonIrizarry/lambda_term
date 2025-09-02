@@ -1,6 +1,5 @@
 import lbd.beta as beta
 import lbd.error as err
-import lbd.gamma as g
 import lbd.parse as parse
 import lbd.term as term
 import lbd.token_defs as tdef

@@ -5,7 +5,6 @@ import readline
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.prettify as prettify
-import lbd.token_defs as tdef
 import lbd.tokenize as tkz
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
