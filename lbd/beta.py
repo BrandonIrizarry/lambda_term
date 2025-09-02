@@ -46,7 +46,7 @@ def dec(ast: term.AST, minimum: int):
     shift(ast, -1, minimum)
 
 
-def replace(ast: term.AST, argument: term.AST, target_index: int):
+def replace(ast: term.AST, argument: term.AST, target_index: int) -> term.AST:
     """Replace TARGET_INDEX inside AST with ARGUMENT, another AST.
 
     Return the modified AST."""
@@ -73,6 +73,8 @@ def replace(ast: term.AST, argument: term.AST, target_index: int):
         case term.Assignment():
             new_name = replace(ast.name, argument, target_index)
             new_value = replace(ast.value, argument, target_index)
+
+            assert isinstance(new_name, term.Name)
 
             return term.Assignment(new_name, new_value)
 
