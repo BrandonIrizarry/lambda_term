@@ -5,6 +5,7 @@ import argparse
 import lbd.error as error
 import lbd.evaluate as evl
 import lbd.repl as repl
+import lbd.tokenize as tkz
 
 ap = argparse.ArgumentParser(
     description="""A lightweight programming language, based on functional paradigms."""
@@ -23,7 +24,12 @@ def load(filenames: list[str]) -> str | None:
                 line = line.strip()
 
                 if line != "":
-                    err = evl.eval_raw_term(line)
+                    tokens = tkz.tokenize(line)
+
+                    if isinstance(tokens, error.LambdaError):
+                        return f"in '{filename}': {tokens}"
+
+                    err = evl.eval_line(tokens)
 
                     if isinstance(err, error.LambdaError):
                         return f"in '{filename}': {err}"
