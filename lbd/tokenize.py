@@ -32,6 +32,10 @@ def name_t(value: str):
     return new_token(tdef.Tk.NAME, value, IDENT)
 
 
+def error_t(value: str):
+    return new_token(tdef.Tk.ERROR, value, r".")
+
+
 def get(tokens: list[Token], pos: int) -> Token | None:
     """Return the token at position POS.
 
@@ -106,6 +110,7 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
             case "name":
                 tokens.append(name_t(value))
             case "error":
+                tokens.append(error_t(value))
                 return err.error(tokens, i, err.Err.ILLEGAL_TOKEN)
             case "space":
                 continue
