@@ -95,9 +95,16 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
 
     tokens: list[Token] = []
 
-    # Track the current iteration index, to make IllegalTokenError
-    # consistent with other errors.
+    # Track the current iteration index, to flag the position of any
+    # ILLEGAL_TOKEN error.
+    #
+    # Flag the position of the first illegal token so that the
+    # returned error can use the entire 'tokens' buffer (as opposed to
+    # immediately returning, which necessarily truncates this
+    # information.)
     i = 0
+    error_idx = None
+
     for mobj in re.finditer(token_pattern, raw_term):
         label = mobj.lastgroup
 
@@ -111,7 +118,10 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
                 tokens.append(name_t(value))
             case "error":
                 tokens.append(error_t(value))
-                return err.error(tokens, i, err.Err.ILLEGAL_TOKEN)
+
+                if error_idx is None:
+                    error_idx = i
+
             case "space":
                 continue
             case "comment":
@@ -120,5 +130,8 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
                 tokens.append(spec[label])
 
         i += 1
+
+    if error_idx is not None:
+        return err.error(tokens, error_idx, err.Err.ILLEGAL_TOKEN)
 
     return tokens
