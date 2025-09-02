@@ -7,6 +7,12 @@ class AST():
 
 
 @dataclass
+class Empty(AST):
+    def __str__(self):
+        return "nil"
+
+
+@dataclass
 class Name(AST):
     index: int
     depth: int

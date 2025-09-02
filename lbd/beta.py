@@ -27,6 +27,9 @@ def shift(ast: term.AST, amount: int, minimum: int) -> None:
             shift(ast.name, amount, minimum)
             shift(ast.value, amount, minimum)
 
+        case term.Empty():
+            return
+
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
@@ -72,6 +75,9 @@ def replace(ast: term.AST, argument: term.AST, target_index: int):
             new_value = replace(ast.value, argument, target_index)
 
             return term.Assignment(new_name, new_value)
+
+        case term.Empty():
+            return ast
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
@@ -131,6 +137,9 @@ def beta_reduce(ast: term.AST) -> term.AST:
             g.sym_set(sym.label, beta_value)
 
             return beta_value
+
+        case term.Empty():
+            return ast
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
