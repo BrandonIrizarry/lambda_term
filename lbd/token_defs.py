@@ -9,6 +9,7 @@ class Tk(enum.Enum):
     """
 
     ASSIGN = (enum.auto(), ":=")
+    COMMENT = (enum.auto(), "#")
     DOT = (enum.auto(), ".")
     ERROR = (enum.auto(), "")
     LAMBDA = (enum.auto(), "\\")
