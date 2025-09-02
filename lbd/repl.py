@@ -48,12 +48,10 @@ def repl():
             print(tokens)
             continue
 
-        # Here we support chaining multiple lambda terms on the same
-        # line using ';' - useful, since we now support assignment as
-        # a side-effect.
+        # 'eval_line' specifically supports chaining multiple lambda
+        # terms on the same line using ';'.
         ast = evl.eval_line(tokens)
 
-        # Back to our regularly scheduled program.
         if isinstance(ast, Exception):
             print(ast)
             continue
