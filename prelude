@@ -1,21 +1,11 @@
-<identity x := x> 
-
-<select_first x y := x>
-<select_second x y := y>
-
-<true := select_first>
-<false := select_second>
-
-<if cond branch1 branch2 := (cond branch1 branch2)>
-<not x := (if x false true)>
-
-<zero := identity>
-<iszero n := (n select_first)>
-
+<zero := \x.x>
+<first x y := x>; <true := first>
+<second x y := y>; <false := second>
+<iszero n := (n first)>
 <succ n := \s.(s false n)>
+<if cond e1 e2 := (cond e1 e2)>
+<pred1 n := (n second)>
+<pred n := (if (iszero n) zero (pred1 n))>
 <one := (succ zero)>
 <two := (succ one)>
-
-<pred n := (if (iszero n) zero (n select_second))>
-
-
+<three := (succ two)>
