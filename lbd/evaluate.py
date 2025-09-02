@@ -23,7 +23,7 @@ def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
 
     """
 
-    ast = None
+    ast = term.Empty()
     i = 0
     buf: list[tkz.Token] = []
 
@@ -33,12 +33,13 @@ def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
 
         match kind:
             case tdef.Tk.SEMICOLON:
-                ast = eval_tokens(buf)
+                if len(buf) != 0:
+                    ast = eval_tokens(buf)
 
-                if isinstance(ast, err.LambdaError):
-                    return ast
+                    if isinstance(ast, err.LambdaError):
+                        return ast
 
-                buf.clear()
+                    buf.clear()
 
             case _:
                 buf.append(t)
@@ -55,8 +56,6 @@ def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
             return ast
 
         buf.clear()
-
-    assert ast is not None
 
     return ast
 
