@@ -140,7 +140,7 @@ class TestIllegalTerms(unittest.TestCase):
         # keyword means there's no longer a local binding for x,
         # meaning that it's an undeclared free symbol.
         if isinstance(exception, err.LambdaError):
-            self.assertEqual(exception.kind, err.Err.UNDECLARED_SYMBOL)
+            self.assertEqual(exception.kind, err.Err.UNASSIGNED)
         else:
             self.assertIsInstance(exception, err.LambdaError)
 

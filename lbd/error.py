@@ -18,7 +18,7 @@ class Err(enum.StrEnum):
     MISSING_DOT = "Missing dot after parameter name"
     MISSING_PARAM = "Missing parameter"
     TRAILING_GARBAGE = "Trailing garbage"
-    UNDECLARED_SYMBOL = "Undeclared free symbol"
+    UNASSIGNED = "Unassigned free symbol"
     UNSPECIFIED = "Unspecified error"
 
 

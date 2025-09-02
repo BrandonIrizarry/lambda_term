@@ -155,7 +155,7 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     if free_index is not None:
         return term.Name(free_index + depth, depth), i + 1
 
-    return err.error(tokens, i, err.Err.UNDECLARED_SYMBOL)
+    return err.error(tokens, i, err.Err.UNASSIGNED)
 
 
 def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
