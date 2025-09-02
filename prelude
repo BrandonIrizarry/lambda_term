@@ -1,11 +1,28 @@
-<zero := \x.x>
+# Boolean-related definitions.
+
 <first x y := x>; <true := first>
 <second x y := y>; <false := second>
+<if cond e1 e2 := (cond e1 e2)>
+
+
+# Natural number bootstrapping definitions.
+
+<zero := \x.x>
 <iszero n := (n first)>
 <succ n := \s.(s false n)>
-<if cond e1 e2 := (cond e1 e2)>
 <pred1 n := (n second)>
 <pred n := (if (iszero n) zero (pred1 n))>
+
+
+# Natural numbers from 1 to 10.
+
 <one := (succ zero)>
 <two := (succ one)>
 <three := (succ two)>
+<four := (succ three)>
+<five := (succ four)>
+<six := (succ five)>
+<seven := (succ six)>
+<eight := (succ seven)>
+<nine := (succ eight)>
+<ten := (succ nine)>
