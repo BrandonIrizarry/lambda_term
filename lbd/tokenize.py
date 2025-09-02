@@ -109,6 +109,8 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
                 return err.error(tokens, i, err.Err.ILLEGAL_TOKEN)
             case "space":
                 continue
+            case "comment":
+                break
             case _:
                 tokens.append(spec[label])
 
