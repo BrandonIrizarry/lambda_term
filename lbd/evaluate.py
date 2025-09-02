@@ -31,16 +31,17 @@ def eval_line(tokens: list[tkz.Token]) -> term.AST | LambdaError:
         t = tokens[i]
         kind = t.kind
 
-        if kind != tdef.Tk.SEMICOLON:
-            buf.append(t)
+        match kind:
+            case tdef.Tk.SEMICOLON:
+                ast = eval_tokens(buf)
 
-        else:
-            ast = eval_tokens(buf)
+                if isinstance(ast, err.LambdaError):
+                    return ast
 
-            if isinstance(ast, err.LambdaError):
-                return ast
+                buf.clear()
 
-            buf.clear()
+            case _:
+                buf.append(t)
 
         i += 1
 
