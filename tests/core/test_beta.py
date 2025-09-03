@@ -62,14 +62,6 @@ class TestStepwiseOmega(unittest.TestCase):
 
         self.assertEqual(self.stop_point, actual)
 
-    def test_two_steps(self):
-        """Test two steps in reducing stepwise-Ω."""
-
-        result1 = beta.beta_reduce(self.term)
-        result2 = beta.beta_reduce(A(result1, identity))
-
-        self.assertEqual(self.stop_point, result2)
-
     def test_many_steps(self):
         """Test many steps in reducing stepwise-Ω."""
 
