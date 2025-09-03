@@ -42,3 +42,14 @@ class TestBetaReduction(unittest.TestCase):
 
         second = beta.beta_reduce(A(pair_identity_applyfn, select_second))
         self.assertEqual(second, applyfn)
+
+    def test_stepwise_infinity(self):
+        """Examine a variation of Ω."""
+
+        inner = F(F(A(N(1, 2), N(1, 2))))
+        term = A(inner, inner)
+
+        actual = beta.beta_reduce(term)
+        expected = F(A(inner, inner))
+
+        self.assertEqual(expected, actual)
