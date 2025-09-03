@@ -40,20 +40,19 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
         case term.Abstraction():
             # Generate a random word to use as the function parameter.
             param: str = rword.word(regex=r"[a-z]+")
-            env.append(param)
 
-            body = prettify(ast.body, env[:])
+            body = prettify(ast.body, [*env, param])
             return f"\\{param}.{body}"
 
         case term.Application():
-            left = prettify(ast.left, env[:])
-            right = prettify(ast.right, env[:])
+            left = prettify(ast.left, env)
+            right = prettify(ast.right, env)
 
             return f"({left} {right})"
 
         case term.Assignment():
-            name = prettify(ast.name, env[:])
-            value = prettify(ast.value, env[:])
+            name = prettify(ast.name, env)
+            value = prettify(ast.value, env)
 
             return f"<{name}, {value}>"
 
