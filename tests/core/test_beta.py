@@ -43,13 +43,40 @@ class TestBetaReduction(unittest.TestCase):
         second = beta.beta_reduce(A(pair_identity_applyfn, select_second))
         self.assertEqual(second, applyfn)
 
-    def test_stepwise_infinity(self):
-        """Examine a variation of Ω."""
 
+class TestStepwiseOmega(unittest.TestCase):
+    """Examine a stepwise version of Ω."""
+
+    def setUp(self):
         inner = F(F(A(N(1, 2), N(1, 2))))
         term = A(inner, inner)
+        stop_point = F(A(inner, inner))
 
-        actual = beta.beta_reduce(term)
-        expected = F(A(inner, inner))
+        self.term = term
+        self.stop_point = stop_point
 
-        self.assertEqual(expected, actual)
+    def test_one_step(self):
+        """Test one step in reducing stepwise-Ω."""
+
+        actual = beta.beta_reduce(self.term)
+
+        self.assertEqual(self.stop_point, actual)
+
+    def test_two_steps(self):
+        """Test two steps in reducing stepwise-Ω."""
+
+        result1 = beta.beta_reduce(self.term)
+        result2 = beta.beta_reduce(A(result1, identity))
+
+        self.assertEqual(self.stop_point, result2)
+
+    def test_many_steps(self):
+        """Test many steps in reducing stepwise-Ω."""
+
+        current = beta.beta_reduce(self.term)
+
+        for _ in range(100):
+            intermediate = beta.beta_reduce(current)
+            current = beta.beta_reduce(A(intermediate, identity))
+
+        self.assertEqual(self.stop_point, current)
