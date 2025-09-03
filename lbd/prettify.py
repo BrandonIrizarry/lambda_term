@@ -41,6 +41,11 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
             # Generate a random word to use as the function parameter.
             param: str = rword.word(regex=r"[a-z]+")
 
+            # Make sure that binders are unique as we move down the
+            # scope.
+            while param in env:
+                param = rword.word(regex=r"[a-z]+")
+
             body = prettify(ast.body, [*env, param])
             return f"\\{param}.{body}"
 
