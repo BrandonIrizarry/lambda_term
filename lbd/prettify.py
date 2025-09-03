@@ -7,7 +7,7 @@ import lbd.term as term
 rword = RandomWord()
 
 
-def prettify(ast: term.AST, env: list[str] = []) -> str:
+def prettify(ast: term.AST, env: list[str] = [], omit_parens=False) -> str:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -50,8 +50,11 @@ def prettify(ast: term.AST, env: list[str] = []) -> str:
             return f"\\{param}.{body}"
 
         case term.Application():
-            left = prettify(ast.left, env)
+            left = prettify(ast.left, env, omit_parens=True)
             right = prettify(ast.right, env)
+
+            if omit_parens:
+                return f"{left} {right}"
 
             return f"({left} {right})"
 
