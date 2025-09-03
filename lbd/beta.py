@@ -2,11 +2,11 @@ import lbd.gamma as g
 import lbd.term as term
 
 
-def shift(ast: term.AST, amount: int, minimum: int) -> None:
+def _shift(ast: term.AST, amount: int, minimum: int) -> None:
     """Shift names of at least MINIMUM value inside AST by AMOUNT.
 
-    This doesn't actually get used; rather it's used to implement INC
-    and DEC, which see.
+    This function is used to implement INC and DEC. Otherwise, it
+    should appear nowhere else.
 
     """
 
@@ -17,15 +17,15 @@ def shift(ast: term.AST, amount: int, minimum: int) -> None:
                 ast.depth += amount
 
         case term.Abstraction():
-            shift(ast.body, amount, minimum + 1)
+            _shift(ast.body, amount, minimum + 1)
 
         case term.Application():
-            shift(ast.left, amount, minimum)
-            shift(ast.right, amount, minimum)
+            _shift(ast.left, amount, minimum)
+            _shift(ast.right, amount, minimum)
 
         case term.Assignment():
-            shift(ast.name, amount, minimum)
-            shift(ast.value, amount, minimum)
+            _shift(ast.name, amount, minimum)
+            _shift(ast.value, amount, minimum)
 
         case term.Empty():
             return
@@ -37,13 +37,13 @@ def shift(ast: term.AST, amount: int, minimum: int) -> None:
 def inc(ast: term.AST, minimum: int):
     """Shift names of at least MINIMUM value inside AST up by 1."""
 
-    shift(ast, 1, minimum)
+    _shift(ast, 1, minimum)
 
 
 def dec(ast: term.AST, minimum: int):
     """Shift names of at least MINIMUM value inside AST down by 1. """
 
-    shift(ast, -1, minimum)
+    _shift(ast, -1, minimum)
 
 
 def replace(ast: term.AST, argument: term.AST, target_index: int) -> term.AST:
