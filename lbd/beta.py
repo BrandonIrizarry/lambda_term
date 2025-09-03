@@ -34,13 +34,13 @@ def _shift(ast: term.AST, amount: int, minimum: int) -> None:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
 
-def inc(ast: term.AST, minimum: int):
+def inc(ast: term.AST, minimum: int) -> None:
     """Shift names of at least MINIMUM value inside AST up by 1."""
 
     _shift(ast, 1, minimum)
 
 
-def dec(ast: term.AST, minimum: int):
+def dec(ast: term.AST, minimum: int) -> None:
     """Shift names of at least MINIMUM value inside AST down by 1. """
 
     _shift(ast, -1, minimum)
