@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass
 class AST():
     pass
 
