@@ -94,8 +94,11 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
     match ast:
         case term.Name():
+            # No situation should arise where a local name will be
+            # beta reduced, and so panic with a ValueError here.
             if (fness := ast.freeness) < 0:
-                return ast
+                raise ValueError(
+                    f"Cannot beta-reduce local name (freeness {fness})")
 
             sym = g.sym_get(fness)
 
