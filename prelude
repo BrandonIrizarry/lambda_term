@@ -26,3 +26,11 @@
 <eight := (succ seven)>
 <nine := (succ eight)>
 <ten := (succ nine)>
+
+# Define the Y combinator (our implementation of recursion relies on it.)
+<recursive f := (\s.(f (s s)) \s.(f (s s)))>
+
+# Define a function that reduces its argument to zero.
+<zero_out1 rec x := (if (iszero x) zero \d.(rec (pred x)))>
+<zero_out := (recursive zero_out1)>
+
