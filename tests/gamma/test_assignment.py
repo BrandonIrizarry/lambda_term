@@ -76,6 +76,17 @@ class TestAssignmentBasics(unittest.TestCase):
         expected = F(S(G(second_index, 1), SECOND))
         self.assertEqual(ast, expected)
 
+    @unittest.expectedFailure
+    def test_delayed_assignment(self):
+        """Make sure that abstraction delays an assignment."""
+
+        term = "\\x.<foo := \\x.\\y.x>; foo"
+        tokens = tkz.tokenize(term)
+        assert not isinstance(tokens, LambdaError)
+
+        err = evl.eval_line(tokens)
+        self.assertEqual(err, LambdaError)
+
 
 class TestDepth(unittest.TestCase):
     """Test the depth field in name-ASTs.
