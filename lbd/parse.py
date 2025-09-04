@@ -18,8 +18,14 @@ import lbd.tokenize as tkz
 
 
 def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Application, int] | err.LambdaError:
-    """Return a parsed application, as well as the index corresponding
-    to the start of the next lambda term."""
+    """Parse an application.
+
+    Applications are of the form: (TERM TERM)
+
+    Return a parsed application, as well as the index corresponding
+    to the start of the next lambda term.
+
+    """
 
     # Skip the left parenthesis.
     i += 1
@@ -82,6 +88,14 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
 
 def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Abstraction, int] | err.LambdaError:
+    """Parse an abstraction.
+
+    Abstractions are of the form: \\NAME.TERM
+
+    Return the parsed abstraction.
+
+    """
+
     # Skip the lambda symbol.
     i += 1
 
@@ -121,6 +135,15 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
 
 def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Name, int] | err.LambdaError:
+    """Parse a name.
+
+    A name is valid (for now) if and only if it could be a valid C
+    identifier.
+
+    Return the parsed name.
+
+    """
+
     # Search for the current name across the local env, starting from
     # the back (using a LIFO discipline, since we're implementing
     # layered function scopes.)
@@ -240,8 +263,14 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
 
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
-    """Parse TOKENS and return a parse tree (along with the current
-    index into TOKENS.)"""
+    """Parse TOKENS, given index I and environment ENV.
+
+    This function is used for parsing a general lambda term.
+
+    Return a parse tree (along with the next position to parse inside
+    TOKENS.)
+
+    """
 
     if len(tokens[i:]) == 0:
         return err.error(tokens, i, err.Err.INCOMPLETE)
