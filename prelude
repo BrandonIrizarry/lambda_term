@@ -31,6 +31,9 @@
 <recursive f := (\s.(f (s s)) \s.(f (s s)))>
 
 # Define a function that reduces its argument to zero.
-<zero_out1 rec x := (if (iszero x) zero \d.(rec (pred x)))>
+<zero_out1 rec x := (if (iszero x) zero (rec (pred x)))>
 <zero_out := (recursive zero_out1)>
 
+# Define addition.
+<add1 rec x y := (if (iszero y) x (rec (succ x) (pred y)))>
+<add := (recursive add1)>
