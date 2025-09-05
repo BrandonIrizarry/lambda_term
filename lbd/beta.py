@@ -2,7 +2,7 @@ import lbd.gamma as g
 import lbd.term as term
 
 
-def _shift(ast: term.AST, amount: int, minimum: int) -> None:
+def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
     """Shift names of at least MINIMUM value inside AST by AMOUNT.
 
     This function is used to implement INC and DEC. Otherwise, it
@@ -13,36 +13,46 @@ def _shift(ast: term.AST, amount: int, minimum: int) -> None:
     match ast:
         case term.Name():
             if ast.index >= minimum:
-                ast.index += amount
+                return term.Name(ast.index + amount)
+
+            return ast
 
         case term.Abstraction():
-            _shift(ast.body, amount, minimum + 1)
+            new_body = _shift(ast.body, amount, minimum + 1)
+
+            return term.Abstraction(new_body)
 
         case term.Application():
-            _shift(ast.left, amount, minimum)
-            _shift(ast.right, amount, minimum)
+            new_left = _shift(ast.left, amount, minimum)
+            new_right = _shift(ast.right, amount, minimum)
+
+            return term.Application(new_left, new_right)
 
         case term.Assignment():
-            _shift(ast.name, amount, minimum)
-            _shift(ast.value, amount, minimum)
+            new_name = _shift(ast.name, amount, minimum)
+            new_value = _shift(ast.value, amount, minimum)
+
+            assert isinstance(new_name, term.Name)
+
+            return term.Assignment(new_name, new_value)
 
         case term.Empty():
-            return
+            return ast
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
 
-def inc(ast: term.AST, minimum: int) -> None:
+def inc(ast: term.AST, minimum: int) -> term.AST:
     """Shift names of at least MINIMUM value inside AST up by 1."""
 
-    _shift(ast, 1, minimum)
+    return _shift(ast, 1, minimum)
 
 
-def dec(ast: term.AST, minimum: int) -> None:
+def dec(ast: term.AST, minimum: int) -> term.AST:
     """Shift names of at least MINIMUM value inside AST down by 1. """
 
-    _shift(ast, -1, minimum)
+    return _shift(ast, -1, minimum)
 
 
 def replace(ast: term.AST, argument: term.AST, target_index: int) -> term.AST:
@@ -58,8 +68,8 @@ def replace(ast: term.AST, argument: term.AST, target_index: int) -> term.AST:
             return ast
 
         case term.Abstraction():
-            inc(argument, 0)
-            new_body = replace(ast.body, argument, target_index + 1)
+            new_argument = inc(argument, 0)
+            new_body = replace(ast.body, new_argument, target_index + 1)
 
             return term.Abstraction(new_body)
 
@@ -122,11 +132,11 @@ def beta_reduce(ast: term.AST) -> term.AST:
                     arg = ast.right
 
                     # Actual beta redux algorithm.
-                    inc(arg, 0)
-                    replaced_body = replace(fn.body, arg, 0)
-                    dec(replaced_body, 0)
+                    new_arg = inc(arg, 0)
+                    replaced_body = replace(fn.body, new_arg, 0)
+                    new_replaced_body = dec(replaced_body, 0)
 
-                    return beta_reduce(replaced_body)
+                    return beta_reduce(new_replaced_body)
 
                 case _:
                     beta_right = beta_reduce(ast.right)
