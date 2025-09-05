@@ -1,0 +1,21 @@
+# Basic definitions
+<identity := \x.x>
+<first x y := x>
+<second x y := y>
+
+# Boolean-related definitions.
+
+<true := first>
+<false := second>
+<if cond e1 e2 := (cond e1 e2)>
+
+
+# Natural number bootstrapping definitions.
+
+<zero := identity>
+<iszero n := (n first)>
+<succ n := \s.(s false n)>
+<pred1 n := (n second)>
+<pred n := (if (iszero n) zero (pred1 n))>
+
+<one := (succ zero)>
