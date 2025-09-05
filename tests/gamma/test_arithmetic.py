@@ -56,3 +56,11 @@ class TestNaturalNumbers(unittest.TestCase):
             ast = evl.eval_raw_term(term)
 
             self.assertEqual(expected, ast)
+
+        # Perhaps redundant, but one often doesn't know where bugs
+        # truly lie. :)
+        for _ in range(100):
+            term = "(iszero one)"
+
+            ast = evl.eval_raw_term(term)
+            self.assertEqual(expected, ast)
