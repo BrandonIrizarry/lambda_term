@@ -21,7 +21,7 @@ class TestAssignmentBasics(unittest.TestCase):
 
         assert x_index is not None
 
-        identity = F(N(0, 1))
+        identity = F(N(0))
 
         # Check that we have the correct AST.
         self.assertEqual(ast, identity)
@@ -44,7 +44,7 @@ class TestAssignmentBasics(unittest.TestCase):
         ]
 
         ast = None
-        identity = F(N(0, 1))
+        identity = F(N(0))
 
         for t in terms:
             ast = evl.eval_raw_term(t)
@@ -71,7 +71,7 @@ class TestAssignmentBasics(unittest.TestCase):
         #
         # It hasn't been assigned yet in gamma, though, which is
         # partly the point of this test.
-        SECOND = F(F(N(0, 2)))
+        SECOND = F(F(N(0)))
 
         expected = F(S(G(second_index, 1), SECOND))
         self.assertEqual(ast, expected)
@@ -136,7 +136,7 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(N(0, 1)))
+        self.assertEqual(ast, F(N(0)))
 
     def test_apply(self):
         term = "<apply f a := (f a)>"
@@ -144,8 +144,8 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(F(A(N(1, 2),
-                                    N(0, 2)))))
+        self.assertEqual(ast, F(F(A(N(1),
+                                    N(0)))))
 
     def test_if(self):
         term = "<if cond e1 e2 := (cond e1 e2)>"
@@ -153,6 +153,6 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(F(F(A(A(N(2, 3),
-                                        N(1, 3)),
-                                      N(0, 3))))))
+        self.assertEqual(ast, F(F(F(A(A(N(2),
+                                        N(1)),
+                                      N(0))))))

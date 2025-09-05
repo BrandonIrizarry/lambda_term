@@ -20,22 +20,21 @@ def prettify(ast: term.AST, env: list[str] = [], level=0, omit_parens=False) -> 
 
     match ast:
         case term.Name():
-            fness = ast.freeness
+            # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
+            # Ex: index = 0 -> -1, index = 1 -> -2, etc.
+            idx = ast.index
+            env_depth = -(idx + 1)
 
-            if fness < 0:
-                # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
-                # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-                idx = ast.index
-                env_depth = -(idx + 1)
-
+            if abs(env_depth) <= len(env):
                 return env[env_depth]
-            else:
-                free_sym = g.sym_get(fness)
 
-                if free_sym is None:
-                    raise ValueError(f"Fatal: sym_get({fness}) failed")
+            free_idx = idx - len(env)
+            free_sym = g.sym_get(free_idx)
 
-                return free_sym.label.upper()
+            if free_sym is None:
+                raise ValueError(f"Fatal: sym_get({free_idx}) failed")
+
+            return free_sym.label.upper()
 
         case term.Abstraction():
             # Generate a random word to use as the function parameter.

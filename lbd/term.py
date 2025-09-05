@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -15,20 +15,13 @@ class Empty(AST):
 @dataclass
 class Name(AST):
     index: int
-    depth: int
-    freeness: int = field(init=False)
 
     def __post_init__(self):
         if self.index < 0:
             raise ValueError(f"Negative index: {self.index}")
 
-        self.freeness = self.index - self.depth
-
     def __str__(self):
-        if self.freeness < 0:
-            return f"N({self.index}, {self.depth})"
-
-        return f"G({self.freeness})"
+        return f"N({self.index})"
 
 
 @dataclass
@@ -58,4 +51,4 @@ class Assignment(AST):
 
 
 # Keep this around for now, since some tests use it.
-IDENTITY = Abstraction(Name(0, 1))
+IDENTITY = Abstraction(Name(0))

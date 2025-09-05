@@ -167,16 +167,14 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
 
         index += 1
 
-    depth = len(env)
-
     if is_local:
-        return term.Name(index, depth), i + 1
+        return term.Name(index), i + 1
 
     # Treat the token as referring to a free name.
     free_index = gamma.gamma(value)
 
     if free_index is not None:
-        return term.Name(free_index + depth, depth), i + 1
+        return term.Name(free_index + len(env)), i + 1
 
     return err.error(tokens, i, err.Err.UNASSIGNED)
 
@@ -206,8 +204,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # index, which depends on its gamma value, needs to be known
     # before beta reduction occurs.
     idx = gamma.sym_declare(name_t.value)
-    depth = len(env)
-    name = term.Name(depth + idx, depth)
+    name = term.Name(idx + len(env))
 
     # Skip the name manually, since we didn't (nor couldn't) use
     # 'parse_name' to obtain it.

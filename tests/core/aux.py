@@ -9,5 +9,5 @@ def F(body: term.AST) -> term.Abstraction:
     return term.Abstraction(body)
 
 
-def N(index: int, depth: int) -> term.Name:
-    return term.Name(index, depth)
+def N(index: int) -> term.Name:
+    return term.Name(index)

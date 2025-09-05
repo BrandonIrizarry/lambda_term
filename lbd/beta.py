@@ -14,7 +14,6 @@ def _shift(ast: term.AST, amount: int, minimum: int) -> None:
         case term.Name():
             if ast.index >= minimum:
                 ast.index += amount
-                ast.depth += amount
 
         case term.Abstraction():
             _shift(ast.body, amount, minimum + 1)
@@ -94,19 +93,18 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
     match ast:
         case term.Name():
-            # No situation should arise where a local name will be
-            # beta reduced, and so panic with a ValueError here.
-            if (fness := ast.freeness) < 0:
+            if (idx := ast.index) < 0:
                 raise ValueError(
-                    f"Cannot beta-reduce local name (freeness {fness})")
+                    f"Fatal: name with negative index of {ast.index}")
 
-            sym = g.sym_get(fness)
+            sym = g.sym_get(idx)
 
             # This should've been caught at parse time, hence we panic
             # with a ValueError here.
             if sym is None:
-                raise ValueError(f"Undefined free symbol (freeness {fness})")
+                raise ValueError(f"Undefined free symbol (freeness {idx})")
 
+            # FIXME: maybe use an Error term?
             elif sym.ast is None:
                 raise ValueError(f"Unassigned free symbol '{sym.label}'")
 
@@ -136,7 +134,14 @@ def beta_reduce(ast: term.AST) -> term.AST:
                     return term.Application(beta_left, beta_right)
 
         case term.Assignment():
-            sym = g.sym_get(ast.name.freeness)
+            # The code here should be very similar to the term.Name()
+            # case (and execute only under the same circumstances),
+            # except that the global value of sym.label is set as a
+            # side-effect.
+            if (idx := ast.name.index) < 0:
+                f"Fatal: name with negative index of {idx}"
+
+            sym = g.sym_get(idx)
 
             if sym is None:
                 raise ValueError(f"Fatal: '{ast.name}' isn't a free symbol")

@@ -4,12 +4,12 @@ import unittest
 import lbd.prettify as prettify
 from tests.core.aux import F, N
 
-identity = F(N(0, 1))
+identity = F(N(0))
 
 selectors = {
-    "first": F(F(F(N(2, 3)))),
-    "second": F(F(F(N(1, 3)))),
-    "third": F(F(F(N(0, 3)))),
+    "first": F(F(F(N(2)))),
+    "second": F(F(F(N(1)))),
+    "third": F(F(F(N(0)))),
 }
 
 
