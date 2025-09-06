@@ -8,8 +8,13 @@ This project is heavily under construction, and far from complete.
 
 ## Features
 
-A good question to ask here is, "what kinds of programs do I plan on
-running with this language?"
+So far the language can implement simple arithmetic, e.g. the expression
+
+```
+(add one two)
+```
+
+evaluates to a lambda term equivalent to the numeral for three.
 
 # Requirements
 
