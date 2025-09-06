@@ -56,7 +56,5 @@ def repl():
             continue
 
         print()
-        print(ast)
-        print()
         print(prettify.prettify(ast))
         print()
