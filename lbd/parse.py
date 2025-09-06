@@ -140,7 +140,13 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     A name is valid (for now) if and only if it could be a valid C
     identifier.
 
-    Return the parsed name.
+    This function identifies the given name-token's (already
+    predetermined) place in the function-scope hierarchy: that is,
+    it'll either be identified as a bound local name, or else a free
+    name. Either way, a new Name term will be returned, with its
+    DeBruijn index set according to that circumstance.
+
+    Return the parsed name, or else a parse-error.
 
     """
 
