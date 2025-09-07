@@ -10,7 +10,8 @@ rword = RandomWord()
 def prettify(ast: term.AST,
              env: list[str],
              level: int,
-             omit_parens: bool) -> str:
+             omit_parens: bool,
+             used_names: set[str]) -> tuple[str, set[str]]:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -29,7 +30,8 @@ def prettify(ast: term.AST,
             env_depth = -(idx + 1)
 
             if abs(env_depth) <= len(env):
-                return env[env_depth]
+                name = env[env_depth]
+                return name, {*used_names, name}
 
             free_idx = idx - len(env)
             free_sym = g.sym_get(free_idx)
@@ -37,7 +39,7 @@ def prettify(ast: term.AST,
             if free_sym is None:
                 raise ValueError(f"Fatal: sym_get({free_idx}) failed")
 
-            return free_sym.label.upper()
+            return free_sym.label.upper(), used_names
 
         case term.Abstraction():
             # Generate a random word to use as the function parameter.
@@ -51,31 +53,59 @@ def prettify(ast: term.AST,
             # + 2 for \ and .
             level += len(param) + 2
 
-            body = prettify(ast.body, [*env, param], level, False)
-            return f"\\{param}.{body}"
+            body, used = prettify(ast.body,
+                                  [*env, param],
+                                  level,
+                                  False,
+                                  used_names)
+
+            if param in used:
+                return f"\\{param}.{body}", {*used_names, *used}
+
+            return f"\\_.{body}", {*used_names, *used}
 
         case term.Application():
             # ( adds a space of indentation
             level += 1
 
-            left = prettify(ast.left, env, level, True)
-            right = prettify(ast.right, env, level, False)
+            left, used_left = prettify(ast.left,
+                                       env,
+                                       level,
+                                       True,
+                                       used_names)
+
+            right, used_right = prettify(ast.right,
+                                         env,
+                                         level,
+                                         False,
+                                         used_names)
 
             indent = " " * level
 
             if omit_parens:
-                return f"{left}\n{indent}{right}"
+                return f"{left}\n{indent}{right}", {*used_left, *used_right}
 
-            return f"({left}\n{indent}{right})"
+            return f"({left}\n{indent}{right})", {*used_left, *used_right}
 
         case term.Assignment():
-            name = prettify(ast.name, env, 0, False)
-            value = prettify(ast.value, env, 0, False)
+            # I know prettifying a name won't add a used name, but
+            # let's leave it this way for completion.
+            name, used_in_name = prettify(ast.name,
+                                          env,
+                                          level,
+                                          False,
+                                          used_names)
 
-            return f"<{name}, {value}>"
+            value, used_in_value = prettify(ast.value,
+                                            env,
+                                            level,
+                                            False,
+                                            used_names)
+
+            return f"<{name}, {value}>", {*used_in_name, *used_in_value}
 
         case term.Empty():
-            return f"{ast}"
+            return f"{ast}", used_names
 
         case _:
             raise ValueError("Fatal: wrong AST 'kind' field")

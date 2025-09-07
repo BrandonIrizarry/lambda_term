@@ -19,7 +19,7 @@ class TestPrettify(unittest.TestCase):
     def test_identity(self):
         """Test prettified identity function."""
 
-        pretty_id = prettify.prettify(identity, [], 0, False)
+        pretty_id, _ = prettify.prettify(identity, [], 0, False, set())
 
         mobj = re.fullmatch(r"\\(\w+)\.\1", pretty_id)
 
@@ -29,7 +29,9 @@ class TestPrettify(unittest.TestCase):
         """Test 'select_first', 'select_second', and 'select_third'."""
 
         for i, (ordinal, _) in enumerate(selectors.items()):
-            pretty = prettify.prettify(selectors[ordinal], [], 0, False)
+            pretty, _ = prettify.prettify(
+                selectors[ordinal], [], 0, False, set())
+
             mobj = re.fullmatch(
                 rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)
 
