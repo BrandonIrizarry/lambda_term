@@ -8,9 +8,9 @@ rword = RandomWord()
 
 
 def prettify(ast: term.AST,
-             env: list[str] = [],
-             level=0,
-             omit_parens=False) -> str:
+             env: list[str],
+             level: int,
+             omit_parens: bool) -> str:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -51,15 +51,15 @@ def prettify(ast: term.AST,
             # + 2 for \ and .
             level += len(param) + 2
 
-            body = prettify(ast.body, [*env, param], level)
+            body = prettify(ast.body, [*env, param], level, False)
             return f"\\{param}.{body}"
 
         case term.Application():
             # ( adds a space of indentation
             level += 1
 
-            left = prettify(ast.left, env, level=level, omit_parens=True)
-            right = prettify(ast.right, env, level=level)
+            left = prettify(ast.left, env, level, True)
+            right = prettify(ast.right, env, level, False)
 
             indent = " " * level
 
@@ -69,8 +69,8 @@ def prettify(ast: term.AST,
             return f"({left}\n{indent}{right})"
 
         case term.Assignment():
-            name = prettify(ast.name, env)
-            value = prettify(ast.value, env)
+            name = prettify(ast.name, env, 0, False)
+            value = prettify(ast.value, env, 0, False)
 
             return f"<{name}, {value}>"
 

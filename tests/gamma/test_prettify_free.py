@@ -34,7 +34,7 @@ class TestPrettifyFree(unittest.TestCase):
                        G(x_index, 2)))),
                  G(y_index, 0))
 
-        pretty = prettify.prettify(term)
+        pretty = prettify.prettify(term, [], 0, False)
         pattern = r"""\(\\(\w+)\.\\(\w+)\.\(\1\n\s+X\)\n\s+Y\)"""
 
         mobj = re.fullmatch(pattern, pretty)
