@@ -7,7 +7,10 @@ import lbd.term as term
 rword = RandomWord()
 
 
-def prettify(ast: term.AST, env: list[str] = [], level=0, omit_parens=False) -> str:
+def prettify(ast: term.AST,
+             env: list[str] = [],
+             level=0,
+             omit_parens=False) -> str:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
