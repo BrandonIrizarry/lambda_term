@@ -34,6 +34,29 @@ class TestAssignmentBasics(unittest.TestCase):
         self.assertEqual(sym.label, "x")
         self.assertEqual(sym.ast, identity)
 
+    def test_repeated_assignment(self):
+        """Test that a free name can be redefined."""
+
+        program = [
+            "<a := \\x.x>; <b := \\x.x>",
+            "(a b)",
+            "<a := \\x.\\y.x>",
+            "(a a b)",
+            "<a := \\x.\\y.y>",
+            "(a a b)",
+        ]
+
+        ast = None
+
+        for line in program:
+            tokens = tkz.tokenize(line)
+            assert not isinstance(tokens, LambdaError)
+
+            ast = evl.eval_line(tokens)
+            assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(F(N(0)), ast)
+
     def test_inner_assignment(self):
         terms = [
             "<a := \\x.x>",
