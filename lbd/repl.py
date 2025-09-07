@@ -39,8 +39,6 @@ def repl():
         if repl_input == "":
             continue
 
-        readline.add_history(repl_input)
-
         tokens = tkz.tokenize(repl_input)
 
         if isinstance(tokens, err.LambdaError):
