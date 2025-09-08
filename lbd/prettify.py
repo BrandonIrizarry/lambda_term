@@ -82,11 +82,12 @@ def prettify(ast: term.AST,
                 indent += len(param) + 2
 
             padding = " " * indent
+            union = {*used_left, *used_right}
 
             if omit_parens:
-                return f"{left}\n{padding}{right}", {*used_left, *used_right}
+                return f"{left}\n{padding}{right}", union
 
-            return f"({left}\n{padding}{right})", {*used_left, *used_right}
+            return f"({left}\n{padding}{right})", union
 
         case term.Assignment():
             # I know prettifying a name won't add a used name, but
