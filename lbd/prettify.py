@@ -12,13 +12,9 @@ def prettify_rec(ast: term.AST,
                  indent: int,
                  omit_parens: bool,
                  used_names: set[str]) -> tuple[str, set[str]]:
-    """Create a human-readable lambda expression from AST.
+    """Recursive helper for 'prettify'.
 
-    Since the AST is constructed using DeBruijn indices, the original
-    local variable names are discarded, and so synthetic names are used
-    for the reconstructed human-readable expression.
-
-    Return the prettified version of AST as a string.
+    The actual prettification logic lives here.
 
     """
 
@@ -117,3 +113,20 @@ def prettify_rec(ast: term.AST,
 
         case _:
             raise ValueError("Fatal: wrong AST 'kind' field")
+
+
+def prettify(ast: term.AST) -> str:
+    """Create a human-readable lambda expression from AST.
+
+   Since the AST is constructed using DeBruijn indices, the original
+   local variable names are discarded, and so synthetic names are used
+   for the reconstructed human-readable expression.
+
+   Return the prettified version of AST as a string.
+
+   """
+
+    # The set of used binders isn't used at this top-level invocation.
+    pretty, _ = prettify_rec(ast, [], 0, False, set())
+
+    return pretty

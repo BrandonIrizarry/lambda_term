@@ -1,7 +1,7 @@
 import re
 import unittest
 
-import lbd.prettify as prettify
+from lbd.prettify import prettify
 from tests.core.aux import A, F, N
 
 identity = F(N(0))
@@ -19,7 +19,7 @@ class TestPrettify(unittest.TestCase):
     def test_identity(self):
         """Test prettified identity function."""
 
-        pretty_id, _ = prettify.prettify_rec(identity, [], 0, False, set())
+        pretty_id = prettify(identity)
 
         mobj = re.fullmatch(r"\\(\w+)\.\1", pretty_id)
 
@@ -29,8 +29,7 @@ class TestPrettify(unittest.TestCase):
         """Test 'select_first', 'select_second', and 'select_third'."""
 
         for i, (ordinal, _) in enumerate(selectors.items()):
-            pretty, _ = prettify.prettify_rec(
-                selectors[ordinal], [], 0, False, set())
+            pretty = prettify(selectors[ordinal])
 
             mobj = re.fullmatch(
                 rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)
@@ -45,7 +44,7 @@ class TestUnused(unittest.TestCase):
         """Verify that argument is unused inside application."""
 
         term = F(F(F(A(N(1), N(2)))))
-        pretty, _ = prettify.prettify_rec(term, [], 0, False, set())
+        pretty = prettify(term)
 
         mobj = re.fullmatch(r"\\(\w+)\.\\(\w+)\.\\_.\(\2\n\s+\1\)", pretty)
 

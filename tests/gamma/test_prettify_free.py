@@ -3,9 +3,9 @@ import unittest
 
 import lbd.evaluate as evl
 import lbd.gamma as g
-import lbd.prettify as prettify
 import lbd.tokenize as tkz
 from lbd.error import LambdaError
+from lbd.prettify import prettify
 from tests.gamma.aux import A, F, G, N
 
 
@@ -34,7 +34,7 @@ class TestPrettifyFree(unittest.TestCase):
                        G(x_index, 2)))),
                  G(y_index, 0))
 
-        pretty, _ = prettify.prettify_rec(term, [], 0, False, set())
+        pretty = prettify(term)
         pattern = r"""\(\\(\w+)\.\\(\w+)\.\(\1\n\s+X\)\n\s+Y\)"""
 
         mobj = re.fullmatch(pattern, pretty)
