@@ -77,12 +77,18 @@ def prettify(ast: term.AST,
                                          False,
                                          used_names)
 
-            # + 2 for \ and .
+            union = {*used_left, *used_right}
+
+            # + 2 for \ and . If param is unused in 'union', then
+            # param will be set as '_', giving a total of 3 in that
+            # case.
             for param in env:
-                indent += len(param) + 2
+                if param in union:
+                    indent += len(param) + 2
+                else:
+                    indent += 3
 
             padding = " " * indent
-            union = {*used_left, *used_right}
 
             if omit_parens:
                 return f"{left}\n{padding}{right}", union
