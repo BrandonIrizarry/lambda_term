@@ -50,9 +50,6 @@ def prettify(ast: term.AST,
             while param in env:
                 param = rword.word(regex=r"[a-z]+")
 
-            # + 2 for \ and .
-            indent += len(param) + 2
-
             body, used = prettify(ast.body,
                                   [*env, param],
                                   indent,
@@ -79,6 +76,10 @@ def prettify(ast: term.AST,
                                          indent,
                                          False,
                                          used_names)
+
+            # + 2 for \ and .
+            for param in env:
+                indent += len(param) + 2
 
             padding = " " * indent
 
