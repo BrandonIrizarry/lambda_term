@@ -7,11 +7,11 @@ import lbd.term as term
 rword = RandomWord()
 
 
-def prettify(ast: term.AST,
-             env: list[str],
-             indent: int,
-             omit_parens: bool,
-             used_names: set[str]) -> tuple[str, set[str]]:
+def prettify_rec(ast: term.AST,
+                 env: list[str],
+                 indent: int,
+                 omit_parens: bool,
+                 used_names: set[str]) -> tuple[str, set[str]]:
     """Create a human-readable lambda expression from AST.
 
     Since the AST is constructed using DeBruijn indices, the original
@@ -50,11 +50,11 @@ def prettify(ast: term.AST,
             while param in env:
                 param = rword.word(regex=r"[a-z]+")
 
-            body, used = prettify(ast.body,
-                                  [*env, param],
-                                  indent,
-                                  False,
-                                  used_names)
+            body, used = prettify_rec(ast.body,
+                                      [*env, param],
+                                      indent,
+                                      False,
+                                      used_names)
 
             if param in used:
                 return f"\\{param}.{body}", {*used_names, *used}
@@ -65,17 +65,17 @@ def prettify(ast: term.AST,
             # ( adds a space of indentation
             indent += 1
 
-            left, used_left = prettify(ast.left,
-                                       env,
-                                       indent,
-                                       True,
-                                       used_names)
+            left, used_left = prettify_rec(ast.left,
+                                           env,
+                                           indent,
+                                           True,
+                                           used_names)
 
-            right, used_right = prettify(ast.right,
-                                         env,
-                                         indent,
-                                         False,
-                                         used_names)
+            right, used_right = prettify_rec(ast.right,
+                                             env,
+                                             indent,
+                                             False,
+                                             used_names)
 
             union = {*used_left, *used_right}
 
@@ -98,17 +98,17 @@ def prettify(ast: term.AST,
         case term.Assignment():
             # I know prettifying a name won't add a used name, but
             # let's leave it this way for completion.
-            name, used_in_name = prettify(ast.name,
-                                          env,
-                                          indent,
-                                          False,
-                                          used_names)
+            name, used_in_name = prettify_rec(ast.name,
+                                              env,
+                                              indent,
+                                              False,
+                                              used_names)
 
-            value, used_in_value = prettify(ast.value,
-                                            env,
-                                            indent,
-                                            False,
-                                            used_names)
+            value, used_in_value = prettify_rec(ast.value,
+                                                env,
+                                                indent,
+                                                False,
+                                                used_names)
 
             return f"<{name}, {value}>", {*used_in_name, *used_in_value}
 

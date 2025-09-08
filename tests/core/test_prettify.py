@@ -19,7 +19,7 @@ class TestPrettify(unittest.TestCase):
     def test_identity(self):
         """Test prettified identity function."""
 
-        pretty_id, _ = prettify.prettify(identity, [], 0, False, set())
+        pretty_id, _ = prettify.prettify_rec(identity, [], 0, False, set())
 
         mobj = re.fullmatch(r"\\(\w+)\.\1", pretty_id)
 
@@ -29,7 +29,7 @@ class TestPrettify(unittest.TestCase):
         """Test 'select_first', 'select_second', and 'select_third'."""
 
         for i, (ordinal, _) in enumerate(selectors.items()):
-            pretty, _ = prettify.prettify(
+            pretty, _ = prettify.prettify_rec(
                 selectors[ordinal], [], 0, False, set())
 
             mobj = re.fullmatch(
@@ -45,7 +45,7 @@ class TestUnused(unittest.TestCase):
         """Verify that argument is unused inside application."""
 
         term = F(F(F(A(N(1), N(2)))))
-        pretty, _ = prettify.prettify(term, [], 0, False, set())
+        pretty, _ = prettify.prettify_rec(term, [], 0, False, set())
 
         mobj = re.fullmatch(r"\\(\w+)\.\\(\w+)\.\\_.\(\2\n\s+\1\)", pretty)
 

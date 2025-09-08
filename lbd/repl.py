@@ -56,7 +56,7 @@ def repl():
         print()
 
         # Don't use 'used_names' return value.
-        pretty, _ = prettify.prettify(ast, [], 0, False, set())
+        pretty, _ = prettify.prettify_rec(ast, [], 0, False, set())
 
         print(pretty)
         print()
