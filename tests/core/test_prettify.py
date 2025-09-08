@@ -45,7 +45,7 @@ class TestUnused(unittest.TestCase):
         """Verify that argument is unused inside application."""
 
         term = F(F(F(A(N(1), N(2)))))
-        pretty, _ = prettify.prettify(term, [], False, set())
+        pretty, _ = prettify.prettify(term, [], 0, False, set())
 
         mobj = re.fullmatch(r"\\(\w+)\.\\(\w+)\.\\_.\(\2\n\s+\1\)", pretty)
 
