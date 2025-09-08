@@ -9,7 +9,7 @@ rword = RandomWord()
 
 def prettify(ast: term.AST,
              env: list[str],
-             level: int,
+             indent: int,
              omit_parens: bool,
              used_names: set[str]) -> tuple[str, set[str]]:
     """Create a human-readable lambda expression from AST.
@@ -51,11 +51,11 @@ def prettify(ast: term.AST,
                 param = rword.word(regex=r"[a-z]+")
 
             # + 2 for \ and .
-            level += len(param) + 2
+            indent += len(param) + 2
 
             body, used = prettify(ast.body,
                                   [*env, param],
-                                  level,
+                                  indent,
                                   False,
                                   used_names)
 
@@ -66,39 +66,39 @@ def prettify(ast: term.AST,
 
         case term.Application():
             # ( adds a space of indentation
-            level += 1
+            indent += 1
 
             left, used_left = prettify(ast.left,
                                        env,
-                                       level,
+                                       indent,
                                        True,
                                        used_names)
 
             right, used_right = prettify(ast.right,
                                          env,
-                                         level,
+                                         indent,
                                          False,
                                          used_names)
 
-            indent = " " * level
+            padding = " " * indent
 
             if omit_parens:
-                return f"{left}\n{indent}{right}", {*used_left, *used_right}
+                return f"{left}\n{padding}{right}", {*used_left, *used_right}
 
-            return f"({left}\n{indent}{right})", {*used_left, *used_right}
+            return f"({left}\n{padding}{right})", {*used_left, *used_right}
 
         case term.Assignment():
             # I know prettifying a name won't add a used name, but
             # let's leave it this way for completion.
             name, used_in_name = prettify(ast.name,
                                           env,
-                                          level,
+                                          indent,
                                           False,
                                           used_names)
 
             value, used_in_value = prettify(ast.value,
                                             env,
-                                            level,
+                                            indent,
                                             False,
                                             used_names)
 
