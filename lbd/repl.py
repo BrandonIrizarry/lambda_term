@@ -57,5 +57,10 @@ def repl():
 
         pretty = prettify.prettify(ast)
 
+        # Save the last evaluation result in '_', similar to how
+        # Python does. Note that we can use Lambda Term itself to
+        # achieve this, via an assignment expression.
+        evl.eval_raw_term(f"<_ := {pretty}>")
+
         print(pretty)
         print()
