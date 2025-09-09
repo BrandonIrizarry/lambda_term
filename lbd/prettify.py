@@ -73,13 +73,13 @@ def prettify_rec(ast: term.AST,
                                              False,
                                              used_names)
 
-            union = {*used_left, *used_right}
+            used_app = {*used_left, *used_right}
 
             # + 2 for \ and . If param is unused in 'union', then
             # param will be set as '_', giving a total of 3 in that
             # case.
             for param in env:
-                if param in union:
+                if param in used_app:
                     indent += len(param) + 2
                 else:
                     indent += 3
@@ -87,9 +87,9 @@ def prettify_rec(ast: term.AST,
             padding = " " * indent
 
             if omit_parens:
-                return f"{left}\n{padding}{right}", union
+                return f"{left}\n{padding}{right}", used_app
 
-            return f"({left}\n{padding}{right})", union
+            return f"({left}\n{padding}{right})", used_app
 
         case term.Assignment():
             # I know prettifying a name won't add a used name, but
