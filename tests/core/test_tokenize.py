@@ -37,3 +37,27 @@ class TestTokenizer(unittest.TestCase):
         ]
 
         self.assertEqual(tokens, expected)
+
+    def test_line_breaks(self):
+        """Tokenizer accepts expressions with line breaks."""
+
+        term = """
+\\u.\\x.(u
+         x)
+"""
+
+        tokens = tkz.tokenize(term)
+        expected = [
+            tkz.spec["lambda"],
+            tkz.name_t("u"),
+            tkz.spec["dot"],
+            tkz.spec["lambda"],
+            tkz.name_t("x"),
+            tkz.spec["dot"],
+            tkz.spec["left_paren"],
+            tkz.name_t("u"),
+            tkz.name_t("x"),
+            tkz.spec["right_paren"],
+        ]
+
+        self.assertEqual(expected, tokens)
