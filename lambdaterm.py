@@ -2,10 +2,8 @@
 
 import argparse
 
-import lbd.error as error
-import lbd.evaluate as evl
 import lbd.repl as repl
-import lbd.tokenize as tkz
+from load import load
 
 ap = argparse.ArgumentParser(
     description="""A lightweight programming language, based on functional paradigms."""
@@ -15,24 +13,6 @@ ap.add_argument("-l", "--load", nargs=1, default=[], help="""Execute, as well as
 defintions into REPL.""")
 
 args = ap.parse_args()
-
-
-def load(filenames: list[str]) -> str | None:
-    for filename in filenames:
-        with open(filename, "r") as f:
-            for line in f.readlines():
-                line = line.strip()
-
-                if line != "":
-                    tokens = tkz.tokenize(line)
-
-                    if isinstance(tokens, error.LambdaError):
-                        return f"in '{filename}': {tokens}"
-
-                    err = evl.eval_line(tokens)
-
-                    if isinstance(err, error.LambdaError):
-                        return f"in '{filename}': {err}"
 
 
 def main():
