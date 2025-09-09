@@ -9,9 +9,7 @@ rword = RandomWord()
 
 def prettify_rec(ast: term.AST,
                  env: list[str],
-                 indent: int,
-                 omit_parens: bool,
-                 used_names: set[str]) -> tuple[str, set[str]]:
+                 indent: int) -> str:
     """Recursive helper for 'prettify'.
 
     The actual prettification logic lives here.
@@ -27,7 +25,7 @@ def prettify_rec(ast: term.AST,
 
             if abs(env_depth) <= len(env):
                 name = env[env_depth]
-                return name, {*used_names, name}
+                return name
 
             free_idx = idx - len(env)
             free_sym = g.sym_get(free_idx)
@@ -35,7 +33,7 @@ def prettify_rec(ast: term.AST,
             if free_sym is None:
                 raise ValueError(f"Fatal: sym_get({free_idx}) failed")
 
-            return free_sym.label.upper(), used_names
+            return free_sym.label.upper()
 
         case term.Abstraction():
             # Generate a random word to use as the function parameter.
@@ -46,70 +44,43 @@ def prettify_rec(ast: term.AST,
             while param in env:
                 param = rword.word(regex=r"[a-z]+")
 
-            body, used = prettify_rec(ast.body,
-                                      [*env, param],
-                                      indent,
-                                      False,
-                                      used_names)
+            indent += len(param) + 2
 
-            if param in used:
-                return f"\\{param}.{body}", {*used_names, *used}
+            body = prettify_rec(ast.body,
+                                [*env, param],
+                                indent)
 
-            return f"\\_.{body}", {*used_names, *used}
+            return f"\\{param}.{body}"
 
         case term.Application():
             # ( adds a space of indentation
             indent += 1
 
-            left, used_left = prettify_rec(ast.left,
-                                           env,
-                                           indent,
-                                           True,
-                                           used_names)
+            left = prettify_rec(ast.left,
+                                env,
+                                indent)
 
-            right, used_right = prettify_rec(ast.right,
-                                             env,
-                                             indent,
-                                             False,
-                                             used_names)
-
-            used_app = {*used_left, *used_right}
-
-            # + 2 for \ and . If param is unused in 'union', then
-            # param will be set as '_', giving a total of 3 in that
-            # case.
-            for param in env:
-                if param in used_app:
-                    indent += len(param) + 2
-                else:
-                    indent += 3
+            right = prettify_rec(ast.right,
+                                 env,
+                                 indent)
 
             padding = " " * indent
 
-            if omit_parens:
-                return f"{left}\n{padding}{right}", used_app
-
-            return f"({left}\n{padding}{right})", used_app
+            return f"({left}\n{padding}{right})"
 
         case term.Assignment():
-            # I know prettifying a name won't add a used name, but
-            # let's leave it this way for completion.
-            name, used_in_name = prettify_rec(ast.name,
-                                              env,
-                                              indent,
-                                              False,
-                                              used_names)
+            name = prettify_rec(ast.name,
+                                env,
+                                indent)
 
-            value, used_in_value = prettify_rec(ast.value,
-                                                env,
-                                                indent,
-                                                False,
-                                                used_names)
+            value = prettify_rec(ast.value,
+                                 env,
+                                 indent)
 
-            return f"<{name}, {value}>", {*used_in_name, *used_in_value}
+            return f"<{name}, {value}>"
 
         case term.Empty():
-            return f"{ast}", used_names
+            return f"{ast}"
 
         case _:
             raise ValueError("Fatal: wrong AST 'kind' field")
@@ -118,15 +89,14 @@ def prettify_rec(ast: term.AST,
 def prettify(ast: term.AST) -> str:
     """Create a human-readable lambda expression from AST.
 
-   Since the AST is constructed using DeBruijn indices, the original
-   local variable names are discarded, and so synthetic names are used
-   for the reconstructed human-readable expression.
+    Since the AST is constructed using DeBruijn indices, the original
+    local variable names are discarded, and so synthetic names are used
+    for the reconstructed human-readable expression.
 
-   Return the prettified version of AST as a string.
+    Return the prettified version of AST as a string.
 
-   """
+    """
 
-    # The set of used binders isn't used at this top-level invocation.
-    pretty, _ = prettify_rec(ast, [], 0, False, set())
+    pretty = prettify_rec(ast, [], 0)
 
     return pretty
