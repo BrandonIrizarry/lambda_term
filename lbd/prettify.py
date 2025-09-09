@@ -7,6 +7,16 @@ import lbd.term as term
 rword = RandomWord()
 
 
+def prettify_free_symbol(name: term.Name, depth: int) -> str:
+    free_idx = name.index - depth
+    free_sym = g.sym_get(free_idx)
+
+    if free_sym is None:
+        raise ValueError(f"Fatal: sym_get({free_idx}) failed")
+
+    return free_sym.label.upper()
+
+
 def prettify_rec(ast: term.AST,
                  env: list[str],
                  indent: int) -> str:
@@ -27,13 +37,7 @@ def prettify_rec(ast: term.AST,
                 name = env[env_depth]
                 return name
 
-            free_idx = idx - len(env)
-            free_sym = g.sym_get(free_idx)
-
-            if free_sym is None:
-                raise ValueError(f"Fatal: sym_get({free_idx}) failed")
-
-            return free_sym.label.upper()
+            return prettify_free_symbol(ast, len(env))
 
         case term.Abstraction():
             # Generate a random word to use as the function parameter.
