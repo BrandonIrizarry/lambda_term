@@ -36,4 +36,7 @@
 
 # Define addition.
 <add1 rec x y := (if (iszero y) x (rec (succ x) (pred y)))>
-<add := (recursive add1)>
+<add_v1 := (recursive add1)>
+
+(\_add.<add_v2 := (recursive _add)> add1)
+(\_add.<add_v3 := (recursive _add)> \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y))))
