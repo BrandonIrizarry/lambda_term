@@ -31,12 +31,29 @@
 <recursive f := (\s.(f (s s)) \s.(f (s s)))>;
 
 # Define a function that reduces its argument to zero. #
-<zero_out1 rec x := (if (iszero x) zero (rec (pred x)))>;
+<zero_out1 rec x := (if (iszero x)
+                         zero
+                         (rec (pred x)))>;
+
 <zero_out := (recursive zero_out1)>;
 
 # Define addition. #
-<add1 rec x y := (if (iszero y) x (rec (succ x) (pred y)))>;
+<add1 rec x y := (if (iszero y)
+                      x
+                      (rec (succ x) (pred y)))>;
+
 <add_v1 := (recursive add1)>;
 
 (\_add.<add_v2 := (recursive _add)> add1);
-(\_add.<add_v3 := (recursive _add)> \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y))));
+
+#
+Here, the definition of add1 is being substituted
+in place of the label 'add1'.
+
+This does, in fact, result in a structurally differing (but semantically
+equivalent) evaluation.
+#
+(\_add.<add_v3 := (recursive _add)>
+ \rec.\x.\y.(if (iszero y)
+                 x
+                 (rec (succ x) (pred y))));
