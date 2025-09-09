@@ -1,21 +1,40 @@
+import re
+
 from lbd.error import LambdaError
-from lbd.evaluate import eval_line
-from lbd.tokenize import tokenize
+from lbd.evaluate import eval_raw_term
 
 
-def load(filenames: list[str]) -> str | None:
+def chunks(filename: str) -> list[str]:
+    """Isolate individual expressions.
+
+    Return a list of the expressions in FILENAME, with comments first
+    stripped away.
+
+    """
+
+    with open(filename, "r") as f:
+        contents = f.read().strip()
+        contents = re.sub(r"\#.+?\#", "", contents, flags=re.DOTALL)
+
+        chunks = [chunk.strip() for chunk in contents.split(";")]
+
+        # If a stray empty string makes it in at the end, remove it.
+        if chunks[-1] == "":
+            chunks.pop()
+
+        return chunks
+
+
+def load(filenames: list[str]) -> LambdaError | None:
     for filename in filenames:
-        with open(filename, "r") as f:
-            for line in f.readlines():
-                line = line.strip()
+        cks = chunks(filename)
 
-                if line != "":
-                    tokens = tokenize(line)
+        # For now, terms are only evaluated for their side-effects;
+        # hence, the result of 'eval_raw_term' isn't stored anywhere.
+        for c in cks:
+            err = eval_raw_term(c)
 
-                    if isinstance(tokens, LambdaError):
-                        return f"in '{filename}': {tokens}"
+            if isinstance(err, LambdaError):
+                return err
 
-                    err = eval_line(tokens)
-
-                    if isinstance(err, LambdaError):
-                        return f"in '{filename}': {err}"
+        return None

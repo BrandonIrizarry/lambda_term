@@ -1,42 +1,42 @@
-# Boolean-related definitions.
+# Boolean-related definitions.#
 
-<first x y := x>; <true := first>
-<second x y := y>; <false := second>
-<if cond e1 e2 := (cond e1 e2)>
-
-
-# Natural number bootstrapping definitions.
-
-<zero := \x.x>
-<iszero n := (n first)>
-<succ n := \s.(s false n)>
-<pred1 n := (n second)>
-<pred n := (if (iszero n) zero (pred1 n))>
+<first x y := x>; <true := first>;
+<second x y := y>; <false := second>;
+<if cond e1 e2 := (cond e1 e2)>;
 
 
-# Natural numbers from 1 to 10.
+# Natural number bootstrapping definitions.#
 
-<one := (succ zero)>
-<two := (succ one)>
-<three := (succ two)>
-<four := (succ three)>
-<five := (succ four)>
-<six := (succ five)>
-<seven := (succ six)>
-<eight := (succ seven)>
-<nine := (succ eight)>
-<ten := (succ nine)>
+<zero := \x.x>;
+<iszero n := (n first)>;
+<succ n := \s.(s false n)>;
+<pred1 n := (n second)>;
+<pred n := (if (iszero n) zero (pred1 n))>;
 
-# Define the Y combinator (our implementation of recursion relies on it.)
-<recursive f := (\s.(f (s s)) \s.(f (s s)))>
 
-# Define a function that reduces its argument to zero.
-<zero_out1 rec x := (if (iszero x) zero (rec (pred x)))>
-<zero_out := (recursive zero_out1)>
+# Natural numbers from 1 to 10.#
 
-# Define addition.
-<add1 rec x y := (if (iszero y) x (rec (succ x) (pred y)))>
-<add_v1 := (recursive add1)>
+<one := (succ zero)>;
+<two := (succ one)>;
+<three := (succ two)>;
+<four := (succ three)>;
+<five := (succ four)>;
+<six := (succ five)>;
+<seven := (succ six)>;
+<eight := (succ seven)>;
+<nine := (succ eight)>;
+<ten := (succ nine)>;
 
-(\_add.<add_v2 := (recursive _add)> add1)
-(\_add.<add_v3 := (recursive _add)> \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y))))
+# Define the Y combinator (our implementation of recursion relies on it.) #
+<recursive f := (\s.(f (s s)) \s.(f (s s)))>;
+
+# Define a function that reduces its argument to zero. #
+<zero_out1 rec x := (if (iszero x) zero (rec (pred x)))>;
+<zero_out := (recursive zero_out1)>;
+
+# Define addition. #
+<add1 rec x y := (if (iszero y) x (rec (succ x) (pred y)))>;
+<add_v1 := (recursive add1)>;
+
+(\_add.<add_v2 := (recursive _add)> add1);
+(\_add.<add_v3 := (recursive _add)> \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y))));
