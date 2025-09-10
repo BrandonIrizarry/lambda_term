@@ -1,6 +1,6 @@
 import re
 
-from lbd.error import LambdaError
+from lbd.error import Err, LambdaError
 from lbd.evaluate import eval_raw_term
 
 
@@ -31,10 +31,12 @@ def load(filenames: list[str]) -> LambdaError | None:
 
         # For now, terms are only evaluated for their side-effects;
         # hence, the result of 'eval_raw_term' isn't stored anywhere.
-        for c in cks:
+        for i, c in enumerate(cks):
             err = eval_raw_term(c)
 
             if isinstance(err, LambdaError):
-                return err
+                header = f"chunk {i}, expression '{c}':"
+                bars = "-" * len(header)
+                return LambdaError(Err.UNSPECIFIED, f"{header}\n{bars}\n{str(err)}")
 
         return None
