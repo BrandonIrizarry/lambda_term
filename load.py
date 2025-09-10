@@ -14,7 +14,7 @@ def chunks(filename: str) -> list[str]:
 
     with open(filename, "r") as f:
         contents = f.read().strip()
-        contents = re.sub(r"\#.+?\#", "", contents, flags=re.DOTALL)
+        contents = re.sub(r"#.+?#", "", contents, flags=re.DOTALL)
 
         chunks = [chunk.strip() for chunk in contents.split(";")]
 
