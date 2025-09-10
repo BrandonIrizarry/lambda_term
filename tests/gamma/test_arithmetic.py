@@ -2,7 +2,6 @@ import unittest
 
 import lbd.evaluate as evl
 import lbd.gamma as g
-import lbd.tokenize as tkz
 from lbd.error import LambdaError
 from tests.gamma.aux import F, N
 
@@ -11,8 +10,10 @@ class TestNaturalNumbers(unittest.TestCase):
     def setUp(self):
         prelude = [
             "<zero := \\x.x>",
-            "<first x y := x>; <true := first>",
-            "<second x y := y>; <false := second>",
+            "<first x y := x>",
+            "<true := first>",
+            "<second x y := y>",
+            "<false := second>",
             "<iszero n := (n first)>",
             "<succ n := \\s.(s false n)>",
             "<if cond e1 e2 := (cond e1 e2)>",
@@ -24,10 +25,7 @@ class TestNaturalNumbers(unittest.TestCase):
         ]
 
         for line in prelude:
-            tokens = tkz.tokenize(line)
-            assert not isinstance(tokens, LambdaError)
-
-            ast = evl.eval_line(tokens)
+            ast = evl.eval_raw_term(line)
             assert not isinstance(ast, LambdaError)
 
     def tearDown(self):

@@ -3,7 +3,6 @@ import unittest
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
-import lbd.tokenize as tkz
 from lbd.error import LambdaError
 from tests.gamma.aux import A, F, G, N, S
 
@@ -38,7 +37,8 @@ class TestAssignmentBasics(unittest.TestCase):
         """Test that a free name can be redefined."""
 
         program = [
-            "<a := \\x.x>; <b := \\x.x>",
+            "<a := \\x.x>",
+            "<b := \\x.x>",
             "(a b)",
             "<a := \\x.\\y.x>",
             "(a a b)",
@@ -49,10 +49,7 @@ class TestAssignmentBasics(unittest.TestCase):
         ast = None
 
         for line in program:
-            tokens = tkz.tokenize(line)
-            assert not isinstance(tokens, LambdaError)
-
-            ast = evl.eval_line(tokens)
+            ast = evl.eval_raw_term(line)
             assert not isinstance(ast, LambdaError)
 
         self.assertEqual(F(N(0)), ast)
@@ -102,11 +99,11 @@ class TestAssignmentBasics(unittest.TestCase):
     def test_delayed_assignment(self):
         """Make sure that abstraction delays an assignment."""
 
-        term = "\\x.<foo := \\x.\\y.x>; foo"
-        tokens = tkz.tokenize(term)
-        assert not isinstance(tokens, LambdaError)
+        term1 = "\\x.<foo := \\x.\\y.x>"
+        term2 = "foo"
 
-        self.assertRaises(ValueError, evl.eval_line, tokens)
+        evl.eval_raw_term(term1)
+        self.assertRaises(ValueError, evl.eval_raw_term, term2)
 
 
 class TestDepth(unittest.TestCase):
@@ -122,14 +119,13 @@ class TestDepth(unittest.TestCase):
         g.clear_gamma()
 
     def test_parse(self):
-        decl = "<x := \\x.x>; <y := \\x.x>"
+        decl1 = "<x := \\x.x>"
+        decl2 = "<y := \\x.x>"
         term = "(\\u.\\v.(u x) y)"
 
         # Populate gamma.
-        tokens = tkz.tokenize(decl)
-        assert not isinstance(tokens, LambdaError)
-
-        evl.eval_line(tokens)
+        evl.eval_raw_term(decl1)
+        evl.eval_raw_term(decl2)
 
         # Evaluate the main term here.
         ast = evl.eval_raw_term(term)

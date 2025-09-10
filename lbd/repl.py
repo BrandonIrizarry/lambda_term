@@ -2,10 +2,8 @@ import atexit
 import os
 import readline
 
-import lbd.error as err
 import lbd.evaluate as evl
 import lbd.prettify as prettify
-import lbd.tokenize as tkz
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -39,15 +37,7 @@ def repl():
         if repl_input == "":
             continue
 
-        tokens = tkz.tokenize(repl_input)
-
-        if isinstance(tokens, err.LambdaError):
-            print(tokens)
-            continue
-
-        # 'eval_line' specifically supports chaining multiple lambda
-        # terms on the same line using ';'.
-        ast = evl.eval_line(tokens)
+        ast = evl.eval_raw_term(repl_input)
 
         if isinstance(ast, Exception):
             print(ast)
