@@ -9,12 +9,11 @@ class Tk(enum.Enum):
     """
 
     ASSIGN = (enum.auto(), ":=")
+    DEF = (enum.auto(), "def")
     DOT = (enum.auto(), ".")
     ERROR = (enum.auto(), "")
     LAMBDA = (enum.auto(), "\\")
-    LEFT_ANGLE = (enum.auto(), "<")
     LEFT_PAREN = (enum.auto(), "(")
     NAME = (enum.auto(), "")
-    RIGHT_ANGLE = (enum.auto(), ">")
     RIGHT_PAREN = (enum.auto(), ")")
     SPACE = (enum.auto(), "")

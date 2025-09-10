@@ -12,7 +12,7 @@ class TestAssignmentBasics(unittest.TestCase):
         g.clear_gamma()
 
     def test_top_level_assignment(self):
-        term = "<x := \\x.x>"
+        term = "def x := \\x.x"
 
         ast = evl.eval_raw_term(term)
 
@@ -37,12 +37,12 @@ class TestAssignmentBasics(unittest.TestCase):
         """Test that a free name can be redefined."""
 
         program = [
-            "<a := \\x.x>",
-            "<b := \\x.x>",
+            "def a := \\x.x",
+            "def b := \\x.x",
             "(a b)",
-            "<a := \\x.\\y.x>",
+            "def a := \\x.\\y.x",
             "(a a b)",
-            "<a := \\x.\\y.y>",
+            "def a := \\x.\\y.y",
             "(a a b)",
         ]
 
@@ -56,10 +56,10 @@ class TestAssignmentBasics(unittest.TestCase):
 
     def test_inner_assignment(self):
         terms = [
-            "<a := \\x.x>",
-            "<b := \\f.\\a.(f a)>",
-            "<c := \\x.\\y.y>",
-            "(<select_first := \\x.\\y.x> c a)",
+            "def a := \\x.x",
+            "def b := \\f.\\a.(f a)",
+            "def c := \\x.\\y.y",
+            "(def select_first := \\x.\\y.x c a)",
             "(select_first a b)",
         ]
 
@@ -78,7 +78,7 @@ class TestAssignmentBasics(unittest.TestCase):
 
         """
 
-        term = "(<first := \\x.\\y.x> <second := \\x.\\y.y>)"
+        term = "(def first := \\x.\\y.x def second := \\x.\\y.y)"
         ast = evl.eval_raw_term(term)
 
         self.assertNotIsInstance(ast, err.LambdaError)
@@ -99,7 +99,7 @@ class TestAssignmentBasics(unittest.TestCase):
     def test_delayed_assignment(self):
         """Make sure that abstraction delays an assignment."""
 
-        term1 = "\\x.<foo := \\x.\\y.x>"
+        term1 = "\\x.def foo := \\x.\\y.x"
         term2 = "foo"
 
         evl.eval_raw_term(term1)
@@ -119,8 +119,8 @@ class TestDepth(unittest.TestCase):
         g.clear_gamma()
 
     def test_parse(self):
-        decl1 = "<x := \\x.x>"
-        decl2 = "<y := \\x.x>"
+        decl1 = "def x := \\x.x"
+        decl2 = "def y := \\x.x"
         term = "(\\u.\\v.(u x) y)"
 
         # Populate gamma.
@@ -150,7 +150,7 @@ class TestAssignmentParameters(unittest.TestCase):
         g.clear_gamma()
 
     def test_identity(self):
-        term = "<identity x := x>"
+        term = "def identity x := x"
 
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
@@ -158,7 +158,7 @@ class TestAssignmentParameters(unittest.TestCase):
         self.assertEqual(ast, F(N(0)))
 
     def test_apply(self):
-        term = "<apply f a := (f a)>"
+        term = "def apply f a := (f a)"
 
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
@@ -167,7 +167,7 @@ class TestAssignmentParameters(unittest.TestCase):
                                     N(0)))))
 
     def test_if(self):
-        term = "<if cond e1 e2 := (cond e1 e2)>"
+        term = "def if cond e1 e2 := (cond e1 e2)"
 
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)

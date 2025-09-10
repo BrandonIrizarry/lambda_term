@@ -192,7 +192,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     """
 
-    # Skip the left angle bracket.
+    # Skip 'def'.
     i += 1
 
     # Get the token corresponding to the assignee.
@@ -237,6 +237,8 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Skip the assignment token.
     i += 1
 
+    # This is where we parse the assigned value.
+
     # We should proceed with caution here, since, if subenv is
     # non-empty, it _must_ be wrapped accordingly with Abstractions,
     # else all the inner names will have the wrong depth values.
@@ -246,14 +248,6 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
         return _ast
 
     ast, i = _ast
-
-    # Check that we have, in fact, landed on the closing angle
-    # bracket.
-    if tkz.get(tokens, i) != tkz.spec["right_angle"]:
-        return err.error(tokens, i, err.Err.MISSING)
-
-    # Advance past the closing angle bracket
-    i += 1
 
     # If params is non-empty, then by now, the environment of the
     # assigned value will have conveniently been extended.
@@ -286,7 +280,7 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
         case tdef.Tk.NAME:
             return parse_name(tokens, i, env)
 
-        case tdef.Tk.LEFT_ANGLE:
+        case tdef.Tk.DEF:
             return parse_assignment(tokens, i, env)
 
         case _:

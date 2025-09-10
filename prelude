@@ -1,50 +1,50 @@
 # Boolean-related definitions.#
 
-<first x y := x>; <true := first>;
-<second x y := y>; <false := second>;
-<if cond e1 e2 := (cond e1 e2)>;
+def first x y := x; def true := first;
+def second x y := y; def false := second;
+def if cond e1 e2 := (cond e1 e2);
 
 
 # Natural number bootstrapping definitions.#
 
-<zero := \x.x>;
-<iszero n := (n first)>;
-<succ n := \s.(s false n)>;
-<pred1 n := (n second)>;
-<pred n := (if (iszero n) zero (pred1 n))>;
+def zero := \x.x;
+def iszero n := (n first);
+def succ n := \s.(s false n);
+def pred1 n := (n second);
+def pred n := (if (iszero n) zero (pred1 n));
 
 
 # Natural numbers from 1 to 10.#
 
-<one := (succ zero)>;
-<two := (succ one)>;
-<three := (succ two)>;
-<four := (succ three)>;
-<five := (succ four)>;
-<six := (succ five)>;
-<seven := (succ six)>;
-<eight := (succ seven)>;
-<nine := (succ eight)>;
-<ten := (succ nine)>;
+def one := (succ zero);
+def two := (succ one);
+def three := (succ two);
+def four := (succ three);
+def five := (succ four);
+def six := (succ five);
+def seven := (succ six);
+def eight := (succ seven);
+def nine := (succ eight);
+def ten := (succ nine);
 
 # Define the Y combinator (our implementation of recursion relies on it.) #
-<recursive f := (\s.(f (s s)) \s.(f (s s)))>;
+def recursive f := (\s.(f (s s)) \s.(f (s s)));
 
 # Define a function that reduces its argument to zero. #
-<zero_out1 rec x := (if (iszero x)
+def zero_out1 rec x := (if (iszero x)
                          zero
-                         (rec (pred x)))>;
+                         (rec (pred x)));
 
-<zero_out := (recursive zero_out1)>;
+def zero_out := (recursive zero_out1);
 
 # Define addition. #
-<add1 rec x y := (if (iszero y)
+def add1 rec x y := (if (iszero y)
                       x
-                      (rec (succ x) (pred y)))>;
+                      (rec (succ x) (pred y)));
 
-<add_v1 := (recursive add1)>;
+def add_v1 := (recursive add1);
 
-(\_add.<add_v2 := (recursive _add)> add1);
+(\_add.def add_v2 := (recursive _add) add1);
 
 #
 Here, the definition of add1 is being substituted
@@ -53,7 +53,7 @@ in place of the label 'add1'.
 This does, in fact, result in a structurally differing (but semantically
 equivalent) evaluation.
 #
-(\_add.<add_v3 := (recursive _add)>
+(\_add.def add_v3 := (recursive _add)
  \rec.\x.\y.(if (iszero y)
                  x
                  (rec (succ x) (pred y))));

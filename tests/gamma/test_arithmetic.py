@@ -9,19 +9,19 @@ from tests.gamma.aux import F, N
 class TestNaturalNumbers(unittest.TestCase):
     def setUp(self):
         prelude = [
-            "<zero := \\x.x>",
-            "<first x y := x>",
-            "<true := first>",
-            "<second x y := y>",
-            "<false := second>",
-            "<iszero n := (n first)>",
-            "<succ n := \\s.(s false n)>",
-            "<if cond e1 e2 := (cond e1 e2)>",
-            "<pred1 n := (n second)>",
-            "<pred n := (if (iszero n) zero (pred1 n))>",
-            "<one := (succ zero)>",
-            "<two := (succ one)>",
-            "<three := (succ two)>",
+            "def zero := \\x.x",
+            "def first x y := x",
+            "def true := first",
+            "def second x y := y",
+            "def false := second",
+            "def iszero n := (n first)",
+            "def succ n := \\s.(s false n)",
+            "def if cond e1 e2 := (cond e1 e2)",
+            "def pred1 n := (n second)",
+            "def pred n := (if (iszero n) zero (pred1 n))",
+            "def one := (succ zero)",
+            "def two := (succ one)",
+            "def three := (succ two)",
         ]
 
         for line in prelude:
