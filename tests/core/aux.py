@@ -11,3 +11,6 @@ def F(body: term.AST) -> term.Abstraction:
 
 def N(index: int) -> term.Name:
     return term.Name(index)
+
+
+IDENTITY = F(N(0))
