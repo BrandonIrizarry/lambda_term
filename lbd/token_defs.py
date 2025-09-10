@@ -1,4 +1,14 @@
 import enum
+from dataclasses import dataclass
+
+
+@dataclass
+class Entry:
+    """A Tk entry."""
+
+    index: int
+    label: str
+    is_keyword: bool = False
 
 
 class Tk(enum.Enum):
@@ -8,12 +18,12 @@ class Tk(enum.Enum):
 
     """
 
-    ASSIGN = (enum.auto(), ":=")
-    DEF = (enum.auto(), "def")
-    DOT = (enum.auto(), ".")
-    ERROR = (enum.auto(), "")
-    LAMBDA = (enum.auto(), "\\")
-    LEFT_PAREN = (enum.auto(), "(")
-    NAME = (enum.auto(), "")
-    RIGHT_PAREN = (enum.auto(), ")")
-    SPACE = (enum.auto(), "")
+    ASSIGN = Entry(enum.auto(), ":=")
+    DEF = Entry(enum.auto(), "def", True)
+    DOT = Entry(enum.auto(), ".")
+    ERROR = Entry(enum.auto(), "")
+    LAMBDA = Entry(enum.auto(), "\\")
+    LEFT_PAREN = Entry(enum.auto(), "(")
+    NAME = Entry(enum.auto(), "")
+    RIGHT_PAREN = Entry(enum.auto(), ")")
+    SPACE = Entry(enum.auto(), "")

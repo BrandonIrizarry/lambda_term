@@ -71,7 +71,7 @@ def define_spec() -> dict[str, Token]:
 
     for tk in tdef.Tk:
         enum_name = tk.name.lower()
-        (_, enum_value) = tk.value
+        enum_value = tk.value.label
 
         if enum_value != "":
             spec[enum_name] = new_token(tk, enum_value)
