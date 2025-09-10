@@ -47,9 +47,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
 
     # What follows is our implementation of sugar for writing
     # applications, given that these are left-associative. For
-    # example, (a b c d e) becomes ((((a b) c) d) e). Otherwise, here
-    # we would simply stop here, skipping the right paren and
-    # returning the newly created application-term.
+    # example, (a b c d e) becomes ((((a b) c) d) e).
     #
     # Here I use an iterative version of fold-left, where 'partial' is
     # the accumulator variable.
