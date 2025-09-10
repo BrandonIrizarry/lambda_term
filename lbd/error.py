@@ -16,6 +16,7 @@ class Err(enum.StrEnum):
     MISSING = "Missing token"
     MISSING_ASSIGN_OP = "Missing assignment operator"
     MISSING_DOT = "Missing dot after parameter name"
+    MISSING_IN_OP = "Missing 'in'"
     MISSING_PARAM = "Missing parameter"
     TRAILING_GARBAGE = "Trailing garbage"
     UNASSIGNED = "Unassigned free symbol"

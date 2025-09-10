@@ -268,6 +268,85 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     return term.Assignment(name, ast), i
 
 
+def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
+    """Parse let expressions.
+
+    A let expression is of the form
+
+    let Name := Term in Term
+
+    Note that 'let' and 'in' are keywords.
+
+    This is basically returned as an application of the form
+
+    (\\name.body value)
+
+    The idea is to use logic similar to that used by
+    'parse_abstraction' to construct the left hand side, and then
+    parse the value so that we can return the final application term.
+
+    """
+
+    # Skip 'let'.
+    i += 1
+
+    # Record the let-name as a parameter inside env, as we would in
+    # the case of an abstraction.
+    param = tkz.get(tokens, i)
+
+    if param is None:
+        return err.error(tokens, i, err.Err.MISSING_PARAM)
+
+    if param.kind != tdef.Tk.NAME:
+        return err.error(tokens, i, err.Err.INVALID_PARAM)
+
+    subenv = [param.value]
+
+    # Advance; check if we're on an assignment token.
+    i += 1
+
+    assign = tkz.get(tokens, i)
+
+    if assign is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if assign != tkz.spec["assign"]:
+        return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
+
+    # Advance to land on the let-value, and parse it using the
+    # original env.
+    i += 1
+
+    _value = parse_term(tokens, i, env)
+
+    if isinstance(_value, err.LambdaError):
+        return _value
+
+    value, i = _value
+
+    # Now we should be on 'in'.
+    in_t = tkz.get(tokens, i)
+
+    if in_t is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if in_t != tkz.spec["in"]:
+        return err.error(tokens, i, err.Err.MISSING_IN_OP)
+
+    # Skip the 'in', to move on to the body.
+    i += 1
+
+    # Note that here we finally use the subenv defined previously.
+    _body = parse_term(tokens, i, [*env, *subenv])
+
+    if isinstance(_body, err.LambdaError):
+        return _body
+
+    body, i = _body
+
+    return term.Application(term.Abstraction(body), value), i
+
+
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Parse TOKENS, given index I and environment ENV.
 
@@ -293,6 +372,9 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
         case tdef.Tk.DEF:
             return parse_assignment(tokens, i, env)
+
+        case tdef.Tk.LET:
+            return parse_let(tokens, i, env)
 
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)

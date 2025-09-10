@@ -39,6 +39,12 @@ class Tk(enum.Enum):
     LAMBDA = TkEntry(enum.auto(), "\\", r"\\")
     LEFT_PAREN = TkEntry(enum.auto(), "(", r"\(")
     RIGHT_PAREN = TkEntry(enum.auto(), ")", r"\)")
+    LET = TkEntry(enum.auto(), "let", r"let\s")
+    IN = TkEntry(enum.auto(), "in", r"in\s")
+
+    # The following entries must occur at the end, since the main
+    # tokenization regex defines tokens according to the order of the
+    # entries in this enum.
     SPACE = TkEntry(enum.auto(), "", r"[\t ]")
     NAME = TkEntry(enum.auto(), "", IDENTIFIER, True)
     ERROR = TkEntry(enum.auto(), "", r".", True)
