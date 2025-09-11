@@ -4,7 +4,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Entry:
-    """A Tk entry."""
+    """A Tk entry.
+
+    INDEX: used by the enum to uniquify entries.
+
+    LABEL: what the token looks like in source code.
+
+    Some tokens have their labels set to the empty string, since they
+    are eventually associated with dynamically set values.
+
+    IS_KEYWORD: whether this entry is associated with a keyword, for
+    example 'DEF'.
+
+    """
 
     index: int
     label: str
