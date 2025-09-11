@@ -21,7 +21,6 @@ class TkEntry:
     """
 
     index: int
-    name: str
     label: str
     regex: str
 
@@ -33,12 +32,12 @@ class Tk(enum.Enum):
 
     """
 
-    ASSIGN = TkEntry(enum.auto(), "assign", ":=", r":=")
-    DEF = TkEntry(enum.auto(), "def", "def", r"def")
-    DOT = TkEntry(enum.auto(), "dot", ".", r"\.")
-    ERROR = TkEntry(enum.auto(), "error", "", r".")
-    LAMBDA = TkEntry(enum.auto(), "lambda", "\\", r"\\")
-    LEFT_PAREN = TkEntry(enum.auto(), "left_paren", "(", r"\(")
-    NAME = TkEntry(enum.auto(), "name", "", IDENTIFIER)
-    RIGHT_PAREN = TkEntry(enum.auto(), "right_paren", ")", r"\)")
-    SPACE = TkEntry(enum.auto(), "space", "", r"[\t ]")
+    ASSIGN = TkEntry(enum.auto(), ":=", r":=")
+    DEF = TkEntry(enum.auto(), "def", r"def")
+    DOT = TkEntry(enum.auto(), ".", r"\.")
+    ERROR = TkEntry(enum.auto(), "", r".")
+    LAMBDA = TkEntry(enum.auto(), "\\", r"\\")
+    LEFT_PAREN = TkEntry(enum.auto(), "(", r"\(")
+    NAME = TkEntry(enum.auto(), "", IDENTIFIER)
+    RIGHT_PAREN = TkEntry(enum.auto(), ")", r"\)")
+    SPACE = TkEntry(enum.auto(), "", r"[\t ]")
