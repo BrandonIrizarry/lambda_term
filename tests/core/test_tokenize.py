@@ -1,7 +1,7 @@
 import unittest
 
-import lbd.tokenize as tkz
 from lbd.token_defs import Tk
+from lbd.tokenize import Token, tokenize
 
 
 class TestTokenizer(unittest.TestCase):
@@ -10,12 +10,12 @@ class TestTokenizer(unittest.TestCase):
     def test_identity(self):
         raw_term = "\\x.x"
 
-        tokens = tkz.tokenize(raw_term)
+        tokens = tokenize(raw_term)
         expected = [
-            tkz.spec["lambda"],
-            tkz.Token(Tk.NAME, "x"),
-            tkz.spec["dot"],
-            tkz.Token(Tk.NAME, "x"),
+            Token(Tk.LAMBDA),
+            Token(Tk.NAME, "x"),
+            Token(Tk.DOT),
+            Token(Tk.NAME, "x"),
         ]
 
         self.assertEqual(tokens,  expected)
@@ -23,13 +23,13 @@ class TestTokenizer(unittest.TestCase):
     def test_application(self):
         raw_term = "(select_first x y)"
 
-        tokens = tkz.tokenize(raw_term)
+        tokens = tokenize(raw_term)
         expected = [
-            tkz.spec["left_paren"],
-            tkz.Token(Tk.NAME, "select_first"),
-            tkz.Token(Tk.NAME, "x"),
-            tkz.Token(Tk.NAME, "y"),
-            tkz.spec["right_paren"],
+            Token(Tk.LEFT_PAREN),
+            Token(Tk.NAME, "select_first"),
+            Token(Tk.NAME, "x"),
+            Token(Tk.NAME, "y"),
+            Token(Tk.RIGHT_PAREN),
         ]
 
         self.assertEqual(tokens, expected)
@@ -42,18 +42,18 @@ class TestTokenizer(unittest.TestCase):
          x)
 """
 
-        tokens = tkz.tokenize(term)
+        tokens = tokenize(term)
         expected = [
-            tkz.spec["lambda"],
-            tkz.Token(Tk.NAME, "u"),
-            tkz.spec["dot"],
-            tkz.spec["lambda"],
-            tkz.Token(Tk.NAME, "x"),
-            tkz.spec["dot"],
-            tkz.spec["left_paren"],
-            tkz.Token(Tk.NAME, "u"),
-            tkz.Token(Tk.NAME, "x"),
-            tkz.spec["right_paren"],
+            Token(Tk.LAMBDA),
+            Token(Tk.NAME, "u"),
+            Token(Tk.DOT),
+            Token(Tk.LAMBDA),
+            Token(Tk.NAME, "x"),
+            Token(Tk.DOT),
+            Token(Tk.LEFT_PAREN),
+            Token(Tk.NAME, "u"),
+            Token(Tk.NAME, "x"),
+            Token(Tk.RIGHT_PAREN),
         ]
 
         self.assertEqual(expected, tokens)
