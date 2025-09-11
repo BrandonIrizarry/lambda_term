@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Entry:
+class TkEntry:
     """A Tk entry.
 
     INDEX: used by the enum to uniquify entries.
@@ -30,12 +30,12 @@ class Tk(enum.Enum):
 
     """
 
-    ASSIGN = Entry(enum.auto(), ":=")
-    DEF = Entry(enum.auto(), "def", True)
-    DOT = Entry(enum.auto(), ".")
-    ERROR = Entry(enum.auto(), "")
-    LAMBDA = Entry(enum.auto(), "\\")
-    LEFT_PAREN = Entry(enum.auto(), "(")
-    NAME = Entry(enum.auto(), "")
-    RIGHT_PAREN = Entry(enum.auto(), ")")
-    SPACE = Entry(enum.auto(), "")
+    ASSIGN = TkEntry(enum.auto(), ":=")
+    DEF = TkEntry(enum.auto(), "def", True)
+    DOT = TkEntry(enum.auto(), ".")
+    ERROR = TkEntry(enum.auto(), "")
+    LAMBDA = TkEntry(enum.auto(), "\\")
+    LEFT_PAREN = TkEntry(enum.auto(), "(")
+    NAME = TkEntry(enum.auto(), "")
+    RIGHT_PAREN = TkEntry(enum.auto(), ")")
+    SPACE = TkEntry(enum.auto(), "")
