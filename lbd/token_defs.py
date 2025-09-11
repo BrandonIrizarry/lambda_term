@@ -23,6 +23,7 @@ class TkEntry:
     index: int
     label: str
     regex: str
+    is_dynamic: bool = False
 
 
 class Tk(enum.Enum):
@@ -35,9 +36,9 @@ class Tk(enum.Enum):
     ASSIGN = TkEntry(enum.auto(), ":=", r":=")
     DEF = TkEntry(enum.auto(), "def", r"def")
     DOT = TkEntry(enum.auto(), ".", r"\.")
-    ERROR = TkEntry(enum.auto(), "", r".")
+    ERROR = TkEntry(enum.auto(), "", r".", True)
     LAMBDA = TkEntry(enum.auto(), "\\", r"\\")
     LEFT_PAREN = TkEntry(enum.auto(), "(", r"\(")
-    NAME = TkEntry(enum.auto(), "", IDENTIFIER)
+    NAME = TkEntry(enum.auto(), "", IDENTIFIER, True)
     RIGHT_PAREN = TkEntry(enum.auto(), ")", r"\)")
     SPACE = TkEntry(enum.auto(), "", r"[\t ]")

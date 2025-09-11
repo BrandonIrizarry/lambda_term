@@ -55,11 +55,8 @@ def define_spec() -> dict[str, Token]:
     spec: dict[str, Token] = dict()
 
     for tk in tdef.Tk:
-        enum_name = tk.name.lower()
-        enum_value = tk.value.label
-
-        if enum_value != "":
-            spec[enum_name] = Token(tk)
+        if not tk.value.is_dynamic:
+            spec[tk.name.lower()] = Token(tk)
 
     # Singleton cases. These must be added after spec is initialized with
     # the other, constant tokens. This is because the order in which
