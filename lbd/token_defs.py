@@ -1,6 +1,8 @@
 import enum
 from dataclasses import dataclass
 
+IDENTIFIER = r"[A-Za-z_]\w*"
+
 
 @dataclass
 class TkEntry:
@@ -19,8 +21,9 @@ class TkEntry:
     """
 
     index: int
+    name: str
     label: str
-    is_keyword: bool = False
+    regex: str
 
 
 class Tk(enum.Enum):
@@ -30,12 +33,12 @@ class Tk(enum.Enum):
 
     """
 
-    ASSIGN = TkEntry(enum.auto(), ":=")
-    DEF = TkEntry(enum.auto(), "def", True)
-    DOT = TkEntry(enum.auto(), ".")
-    ERROR = TkEntry(enum.auto(), "")
-    LAMBDA = TkEntry(enum.auto(), "\\")
-    LEFT_PAREN = TkEntry(enum.auto(), "(")
-    NAME = TkEntry(enum.auto(), "")
-    RIGHT_PAREN = TkEntry(enum.auto(), ")")
-    SPACE = TkEntry(enum.auto(), "")
+    ASSIGN = TkEntry(enum.auto(), "assign", ":=", r":=")
+    DEF = TkEntry(enum.auto(), "def", "def", r"def")
+    DOT = TkEntry(enum.auto(), "dot", ".", r"\.")
+    ERROR = TkEntry(enum.auto(), "error", "", r".")
+    LAMBDA = TkEntry(enum.auto(), "lambda", "\\", r"\\")
+    LEFT_PAREN = TkEntry(enum.auto(), "left_paren", "(", r"\(")
+    NAME = TkEntry(enum.auto(), "name", "", IDENTIFIER)
+    RIGHT_PAREN = TkEntry(enum.auto(), "right_paren", ")", r"\)")
+    SPACE = TkEntry(enum.auto(), "space", "", r"[\t ]")

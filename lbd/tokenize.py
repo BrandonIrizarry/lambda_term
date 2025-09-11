@@ -4,36 +4,21 @@ from dataclasses import dataclass
 import lbd.error as err
 import lbd.token_defs as tdef
 
-IDENT = r"[A-Za-z_]\w*"
-
 
 @dataclass
 class Token():
     kind: tdef.Tk
-    name: str
-    value: str
-    regex: str
+    value: str | None = None
+
+    def __post_init__(self):
+        if self.value is None:
+            self.value = self.kind.value.label
 
     def __str__(self):
         if self.kind == tdef.Tk.NAME:
             return f"name({self.value})"
 
-        return f"{self.name}"
-
-
-def new_token(kind: tdef.Tk, value: str, regex: str | None = None) -> Token:
-    if regex is None:
-        regex = re.escape(value)
-
-    return Token(kind, kind.name.lower(), value, regex)
-
-
-def name_t(value: str):
-    return new_token(tdef.Tk.NAME, value, IDENT)
-
-
-def error_t(value: str):
-    return new_token(tdef.Tk.ERROR, value, r".")
+        return f"{self.kind.name}"
 
 
 def get(tokens: list[Token], pos: int) -> Token | None:
@@ -74,14 +59,14 @@ def define_spec() -> dict[str, Token]:
         enum_value = tk.value.label
 
         if enum_value != "":
-            spec[enum_name] = new_token(tk, enum_value)
+            spec[enum_name] = Token(tk)
 
     # Singleton cases. These must be added after spec is initialized with
     # the other, constant tokens. This is because the order in which
     # entries are added to spec affects the regex-based tokenization used.
-    spec["space"] = new_token(tdef.Tk.SPACE, " ", r"[\t ]")
-    spec["name"] = new_token(tdef.Tk.NAME, "", IDENT)
-    spec["error"] = new_token(tdef.Tk.ERROR, "", r".")
+    spec["space"] = Token(tdef.Tk.SPACE)
+    spec["name"] = Token(tdef.Tk.NAME)
+    spec["error"] = Token(tdef.Tk.ERROR)
 
     return spec
 
@@ -90,7 +75,8 @@ spec = define_spec()
 
 
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
-    pats = [f"(?P<{label}>{t.regex})" for (label, t) in spec.items()]
+    pats = [f"(?P<{label}>{t.kind.value.regex})" for (
+        label, t) in spec.items()]
     token_pattern = "|".join(pats)
 
     tokens: list[Token] = []
@@ -115,9 +101,11 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
 
         match label:
             case "name":
-                tokens.append(name_t(value))
+                new_name = Token(tdef.Tk.NAME, value)
+                tokens.append(new_name)
             case "error":
-                tokens.append(error_t(value))
+                new_error = Token(tdef.Tk.ERROR, value)
+                tokens.append(new_error)
 
                 if error_idx is None:
                     error_idx = i

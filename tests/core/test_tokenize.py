@@ -1,15 +1,11 @@
 import unittest
 
-import lbd.token_defs as tdef
 import lbd.tokenize as tkz
+from lbd.token_defs import Tk
 
 
 class TestTokenizer(unittest.TestCase):
-    def test_new_token(self):
-        error = tkz.new_token(tdef.Tk.ERROR, "", r".")
-        raw_error = tkz.Token(tdef.Tk.ERROR, "error", "", r".")
-
-        self.assertEqual(raw_error, error)
+    """Lambda Term tokenizer module."""
 
     def test_identity(self):
         raw_term = "\\x.x"
@@ -17,9 +13,9 @@ class TestTokenizer(unittest.TestCase):
         tokens = tkz.tokenize(raw_term)
         expected = [
             tkz.spec["lambda"],
-            tkz.name_t("x"),
+            tkz.Token(Tk.NAME, "x"),
             tkz.spec["dot"],
-            tkz.name_t("x"),
+            tkz.Token(Tk.NAME, "x"),
         ]
 
         self.assertEqual(tokens,  expected)
@@ -30,9 +26,9 @@ class TestTokenizer(unittest.TestCase):
         tokens = tkz.tokenize(raw_term)
         expected = [
             tkz.spec["left_paren"],
-            tkz.name_t("select_first"),
-            tkz.name_t("x"),
-            tkz.name_t("y"),
+            tkz.Token(Tk.NAME, "select_first"),
+            tkz.Token(Tk.NAME, "x"),
+            tkz.Token(Tk.NAME, "y"),
             tkz.spec["right_paren"],
         ]
 
@@ -49,14 +45,14 @@ class TestTokenizer(unittest.TestCase):
         tokens = tkz.tokenize(term)
         expected = [
             tkz.spec["lambda"],
-            tkz.name_t("u"),
+            tkz.Token(Tk.NAME, "u"),
             tkz.spec["dot"],
             tkz.spec["lambda"],
-            tkz.name_t("x"),
+            tkz.Token(Tk.NAME, "x"),
             tkz.spec["dot"],
             tkz.spec["left_paren"],
-            tkz.name_t("u"),
-            tkz.name_t("x"),
+            tkz.Token(Tk.NAME, "u"),
+            tkz.Token(Tk.NAME, "x"),
             tkz.spec["right_paren"],
         ]
 
