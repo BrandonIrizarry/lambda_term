@@ -51,26 +51,6 @@ def find(tokens: list[Token], token: Token) -> int | None:
     return None
 
 
-def define_spec() -> dict[str, Token]:
-    spec: dict[str, Token] = dict()
-
-    for tk in tdef.Tk:
-        if not tk.value.is_dynamic:
-            spec[tk.name.lower()] = Token(tk)
-
-    # Singleton cases. These must be added after spec is initialized with
-    # the other, constant tokens. This is because the order in which
-    # entries are added to spec affects the regex-based tokenization used.
-    spec["space"] = Token(tdef.Tk.SPACE)
-    spec["name"] = Token(tdef.Tk.NAME)
-    spec["error"] = Token(tdef.Tk.ERROR)
-
-    return spec
-
-
-spec = define_spec()
-
-
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
     pats = []
 

@@ -63,7 +63,7 @@ def parse_application(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
         if t is None:
             return err.error(tokens, i, err.Err.INCOMPLETE)
 
-        if t == tkz.spec["right_paren"]:
+        if t == tkz.Token(tdef.Tk.RIGHT_PAREN):
             break
 
         # The next token signifies the beginning of the next _term_ in
@@ -106,6 +106,9 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
+    if param.value is None:
+        raise ValueError(f"Fatal: '{param}' value field was never set")
+
     subenv = [param.value]
 
     # Advance; we should then be on the dot.
@@ -116,7 +119,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if dot is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if dot != tkz.spec["dot"]:
+    if dot != tkz.Token(tdef.Tk.DOT):
         return err.error(tokens, i, err.Err.MISSING_DOT)
 
     # Advance; we should then be at the start of the body.
@@ -154,18 +157,21 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     is_local = False
     index = 0
 
-    t = tkz.get(tokens, i)
+    name_t = tkz.get(tokens, i)
 
-    if t is None:
+    if name_t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if t.kind != tdef.Tk.NAME:
+    if name_t.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
-    value = t.value
+    value = name_t.value
+
+    if value is None:
+        raise ValueError(f"Fatal: value field for '{name_t}' was never set")
 
     for local_name in reversed(env):
-        if local_name == value:
+        if local_name == name_t.value:
             is_local = True
             break
 
@@ -204,10 +210,15 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     if name_t.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_NAME)
 
+    value = name_t.value
+
+    if value is None:
+        raise ValueError(f"Fatal: value field for '{name_t}' was never set")
+
     # Declare the new free name at parse time, since its DeBruijn
     # index, which depends on its gamma value, needs to be known
     # before beta reduction occurs.
-    idx = gamma.sym_declare(name_t.value)
+    idx = gamma.sym_declare(value)
     name = term.Name(idx + len(env))
 
     # Skip the name manually, since we didn't (nor couldn't) use
@@ -217,7 +228,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Scan for any parameters given.
     params = []
 
-    while (p := tkz.get(tokens, i)) != tkz.spec["assign"]:
+    while (p := tkz.get(tokens, i)) != tkz.Token(tdef.Tk.ASSIGN):
         if p is None:
             return err.error(tokens, i, err.Err.INCOMPLETE)
 
