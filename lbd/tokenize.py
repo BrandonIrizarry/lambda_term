@@ -82,8 +82,15 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
 
         match label:
             case "name":
-                new_name = Token(tdef.Tk.NAME, value)
-                tokens.append(new_name)
+                if value in tdef.keywords:
+                    # Swap in the actual keyword (which will match the
+                    # Tk label field!) In this manner, the parser can
+                    # then flag the illegal use of such a token.
+                    new_keyword = Token(tdef.Tk[f"{value.upper()}"])
+                    tokens.append(new_keyword)
+                else:
+                    new_name = Token(tdef.Tk.NAME, value)
+                    tokens.append(new_name)
             case "error":
                 new_error = Token(tdef.Tk.ERROR, value)
                 tokens.append(new_error)
