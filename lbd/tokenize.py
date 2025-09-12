@@ -116,7 +116,8 @@ def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
             case "comment":
                 break
             case _:
-                tokens.append(spec[label])
+                tk = tdef.Tk[f"{label.upper()}"]
+                tokens.append(Token(tk))
 
         i += 1
 
