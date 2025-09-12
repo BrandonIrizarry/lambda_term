@@ -72,8 +72,12 @@ spec = define_spec()
 
 
 def tokenize(raw_term: str) -> "list[Token] | err.LambdaError":
-    pats = [f"(?P<{label}>{t.kind.value.regex})" for (
-        label, t) in spec.items()]
+    pats = []
+
+    for tk in tdef.Tk:
+        subpat = f"(?P<{tk.name.lower()}>{tk.value.regex})"
+        pats.append(subpat)
+
     token_pattern = "|".join(pats)
 
     tokens: list[Token] = []
