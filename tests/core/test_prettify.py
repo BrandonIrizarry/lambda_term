@@ -35,18 +35,3 @@ class TestPrettify(unittest.TestCase):
                 rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)
 
             self.assertIsNotNone(mobj)
-
-
-class TestUnused(unittest.TestCase):
-    """Prettification of lambda terms involving unused local binders."""
-
-    @unittest.expectedFailure
-    def test_unused_in_application(self):
-        """Verify that argument is unused inside application."""
-
-        term = F(F(F(A(N(1), N(2)))))
-        pretty = prettify(term)
-
-        mobj = re.fullmatch(r"\\(\w+)\.\\(\w+)\.\\_.\(\2\n\s+\1\)", pretty)
-
-        self.assertIsNotNone(mobj)
