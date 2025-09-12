@@ -34,7 +34,7 @@ class Tk(enum.Enum):
     """
 
     ASSIGN = TkEntry(enum.auto(), ":=", r":=")
-    DEF = TkEntry(enum.auto(), "def", r"def")
+    DEF = TkEntry(enum.auto(), "def", r"def\s")
     DOT = TkEntry(enum.auto(), ".", r"\.")
     LAMBDA = TkEntry(enum.auto(), "\\", r"\\")
     LEFT_PAREN = TkEntry(enum.auto(), "(", r"\(")
