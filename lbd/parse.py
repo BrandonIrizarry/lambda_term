@@ -300,6 +300,9 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     if param.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
+    if param.value is None:
+        raise ValueError(f"Fatal: value field for '{param}' was never set")
+
     subenv = [param.value]
 
     # Advance; check if we're on an assignment token.
@@ -310,7 +313,7 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     if assign is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if assign != tkz.spec["assign"]:
+    if assign != tkz.Token(tdef.Tk.ASSIGN):
         return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
 
     # Advance to land on the let-value, and parse it using the
@@ -330,7 +333,7 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     if in_t is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
-    if in_t != tkz.spec["in"]:
+    if in_t != tkz.Token(tdef.Tk.IN):
         return err.error(tokens, i, err.Err.MISSING_IN_OP)
 
     # Skip the 'in', to move on to the body.
