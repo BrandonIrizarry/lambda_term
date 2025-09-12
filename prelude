@@ -38,22 +38,5 @@ def zero_out1 rec x := (if (iszero x)
 def zero_out := (recursive zero_out1);
 
 # Define addition. #
-def add1 rec x y := (if (iszero y)
-                      x
-                      (rec (succ x) (pred y)));
-
-def add_v1 := (recursive add1);
-
-(\_add.def add_v2 := (recursive _add) add1);
-
-#
-Here, the definition of add1 is being substituted
-in place of the label 'add1'.
-
-This does, in fact, result in a structurally differing (but semantically
-equivalent) evaluation.
-#
-(\_add.def add_v3 := (recursive _add)
- \rec.\x.\y.(if (iszero y)
-                 x
-                 (rec (succ x) (pred y))));
+let _add := \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y)))
+    in def add := (recursive _add);
