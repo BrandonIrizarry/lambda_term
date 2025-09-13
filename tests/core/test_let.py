@@ -2,7 +2,7 @@ import unittest
 
 from lbd.error import LambdaError
 from lbd.evaluate import eval_raw_term
-from tests.core.aux import FIRST, IDENTITY
+from tests.core.aux import FIRST, IDENTITY, SECOND
 
 
 class TestLet(unittest.TestCase):
@@ -31,3 +31,13 @@ let first := \\x.\\y.x in
         assert not isinstance(ast, LambdaError)
 
         self.assertEqual(FIRST, ast)
+
+    def test_assignment_params_nested(self):
+        """Assignment params but involving nested let-expressions."""
+
+        term = "let first x y := x in let second x y := y in (first second first)"
+
+        ast = eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(SECOND, ast)
