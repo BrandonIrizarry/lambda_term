@@ -14,3 +14,5 @@ def N(index: int) -> term.Name:
 
 
 IDENTITY = F(N(0))
+FIRST = F(F(N(1)))
+SECOND = F(F(N(0)))
