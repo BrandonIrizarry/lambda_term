@@ -38,5 +38,5 @@ def zero_out1 rec x := (if (iszero x)
 def zero_out := (recursive zero_out1);
 
 # Define addition. #
-let _add := \rec.\x.\y.(if (iszero y) x (rec (succ x) (pred y)))
+let _add rec x y := (if (iszero y) x (rec (succ x) (pred y)))
     in def add := (recursive _add);
