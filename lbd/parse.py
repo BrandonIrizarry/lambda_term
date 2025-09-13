@@ -262,7 +262,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     # If params is non-empty, then by now, the environment of the
     # assigned value will have conveniently been extended.
-    for p in params:
+    for _ in params:
         ast = term.Abstraction(ast)
 
     return term.Assignment(name, ast), i
