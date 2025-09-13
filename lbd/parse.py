@@ -189,6 +189,23 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     return err.error(tokens, i, err.Err.UNASSIGNED)
 
 
+def scan_assignment_params(tokens: list[tkz.Token], i: int) -> tuple[list[tkz.Token], int] | err.LambdaError:
+    params: list[tkz.Token] = []
+
+    while (p := tkz.get(tokens, i)) != tkz.Token(tdef.Tk.ASSIGN):
+        if p is None:
+            return err.error(tokens, i, err.Err.INCOMPLETE)
+
+        if p.kind != tdef.Tk.NAME:
+            return err.error(tokens, i, err.Err.INVALID_PARAM)
+
+        params.append(p)
+
+        i += 1
+
+    return params, i
+
+
 def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
     """Parse an assignment statement.
 
@@ -226,24 +243,16 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     i += 1
 
     # Scan for any parameters given.
-    params = []
+    _params = scan_assignment_params(tokens, i)
 
-    while (p := tkz.get(tokens, i)) != tkz.Token(tdef.Tk.ASSIGN):
-        if p is None:
-            return err.error(tokens, i, err.Err.INCOMPLETE)
+    if isinstance(_params, err.LambdaError):
+        return _params
 
-        if p.kind != tdef.Tk.NAME:
-            return err.error(tokens, i, err.Err.INVALID_PARAM)
+    params, i = _params
 
-        params.append(p)
-
-        i += 1
-
-    # Preemptively create a subenv. Note that, if params is empty,
-    # subenv will be empty, and consequently [*env, *subenv] will
-    # equal simply env, corresponding to the parameterless case, as
-    # desired.
-    subenv = [p.value for p in params]
+    # To satisfy the type checker, we need to add the "is not None"
+    # check.
+    subenv = [p.value for p in params if p.value is not None]
 
     # Skip the assignment token.
     i += 1
