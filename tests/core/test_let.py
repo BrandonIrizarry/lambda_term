@@ -2,7 +2,7 @@ import unittest
 
 from lbd.error import LambdaError
 from lbd.evaluate import eval_raw_term
-from tests.core.aux import IDENTITY
+from tests.core.aux import FIRST, IDENTITY
 
 
 class TestLet(unittest.TestCase):
@@ -22,3 +22,12 @@ let first := \\x.\\y.x in
         assert not isinstance(ast, LambdaError)
 
         self.assertEqual(IDENTITY, ast)
+
+    def test_assignment_params(self):
+        """Assignment params for let-expressions."""
+
+        term = "let apply f a := (f a) in (apply \\x.x \\x.\\y.x)"
+        ast = eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(FIRST, ast)
