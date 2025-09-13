@@ -175,3 +175,12 @@ class TestAssignmentParameters(unittest.TestCase):
         self.assertEqual(ast, F(F(F(A(A(N(2),
                                         N(1)),
                                       N(0))))))
+
+    def test_mixed(self):
+        """Left-hand parameters and right-hand binders."""
+
+        term = "def first x := \\_.x"
+        ast = evl.eval_raw_term(term)
+        assert not isinstance(ast, LambdaError)
+
+        self.assertEqual(ast, F(F(N(1))))
