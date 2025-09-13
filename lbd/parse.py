@@ -301,24 +301,35 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
 
     # Record the let-name as a parameter inside env, as we would in
     # the case of an abstraction.
-    param = tkz.get(tokens, i)
+    let_param = tkz.get(tokens, i)
 
-    if param is None:
+    if let_param is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if param.kind != tdef.Tk.NAME:
+    if let_param.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    if param.value is None:
-        raise ValueError(f"Fatal: value field for '{param}' was never set")
+    if let_param.value is None:
+        raise ValueError(f"Fatal: value field for '{let_param}' was never set")
 
-    subenv = [param.value]
+    let_subenv = [let_param.value]
 
-    # Advance; check if we're on an assignment token.
+    # Advance past the let-name, then scan for parameters!
     i += 1
 
+    _letvar_params = scan_assignment_params(tokens, i)
+
+    if isinstance(_letvar_params, err.LambdaError):
+        return _letvar_params
+
+    letvar_params, i = _letvar_params
+
+    # 'scan_assignment_params' should've left us on the assignment
+    # token.
     assign = tkz.get(tokens, i)
 
+    # FIXME: we should check for this in a nicer way inside
+    # 'scan_assignment_params'.
     if assign is None:
         return err.error(tokens, i, err.Err.INCOMPLETE)
 
@@ -326,15 +337,22 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
         return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
 
     # Advance to land on the let-value, and parse it using the
-    # original env.
+    # original env, but this time extended with the scanned
+    # parameters.
     i += 1
 
-    _value = parse_term(tokens, i, env)
+    value_subenv = [lp.value for lp in letvar_params if lp.value is not None]
+    _value = parse_term(tokens, i, [*env, *value_subenv])
 
     if isinstance(_value, err.LambdaError):
         return _value
 
     value, i = _value
+
+    # Wrap the parsed let-value in the appropriate number of
+    # abstractions, as we do with assignment.
+    for _ in letvar_params:
+        value = term.Abstraction(value)
 
     # Now we should be on 'in'.
     in_t = tkz.get(tokens, i)
@@ -349,7 +367,7 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     i += 1
 
     # Note that here we finally use the subenv defined previously.
-    _body = parse_term(tokens, i, [*env, *subenv])
+    _body = parse_term(tokens, i, [*env, *let_subenv])
 
     if isinstance(_body, err.LambdaError):
         return _body
