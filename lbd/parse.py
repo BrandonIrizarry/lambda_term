@@ -189,21 +189,44 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
     return err.error(tokens, i, err.Err.UNASSIGNED)
 
 
-def scan_assignment_params(tokens: list[tkz.Token], i: int) -> tuple[list[tkz.Token], int] | err.LambdaError:
+def scan_assignment_params(tokens: list[tkz.Token], k: int) -> tuple[list[tkz.Token], int] | err.LambdaError:
+    """Scan TOKENS for a sequence of parameters.
+
+    A parameter refers to a sugared representation of a lambda binder,
+    which occurs between some defined name and an assignment operator,
+    e.g.
+
+    def apply f a := (f a)
+
+    which the parser interprets as the expression
+
+    \\f.\\a.(f a)
+
+    being assigned to the name 'apply'.
+
+    When calling this function, K is the position of the first such
+    parameter in TOKENS.
+
+    If successful, return a tuple of TOKENS paired with the position
+    of the token immediately occurring after the last parameter. Else,
+    return an error.
+
+    """
+
     params: list[tkz.Token] = []
 
-    while (p := tkz.get(tokens, i)) != tkz.Token(tdef.Tk.ASSIGN):
+    while (p := tkz.get(tokens, k)) != tkz.Token(tdef.Tk.ASSIGN):
         if p is None:
-            return err.error(tokens, i, err.Err.INCOMPLETE)
+            return err.error(tokens, k, err.Err.INCOMPLETE)
 
         if p.kind != tdef.Tk.NAME:
-            return err.error(tokens, i, err.Err.INVALID_PARAM)
+            return err.error(tokens, k, err.Err.INVALID_PARAM)
 
         params.append(p)
 
-        i += 1
+        k += 1
 
-    return params, i
+    return params, k
 
 
 def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Assignment, int] | err.LambdaError:
