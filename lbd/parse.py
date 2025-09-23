@@ -258,6 +258,10 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Declare the new free name at parse time, since its DeBruijn
     # index, which depends on its gamma value, needs to be known
     # before beta reduction occurs.
+    #
+    # Currently, this is being done _before_ the right-hand term of
+    # this assignment expression is parsed. This, in and of itself,
+    # enables recursive definitions!
     idx = gamma.sym_declare(value)
     name = term.Name(idx + len(env))
 
