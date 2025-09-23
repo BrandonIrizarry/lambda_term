@@ -273,7 +273,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
 
     params, i = _params
 
-    # To satisfy the type checker, we need to add the "is not None"
+    # To satisfy the Python type checker, we need to add the "is not None"
     # check.
     subenv = [p.value for p in params if p.value is not None]
 
