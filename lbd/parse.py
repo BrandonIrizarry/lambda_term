@@ -283,8 +283,12 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # This is where we parse the assigned value.
     #
     # We should proceed with caution here, since, if subenv is
-    # non-empty, it _must_ be wrapped accordingly with Abstractions,
-    # else all the inner names will have the wrong depth values.
+    # non-empty, it _must_ at some point be wrapped accordingly with
+    # Abstractions, else all the inner names will have the wrong depth
+    # values.
+    #
+    # Currently, we do this a few lines down from here, in this same
+    # function.
     _ast = parse_term(tokens, i, [*env, *subenv])
 
     if isinstance(_ast, err.LambdaError):
