@@ -280,7 +280,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # Skip the assignment token.
     i += 1
 
-    # This is where we parse the assigned value.
+    # PARSE THE VALUE TO BE ASSIGNED.
     #
     # We should proceed with caution here, since, if subenv is
     # non-empty, it _must_ at some point be wrapped accordingly with
