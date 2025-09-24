@@ -72,3 +72,67 @@ class TestStepwiseOmega(unittest.TestCase):
             current = beta.beta_reduce(A(intermediate, identity))
 
         self.assertEqual(self.stop_point, current)
+
+
+class TestChapterTwoPointTwo(unittest.TestCase):
+    """Based on beta-reduction exercises found in Section 2.2.
+
+    The book is An Introduction to Programming Through Lambda
+    Calculus, by Greg Michaelson (Dover, 2011)
+
+    We skip part (c) because it's a trick question: the given
+    expression evaluates to Ω.
+
+    """
+
+    def test_a(self):
+        """Exercise 2.2, part (a)."""
+
+        term = A(A(F(F(A(N(0),
+                         N(1)))),
+                   F(F(N(1)))),
+                 F(N(0)))
+
+        ast = beta.beta_reduce(term)
+
+        self.assertEqual(select_first, ast)
+
+    def test_b(self):
+        """Exercise 2.2, part (b)."""
+
+        term = A(A(A(F(F(F(A(A(N(2),
+                               N(1)),
+                             N(0))))),
+                     applyfn),
+                   identity),
+                 identity)
+
+        ast = beta.beta_reduce(term)
+
+        self.assertEqual(identity, ast)
+
+    def test_d(self):
+        """Exercise 2.2, part (d)."""
+
+        term = A(A(applyfn,
+                   A(identity,
+                     select_first)),
+                 identity)
+
+        ast = beta.beta_reduce(term)
+
+        self.assertEqual(select_second, ast)
+
+    def test_e(self):
+        """Exercise 2.2, part (e)."""
+
+        term = A(A(A(F(F(F(A(N(2),
+                             A(N(1),
+                               N(0)))))),
+                     self_apply),
+                   select_second),
+                 select_first)
+
+        ast = beta.beta_reduce(term)
+
+        self.assertEqual(identity, ast)
