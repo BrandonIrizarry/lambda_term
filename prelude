@@ -4,6 +4,10 @@ def first x y := x; def true := first;
 def second x y := y; def false := second;
 def if cond e1 e2 := (cond e1 e2);
 
+# Note that boolean values are selector functions,
+  so this works. #
+def not x := (x false true);
+
 
 # Natural number bootstrapping definitions.#
 
@@ -27,5 +31,54 @@ def eight := (succ seven);
 def nine := (succ eight);
 def ten := (succ nine);
 
-# Define addition. #
+# Addition. #
 def add x y := (if (iszero y) x (add (succ x) (pred y)));
+
+# Subtraction. #
+def sub x y := (if (iszero y) x (sub (pred x) (pred y)));
+
+# Multiplication. #
+def mult x y := (if (iszero y) zero (add x (mult x (pred y))));
+
+# Comparison functions. #
+let abs_diff x y := (add (sub x y) (sub y x))
+    in def equal x y := (iszero (abs_diff x y));
+
+def greater x y := (not (iszero (sub x y)));
+
+def greater_or_equal x y := (iszero (sub y x));
+
+def less x y := (not (greater_or_equal x y));
+
+def less_or_equal x y := (not (greater x y));
+
+# Y combinator. #
+def recursive f := (\s.(f (s s)) \s.(f (s s)));
+
+# Division.
+
+For now, since our implementation of 'let' doesn't support recursion
+out of the box like 'def' does, we need 'recursive' to implement
+'div1' as a recursive function.
+
+Note that, under normal order beta reduction, the results of 'div' can
+look somewhat wonky (even if we define a naive version of 'div' that
+doesn't check division by zero). Because of this, 'equal' comes in
+handy for checking whether a computed quotient is equal to its
+expected value, viz.:
+
+(equal four (div eight two)) => true
+
+For example, in the REPL, we'd get a raw lambda calculus
+representation of 'first', e.g. '\eggcream.\cherry.eggcream'.
+
+#
+
+let _div1 rec x y := (if (greater y x)
+                          zero
+                          (succ (rec (sub x y)
+                                      y)))
+    in let div1 := (recursive _div1)
+        in def div x y := (if (iszero y)
+                               zero
+                               (div1 x y));
