@@ -3,6 +3,8 @@ import lbd.gamma as gamma
 import lbd.term as term
 import lbd.token_defs as tdef
 import lbd.tokenize as tkz
+from lbd.prettify import prettify
+from lbd.term import A, F, N
 
 # What follows is a series of parse functions for a recursive-descent
 # apparatus. As a rule, they accept the tokenized expression (given as
@@ -408,6 +410,109 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     return term.Application(term.Abstraction(body), value), i
 
 
+def parse_letrec(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
+    """Parse letrec expressions.
+
+    These are let expressions that allow recursive references to the
+    label being defined.
+
+    """
+
+    # Skip 'letrec'.
+    i += 1
+
+    # Record the let-name as a parameter inside env, as we would in
+    # the case of an abstraction.
+    let_name = tkz.get(tokens, i)
+
+    if let_name is None:
+        return err.error(tokens, i, err.Err.MISSING_PARAM)
+
+    if let_name.kind != tdef.Tk.NAME:
+        return err.error(tokens, i, err.Err.INVALID_PARAM)
+
+    if let_name.value is None:
+        raise ValueError(f"Fatal: value field for '{let_name}' was never set")
+
+    let_subenv = [let_name.value]
+
+    # Advance past the let-name, then scan for parameters!
+    i += 1
+
+    # Since this is letrec, we want to shadow the let-name as a
+    # recursive parameter inside the let-value.
+    letvar_params = [let_name]
+
+    _aparams = scan_assignment_params(tokens, i)
+
+    if isinstance(_aparams, err.LambdaError):
+        return _aparams
+
+    # Add the real params on top of the letrec "shadower".
+    letvar_params.extend(_aparams[0])
+    i = _aparams[1]
+
+    # 'scan_assignment_params' should've left us on the assignment
+    # token.
+    assign = tkz.get(tokens, i)
+
+    # FIXME: we should check for this in a nicer way inside
+    # 'scan_assignment_params'.
+    if assign is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if assign != tkz.Token(tdef.Tk.ASSIGN):
+        return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
+
+    # Advance to land on the let-value, and parse it using the
+    # original env, but this time extended with the scanned
+    # parameters.
+    i += 1
+
+    value_subenv = [lp.value for lp in letvar_params if lp.value is not None]
+    _value = parse_term(tokens, i, [*env, *value_subenv])
+
+    if isinstance(_value, err.LambdaError):
+        return _value
+
+    value, i = _value
+
+    # Wrap the parsed let-value in the appropriate number of
+    # abstractions, as we do with assignment.
+    for _ in letvar_params:
+        value = term.Abstraction(value)
+
+    # Now we should be on 'in'.
+    in_t = tkz.get(tokens, i)
+
+    if in_t is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if in_t != tkz.Token(tdef.Tk.IN):
+        return err.error(tokens, i, err.Err.MISSING_IN_OP)
+
+    # Skip the 'in', to move on to the body.
+    i += 1
+
+    # Note that here we finally use the subenv defined previously.
+    # For letrec, inject $label.
+    _body = parse_term(tokens, i, [*env, *let_subenv])
+
+    if isinstance(_body, err.LambdaError):
+        return _body
+
+    body, i = _body
+
+    let_exp = A(F(A(F(body),
+                    A(term.RECURSIVE,
+                      N(0)))),
+                value)
+
+    print(prettify(let_exp))
+
+    return let_exp, i
+
+
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Parse TOKENS, given index I and environment ENV.
 
@@ -436,6 +541,9 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
         case tdef.Tk.LET:
             return parse_let(tokens, i, env)
+
+        case tdef.Tk.LETREC:
+            return parse_letrec(tokens, i, env)
 
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)

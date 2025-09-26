@@ -50,5 +50,24 @@ class Assignment(AST):
         return f"<{self.name}, {self.value}>"
 
 
+# Define convenient aliases.
+#
+# Since I use these all the time in the tests, I've gotten used to
+# them as standard terminology.
+N = Name
+F = Abstraction
+A = Application
+
 # Keep this around for now, since some tests use it.
-IDENTITY = Abstraction(Name(0))
+IDENTITY = F(N(0))
+
+# The Y combinator, used to define 'letrec'.
+#
+# \f.(\s.(f (s s)) \s.(f (s s)))
+#
+RECURSIVE = F(A(F(A(N(1),
+                    A(N(0),
+                      N(0)))),
+                F(A(N(1),
+                    A(N(0),
+                      N(0))))))
