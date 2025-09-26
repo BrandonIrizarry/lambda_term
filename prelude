@@ -82,3 +82,12 @@ let _div1 rec x y := (if (greater y x)
         in def div x y := (if (iszero y)
                                zero
                                (div1 x y));
+
+let div1 div1 x y := (if (greater y x)
+                                     zero
+                                     (succ (div1 (sub x y)
+                                        y)))
+        in (\div1.def tdiv x y := (if (iszero y)
+                               zero
+                               (div1 x y))
+            (recursive div1));
