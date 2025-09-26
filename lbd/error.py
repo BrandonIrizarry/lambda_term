@@ -26,10 +26,11 @@ class Err(enum.StrEnum):
 @dataclass
 class LambdaError(Exception):
     kind: Err
+    pos: int
     message: str
 
     def __str__(self):
-        return self.message
+        return f"Position {self.pos}: {self.message}"
 
 
 TOKEN_JOIN = " "
@@ -37,8 +38,6 @@ TOKEN_JOIN = " "
 
 def error(tokens: list["tkz.Token"], pos: int, kind: Err) -> LambdaError:
     """Report a parsing error."""
-
-    what = f"Position {pos}: {kind.value}"
 
     # Create a simple "debug" view of the given tokens.
     view = []
@@ -57,6 +56,5 @@ def error(tokens: list["tkz.Token"], pos: int, kind: Err) -> LambdaError:
     if outside:
         view.append("???")
 
-    what += f"\n{TOKEN_JOIN.join(view)}"
-
-    return LambdaError(kind, what)
+    message = f"{kind.value}\n{TOKEN_JOIN.join(view)}"
+    return LambdaError(kind, pos, message)

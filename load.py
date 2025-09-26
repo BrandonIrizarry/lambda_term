@@ -37,6 +37,6 @@ def load(filenames: list[str]) -> LambdaError | None:
             if isinstance(err, LambdaError):
                 header = f"chunk {i}, expression '{c}':"
                 bars = "-" * len(header)
-                return LambdaError(Err.UNSPECIFIED, f"{header}\n{bars}\n{str(err)}")
+                return LambdaError(Err.UNSPECIFIED, i, f"{header}\n{bars}\n{str(err)}")
 
         return None
