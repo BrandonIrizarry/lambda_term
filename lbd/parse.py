@@ -494,21 +494,26 @@ def parse_letrec(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.
     # Skip the 'in', to move on to the body.
     i += 1
 
-    # Note that here we finally use the subenv defined previously.
-    # For letrec, inject $label.
-    _body = parse_term(tokens, i, [*env, *let_subenv])
+    # EXPERIMENTAL
+    _body = parse_term(tokens, i, env)
 
     if isinstance(_body, err.LambdaError):
         return _body
 
     body, i = _body
 
+    # Wrap the body in an abstraction, but don't specify a parameter.
+    body = term.Abstraction(body)
+    body = term.Application(
+        body, term.Application(term.RECURSIVE, term.Name(k)))
+    body = term.Abstraction(body)
+
     let_exp = A(F(A(F(body),
                     A(term.RECURSIVE,
-                      N(0)))),
+                      N(len(env) + 1)))),
                 value)
 
-    print(prettify(let_exp))
+#    print(prettify(let_exp))
 
     return let_exp, i
 
