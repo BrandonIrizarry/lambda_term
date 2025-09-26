@@ -332,18 +332,18 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
 
     # Record the let-name as a parameter inside env, as we would in
     # the case of an abstraction.
-    let_param = tkz.get(tokens, i)
+    let_name = tkz.get(tokens, i)
 
-    if let_param is None:
+    if let_name is None:
         return err.error(tokens, i, err.Err.MISSING_PARAM)
 
-    if let_param.kind != tdef.Tk.NAME:
+    if let_name.kind != tdef.Tk.NAME:
         return err.error(tokens, i, err.Err.INVALID_PARAM)
 
-    if let_param.value is None:
-        raise ValueError(f"Fatal: value field for '{let_param}' was never set")
+    if let_name.value is None:
+        raise ValueError(f"Fatal: value field for '{let_name}' was never set")
 
-    let_subenv = [let_param.value]
+    let_subenv = [let_name.value]
 
     # Advance past the let-name, then scan for parameters!
     i += 1
