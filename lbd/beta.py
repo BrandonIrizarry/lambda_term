@@ -102,6 +102,15 @@ def beta_reduce(ast: term.AST) -> term.AST:
     """
 
     match ast:
+        # Some remarks on the Name() case:
+        #
+        # 1. The only time a name is evaluated is when it's a free
+        # name, since otherwise we'd still be at the stage of
+        # evaluating the abstraction binding that name.
+        #
+        # 2. Since the name isn't underneath any abstractions at this
+        # point, its scope-depth is zero, and so its index as a Name
+        # is precisely its index into gamma.
         case term.Name():
             if (idx := ast.index) < 0:
                 raise ValueError(
