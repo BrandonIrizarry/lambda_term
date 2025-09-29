@@ -83,6 +83,7 @@ def bind(global_name: str, term: AST) -> Abstraction:
                 rec(term.right, depth)
 
             case Assignment():
+                rec(term.name, depth)
                 rec(term.value, depth)
 
             case Empty():
