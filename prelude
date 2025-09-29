@@ -57,9 +57,9 @@ def recursive f := (\s.(f (s s)) \s.(f (s s)));
 
 # Division.
 
-For now, since our implementation of 'let' doesn't support recursion
-out of the box like 'def' does, we need 'recursive' to implement
-'div1' as a recursive function.
+Since 'let' doesn't automatically support recursion as in the case of
+'def', it was necessary to implement 'letrec', which uses 'recursive'
+under the hood.
 
 Note that, under normal order beta reduction, the results of 'div' can
 look somewhat wonky (even if we define a naive version of 'div' that
@@ -74,23 +74,5 @@ representation of 'first', e.g. '\eggcream.\cherry.eggcream'.
 
 #
 
-let _div1 rec x y := (if (greater y x)
-                          zero
-                          (succ (rec (sub x y)
-                                      y)))
-    in let div1 := (recursive _div1)
-        in def div x y := (if (iszero y)
-                               zero
-                               (div1 x y));
-
-let div1 div1 x y := (if (greater y x)
-                                     zero
-                                     (succ (div1 (sub x y)
-                                        y)))
-        in (\div1.def tdiv x y := (if (iszero y)
-                               zero
-                               (div1 x y))
-            (recursive div1));
-
 letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)))
-in def rdiv x y := (if (iszero y) zero (div1 x y))
+in def div x y := (if (iszero y) zero (div1 x y))
