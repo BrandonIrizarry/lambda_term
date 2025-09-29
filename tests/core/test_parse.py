@@ -7,7 +7,7 @@ import lbd.tokenize as tkz
 from tests.core.aux import A, F, N
 
 
-def parse_raw(raw_term: str) -> tuple[term.AST, int] | Exception:
+def parse_raw(raw_term: str) -> tuple[term.AST, int] | err.LambdaError:
     tokens = tkz.tokenize(raw_term)
 
     if isinstance(tokens, Exception):
@@ -133,16 +133,8 @@ class TestIllegalTerms(unittest.TestCase):
 
         exception = parse_raw(raw_term)
 
-        # Before, this raw_term was invalid because 'x' was parsed as
-        # a name, and so the '.x' counted as trailing garbage (because
-        # no valid token is present to spur on the parsing process.)
-        # Now, it's invalid simply because the lack of the lambda
-        # keyword means there's no longer a local binding for x,
-        # meaning that it's an undeclared free symbol.
-        if isinstance(exception, err.LambdaError):
-            self.assertEqual(exception.kind, err.Err.UNASSIGNED)
-        else:
-            self.assertIsInstance(exception, err.LambdaError)
+        assert isinstance(exception, err.LambdaError)
+        self.assertEqual(exception.kind, err.Err.TRAILING_GARBAGE)
 
     def test_extra_dots(self):
         raw_term = "\\x..x"

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import lbd.term as term
 
@@ -7,7 +7,7 @@ import lbd.term as term
 class Symbol():
     """Associate a symbol name with its definition."""
     label: str
-    ast: term.AST | None = None
+    ast: term.AST = field(default_factory=lambda: term.Empty())
 
 
 _gamma: list[Symbol] = []

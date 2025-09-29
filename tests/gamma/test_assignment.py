@@ -4,7 +4,7 @@ import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
 from lbd.error import LambdaError
-from tests.gamma.aux import A, F, G, N, S
+from tests.gamma.aux import A, E, F, G, N, S
 
 
 class TestAssignmentBasics(unittest.TestCase):
@@ -103,7 +103,10 @@ class TestAssignmentBasics(unittest.TestCase):
         term2 = "foo"
 
         evl.eval_raw_term(term1)
-        self.assertRaises(ValueError, evl.eval_raw_term, term2)
+        empty = evl.eval_raw_term(term2)
+        assert not isinstance(empty, LambdaError)
+
+        self.assertEqual(E(), empty)
 
 
 class TestDepth(unittest.TestCase):

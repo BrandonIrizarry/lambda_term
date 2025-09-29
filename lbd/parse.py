@@ -181,12 +181,9 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
         return term.Name(index), i + 1
 
     # Treat the token as referring to a free name.
-    free_index = gamma.gamma(value)
+    free_index = gamma.sym_declare(value)
 
-    if free_index is not None:
-        return term.Name(free_index + len(env)), i + 1
-
-    return err.error(tokens, i, err.Err.UNASSIGNED)
+    return term.Name(free_index + len(env)), i + 1
 
 
 def scan_assignment_params(tokens: list[tkz.Token], k: int) -> tuple[list[tkz.Token], int] | err.LambdaError:

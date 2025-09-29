@@ -25,3 +25,7 @@ def G(index: int, depth: int) -> term.Name:
 
 def S(name: term.Name, value: term.AST) -> term.Assignment:
     return term.Assignment(name, value)
+
+
+def E() -> term.Empty:
+    return term.Empty()

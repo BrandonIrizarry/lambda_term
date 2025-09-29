@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import lbd.gamma as gamma
+
 
 @dataclass
 class AST():
@@ -50,5 +52,46 @@ class Assignment(AST):
         return f"<{self.name}, {self.value}>"
 
 
-# Keep this around for now, since some tests use it.
+def bind(global_name: str, term: AST) -> Abstraction:
+    target_index = gamma.gamma(global_name)
+
+    if target_index is None:
+        raise ValueError(f"Fatal: non-global name {global_name}")
+
+    def rec(term: AST, depth: int) -> None:
+        match term:
+            case Name():
+                # 'idx' is the index into gamma. If it's equal to the
+                # target index, we've found an instance of the global
+                # variable we wish to bind. If global (i.e. idx >= 0),
+                # we still need to increment its index because we're
+                # going to wrap the whole expression in an
+                # abstraction, and so need to preserve the invariant
+                # INDEX - DEPTH == GAMMA.
+                idx = term.index - depth
+
+                if idx == target_index:
+                    term.index = depth
+                elif idx >= 0:
+                    term.index += 1
+
+            case Abstraction():
+                rec(term.body, depth + 1)
+
+            case Application():
+                rec(term.left, depth)
+                rec(term.right, depth)
+
+            case Assignment():
+                rec(term.value, depth)
+
+            case Empty():
+                pass
+
+    rec(term, 0)
+
+    return Abstraction(term)
+
+
+    # Keep this around for now, since some tests use it.
 IDENTITY = Abstraction(Name(0))
