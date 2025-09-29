@@ -45,6 +45,7 @@ class Tk(enum.Enum):
     LEFT_PAREN = TkEntry(enum.auto(), "(", r"\(")
     RIGHT_PAREN = TkEntry(enum.auto(), ")", r"\)")
     LET = TkEntry(enum.auto(), "let", r"let\s", is_keyword=True)
+    LETREC = TkEntry(enum.auto(), "letrec", r"letrec\s", is_keyword=True)
     IN = TkEntry(enum.auto(), "in", r"in\s", is_keyword=True)
 
     # The following entries must occur at the end, since the main

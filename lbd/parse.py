@@ -403,6 +403,99 @@ def parse_let(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST
     return term.Application(term.Abstraction(body), value), i
 
 
+def parse_letrec(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
+    # Skip 'letrec'.
+    i += 1
+
+    # Record the let-name as a parameter inside env, as we would in
+    # the case of an abstraction.
+    let_name = tkz.get(tokens, i)
+
+    if let_name is None:
+        return err.error(tokens, i, err.Err.MISSING_PARAM)
+
+    if let_name.kind != tdef.Tk.NAME:
+        return err.error(tokens, i, err.Err.INVALID_PARAM)
+
+    if let_name.value is None:
+        raise ValueError(f"Fatal: value field for '{let_name}' was never set")
+
+    # Advance past the let-name, then scan for parameters.
+    i += 1
+
+    _letvar_params = scan_assignment_params(tokens, i)
+
+    if isinstance(_letvar_params, err.LambdaError):
+        return _letvar_params
+
+    letvar_params, i = _letvar_params
+
+    # 'scan_assignment_params' should've left us on the assignment
+    # token.
+    assign = tkz.get(tokens, i)
+
+    # FIXME: we should check for this in a nicer way inside
+    # 'scan_assignment_params'.
+    if assign is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if assign != tkz.Token(tdef.Tk.ASSIGN):
+        return err.error(tokens, i, err.Err.MISSING_ASSIGN_OP)
+
+    # Advance to land on the let-value, and parse it using the
+    # original env, but this time extended with the scanned
+    # parameters.
+    i += 1
+
+    value_subenv_params = [
+        lp.value for lp in letvar_params if lp.value is not None]
+
+    extended_env = [*env, let_name.value, *value_subenv_params]
+
+    _value = parse_term(tokens, i, extended_env)
+
+    if isinstance(_value, err.LambdaError):
+        return _value
+
+    value, i = _value
+
+    # Wrap the parsed let-value in the appropriate number of
+    # abstractions, as we do with assignment.
+    for _ in extended_env:
+        value = term.Abstraction(value)
+
+    # Now we should be on 'in'.
+    in_t = tkz.get(tokens, i)
+
+    if in_t is None:
+        return err.error(tokens, i, err.Err.INCOMPLETE)
+
+    if in_t != tkz.Token(tdef.Tk.IN):
+        return err.error(tokens, i, err.Err.MISSING_IN_OP)
+
+    # Skip the 'in', to move on to the body.
+    i += 1
+
+    _raw_body = parse_term(tokens, i, env)
+
+    if isinstance(_raw_body, err.LambdaError):
+        return _raw_body
+
+    raw_body, i = _raw_body
+
+    idx = gamma.gamma(let_name.value)
+    assert idx is not None
+
+    body_bound = term.bind(let_name.value, raw_body)
+
+    body1 = term.Application(body_bound, term.Application(
+        term.RECURSIVE, term.Name(idx)))
+
+    body = term.bind(let_name.value, body1)
+
+    return term.Application(body, value), i
+
+
 def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AST, int] | err.LambdaError:
     """Parse TOKENS, given index I and environment ENV.
 
@@ -431,6 +524,9 @@ def parse_term(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.AS
 
         case tdef.Tk.LET:
             return parse_let(tokens, i, env)
+
+        case tdef.Tk.LETREC:
+            return parse_letrec(tokens, i, env)
 
         case _:
             return err.error(tokens, i, err.Err.MEANINGLESS)

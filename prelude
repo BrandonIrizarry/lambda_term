@@ -91,3 +91,6 @@ let div1 div1 x y := (if (greater y x)
                                zero
                                (div1 x y))
             (recursive div1));
+
+letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)))
+in def rdiv x y := (if (iszero y) zero (div1 x y))

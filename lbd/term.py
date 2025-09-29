@@ -94,5 +94,18 @@ def bind(global_name: str, term: AST) -> Abstraction:
     return Abstraction(term)
 
 
-    # Keep this around for now, since some tests use it.
-IDENTITY = Abstraction(Name(0))
+# Aliases.
+N = Name
+F = Abstraction
+A = Application
+
+# Keep this around for now, since some tests use it.
+IDENTITY = F(N(0))
+
+# Y combinator.
+
+inner = F(A(N(1),
+            A(N(0),
+              N(0))))
+
+RECURSIVE = F(A(inner, inner))
