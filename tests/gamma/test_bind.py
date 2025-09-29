@@ -4,6 +4,7 @@ import lbd.evaluate as evl
 import lbd.gamma as g
 from lbd.error import LambdaError
 from lbd.term import bind
+from tests.gamma.aux import A, N
 
 
 class TestBind(unittest.TestCase):
@@ -56,3 +57,25 @@ class TestBind(unittest.TestCase):
         assert not isinstance(expected, LambdaError)
 
         self.assertEqual(expected, bound)
+
+    def test_bind_over_application(self):
+        # Reuse some stuff in the prelude for simplicity.  We can't
+        # use 'eval_raw_term' directly since it will evaluate any
+        # non-assigned global symbols as 'nil', which isn't what we
+        # want here.
+        idx_one = g.gamma("one")
+        assert idx_one is not None
+
+        idx_two = g.gamma("two")
+        assert idx_two is not None
+
+        applyfn_unbound = A(N(idx_one), N(idx_two))
+        assert not isinstance(applyfn_unbound, LambdaError)
+
+        inner = bind("two", applyfn_unbound)
+        applyfn = bind("one", inner)
+
+        expected = evl.eval_raw_term("\\f.\\a.(f a)")
+        assert not isinstance(expected, LambdaError)
+
+        self.assertEqual(expected, applyfn)
