@@ -109,8 +109,6 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     if param.value is None:
         raise ValueError(f"Fatal: '{param}' value field was never set")
 
-    subenv = [param.value]
-
     # Advance; we should then be on the dot.
     i += 1
 
@@ -125,7 +123,7 @@ def parse_abstraction(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[
     # Advance; we should then be at the start of the body.
     i += 1
 
-    _body = parse_term(tokens, i, [*env, *subenv])
+    _body = parse_term(tokens, i, [*env, param.value])
 
     if isinstance(_body, err.LambdaError):
         return _body
