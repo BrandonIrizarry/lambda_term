@@ -3,7 +3,6 @@ import unittest
 import lbd.evaluate as evl
 import lbd.gamma as g
 from lbd.error import LambdaError
-from lbd.term import AST
 from tests.gamma.aux import F, N
 
 
