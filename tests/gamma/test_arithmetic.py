@@ -149,7 +149,7 @@ class TestOperations(unittest.TestCase):
     def test_mult(self):
         "Multiply two small numbers."
 
-        check = evl.eval_raw_term("(equal (mult two three) six)")
+        check = evl.eval_raw_term("(equal (mult three two) six)")
         assert not isinstance(check, LambdaError)
 
         self.assertEqual(self.true, check)
@@ -157,7 +157,7 @@ class TestOperations(unittest.TestCase):
     def test_false_mult(self):
         "No false flags when multiplying two small numbers."
 
-        check = evl.eval_raw_term("(equal (mult two three) five)")
+        check = evl.eval_raw_term("(equal (mult three two) five)")
         assert not isinstance(check, LambdaError)
 
         self.assertEqual(self.false, check)
