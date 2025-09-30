@@ -87,7 +87,7 @@ class TestOperations(unittest.TestCase):
             "def less x y := (not (greater_or_equal x y))",
             "def less_or_equal x y := (not (greater x y))",
             "letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y))) in def div x y := (if (iszero y) zero (div1 x y))",
-            "def sum n := (if (iszero n) zero (add n (sum (pred n))))",
+            "def summation n := (if (iszero n) zero (add n (summation (pred n))))",
             "def one := (succ zero)",
             "def two := (succ one)",
             "def three := (succ two)",

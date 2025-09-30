@@ -77,4 +77,5 @@ representation of 'first', e.g. '\eggcream.\cherry.eggcream'.
 letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)))
 in def div x y := (if (iszero y) zero (div1 x y));
 
-def sum n := (if (iszero n) zero (add n (sum (pred n))));
+def summation n := (if (iszero n) zero (add n (summation (pred n))));
+
