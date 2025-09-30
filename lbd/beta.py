@@ -122,7 +122,9 @@ def beta_reduce(ast: term.AST) -> term.AST:
             if sym is None:
                 raise ValueError(f"Undefined free symbol (freeness {idx})")
 
-            # FIXME: maybe use an Error term?
+            # Currently, 'sym.ast' can't assume a value of None, but
+            # this could change in the future, hence I'm leaving this
+            # check in place.
             elif sym.ast is None:
                 raise ValueError(f"Unassigned free symbol '{sym.label}'")
 
