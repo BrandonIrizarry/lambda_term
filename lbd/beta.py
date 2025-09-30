@@ -118,8 +118,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
             sym = g.sym_get(idx)
 
-            # This should've been caught at parse time, hence we panic
-            # with a ValueError here.
+            # For now, panic with a ValueError here.
             if sym is None:
                 raise ValueError(f"Undefined free symbol (freeness {idx})")
 
