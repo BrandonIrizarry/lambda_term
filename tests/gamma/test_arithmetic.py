@@ -161,3 +161,19 @@ class TestOperations(unittest.TestCase):
         assert not isinstance(check, LambdaError)
 
         self.assertEqual(self.false, check)
+
+    def test_div(self):
+        "Divide two numbers."
+
+        check = evl.eval_raw_term("(equal (div eight four) two)")
+        assert not isinstance(check, LambdaError)
+
+        self.assertEqual(self.true, check)
+
+    def test_false_div(self):
+        "No false flags when dividing two small numbers."
+
+        check = evl.eval_raw_term("(equal (div eight four) three)")
+        assert not isinstance(check, LambdaError)
+
+        self.assertEqual(self.false, check)
