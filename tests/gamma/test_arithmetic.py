@@ -65,7 +65,8 @@ class TestNaturalNumbers(unittest.TestCase):
 
 
 class TestOperations(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         prelude = [
             "def zero := \\x.x",
             "def first x y := x",
@@ -103,13 +104,14 @@ class TestOperations(unittest.TestCase):
 
         true = evl.eval_raw_term("true")
         assert not isinstance(true, LambdaError)
-        self.true = true
+        cls.true = true
 
         false = evl.eval_raw_term("false")
         assert not isinstance(false, LambdaError)
-        self.false = false
+        cls.false = false
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         g.clear_gamma()
 
     def test_add(self):
