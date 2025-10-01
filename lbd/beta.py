@@ -128,7 +128,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
             elif sym.ast is None:
                 raise ValueError(f"Unassigned free symbol '{sym.label}'")
 
-            return sym.ast
+            return beta_reduce(sym.ast)
 
         case term.Abstraction():
             return ast
@@ -154,10 +154,9 @@ def beta_reduce(ast: term.AST) -> term.AST:
                     return term.Application(beta_left, beta_right)
 
         case term.Assignment():
-            # The code here should be very similar to the term.Name()
-            # case (and execute only under the same circumstances),
-            # except that the global value of sym.label is set as a
-            # side-effect.
+            # The idea is to simply assign the AST to the given name,
+            # which will be evaluated later as need be, under the
+            # term.Name() case.
             if (idx := ast.name.index) < 0:
                 f"Fatal: name with negative index of {idx}"
 
@@ -166,7 +165,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
             if sym is None:
                 raise ValueError(f"Fatal: '{ast.name}' isn't a free symbol")
 
-            beta_value = beta_reduce(ast.value)
+            beta_value = ast.value
 
             g.sym_set(sym.label, beta_value)
 
