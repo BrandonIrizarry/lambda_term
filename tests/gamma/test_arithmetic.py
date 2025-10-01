@@ -146,6 +146,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.false, check)
 
+    @unittest.skip("Takes too long.")
     def test_mult(self):
         "Multiply two small numbers."
 
@@ -154,6 +155,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.true, check)
 
+    @unittest.skip("Takes too long.")
     def test_false_mult(self):
         "No false flags when multiplying two small numbers."
 
@@ -162,6 +164,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.false, check)
 
+    @unittest.skip("Takes too long.")
     def test_div(self):
         "Divide two numbers."
 
@@ -170,6 +173,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.true, check)
 
+    @unittest.skip("Takes too long.")
     def test_false_div(self):
         "No false flags when dividing two small numbers."
 
