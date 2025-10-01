@@ -110,7 +110,10 @@ def beta_reduce(ast: term.AST) -> term.AST:
         #
         # 2. Since the name isn't underneath any abstractions at this
         # point, its scope-depth is zero, and so its index as a Name
-        # is precisely its index into gamma.
+        # is precisely its index into gamma. This is precisely why
+        # negative indices at this point are effectively impossible,
+        # and are flagged with a ValueError, indicative of a fatal
+        # flaw in the implementation.
         case term.Name():
             if (idx := ast.index) < 0:
                 raise ValueError(
