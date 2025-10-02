@@ -140,8 +140,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
             beta_left = beta_reduce(ast.left)
 
             match beta_left:
-                case term.Abstraction():
-                    fn = beta_left
+                case term.Abstraction() as fn:
                     arg = ast.right
 
                     # Actual beta redux algorithm.
