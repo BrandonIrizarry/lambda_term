@@ -83,7 +83,7 @@ def prettify_rec(ast: term.AST,
                                  env,
                                  indent)
 
-            return f"<{name}:={value}>"
+            return f"def {name}:={value}"
 
         case term.Empty():
             return f"{ast}"
