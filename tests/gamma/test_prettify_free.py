@@ -26,7 +26,7 @@ class TestPrettifyFree(unittest.TestCase):
         assert y_index is not None
 
         # (\u.\v.(u x) y)
-        term = A(F(F(A(N(1),
+        term = A(F(F(A(N(1, 2),
                        G(x_index, 2)))),
                  G(y_index, 0))
 

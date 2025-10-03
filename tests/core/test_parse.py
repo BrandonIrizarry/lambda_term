@@ -34,10 +34,10 @@ class TestLegalTerms(unittest.TestCase):
         if not isinstance(_parsed, Exception):
             parsed, num_tokens = _parsed
 
-            ast = A(A(F(F(A(N(0),
-                            N(1)))),
-                      F(F(N(1)))),
-                    F(N(0)))
+            ast = A(A(F(F(A(N(0, 2),
+                            N(1, 2)))),
+                      F(F(N(1, 2)))),
+                    F(N(0, 1)))
 
             self.assertEqual(parsed, ast)
             self.assertEqual(num_tokens, 25)
@@ -54,13 +54,13 @@ class TestLegalTerms(unittest.TestCase):
         if not isinstance(_parsed, Exception):
             parsed, num_tokens = _parsed
 
-            ast = A(A(A(F(F(F(A(A(N(2),
-                                  N(1)),
-                                N(0))))),
-                        F(F((A(N(1),
-                               N(0)))))),
-                      F(N(0))),
-                    F(N(0)))
+            ast = A(A(A(F(F(F(A(A(N(2, 3),
+                                  N(1, 3)),
+                                N(0, 3))))),
+                        F(F((A(N(1, 2),
+                               N(0, 2)))))),
+                      F(N(0, 1))),
+                    F(N(0, 1)))
 
             self.assertEqual(parsed, ast)
             self.assertEqual(num_tokens, 40)
@@ -75,12 +75,12 @@ class TestLegalTerms(unittest.TestCase):
         if not isinstance(_parsed, Exception):
             parsed, num_tokens = _parsed
 
-            ast = A(F(A(A(F(F(A(N(0),
-                                N(1)))),
-                          N(0)),
-                        N(0))),
-                    F(A(N(0),
-                        N(0))))
+            ast = A(F(A(A(F(F(A(N(0, 3),
+                                N(1, 3)))),
+                          N(0, 1)),
+                        N(0, 1))),
+                    F(A(N(0, 1),
+                        N(0, 1))))
 
             self.assertEqual(parsed, ast)
             self.assertEqual(num_tokens, 28)
@@ -158,9 +158,9 @@ class TestSugaredApplications(unittest.TestCase):
 
             # Note how the generated AST includes the desugared extra
             # application.
-            ast = F(F(F(A(A(N(2),
-                            N(1)),
-                          N(0)))))
+            ast = F(F(F(A(A(N(2, 3),
+                            N(1, 3)),
+                          N(0, 3)))))
 
             self.assertEqual(parsed, ast)
         else:
@@ -174,11 +174,11 @@ class TestSugaredApplications(unittest.TestCase):
         if not isinstance(_parsed, Exception):
             parsed, _ = _parsed
 
-            ast = F(F(F(A(A(A(N(1),
-                              N(0)),
-                            N(0)),
-                          A(N(0),
-                            N(2))))))
+            ast = F(F(F(A(A(A(N(1, 3),
+                              N(0, 3)),
+                            N(0, 3)),
+                          A(N(0, 3),
+                            N(2, 3))))))
 
             self.assertEqual(parsed, ast)
         else:

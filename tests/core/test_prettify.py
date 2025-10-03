@@ -1,16 +1,8 @@
 import re
 import unittest
 
+import tests.core.aux as aux
 from lbd.prettify import prettify
-from tests.core.aux import A, F, N
-
-identity = F(N(0))
-
-selectors = {
-    "first": F(F(F(N(2)))),
-    "second": F(F(F(N(1)))),
-    "third": F(F(F(N(0)))),
-}
 
 
 class TestPrettify(unittest.TestCase):
@@ -19,7 +11,7 @@ class TestPrettify(unittest.TestCase):
     def test_identity(self):
         """Test prettified identity function."""
 
-        pretty_id = prettify(identity)
+        pretty_id = prettify(aux.IDENTITY)
 
         mobj = re.fullmatch(r"\\(\w+)\.\1", pretty_id)
 
@@ -28,8 +20,8 @@ class TestPrettify(unittest.TestCase):
     def test_selectors(self):
         """Test 'select_first', 'select_second', and 'select_third'."""
 
-        for i, (ordinal, _) in enumerate(selectors.items()):
-            pretty = prettify(selectors[ordinal])
+        for i, sel in enumerate(aux.TRIPLE_SELECTORS):
+            pretty = prettify(sel)
 
             mobj = re.fullmatch(
                 rf"\\(\w+)\.\\(\w+)\.\\(\w+)\.\{i + 1}", pretty)

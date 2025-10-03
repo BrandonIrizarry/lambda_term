@@ -29,3 +29,13 @@ def S(name: term.Name, value: term.AST) -> term.Assignment:
 
 def E() -> term.Empty:
     return term.Empty()
+
+
+IDENTITY = F(N(0, 1))
+FIRST = F(F(N(1, 2)))
+SECOND = F(F(N(0, 2)))
+SELF_APPLY = F(A(N(0, 1), N(0, 1)))
+APPLY = F(F(A(N(1, 2), N(0, 2))))
+PAIR = F(F(F(A(A(N(0, 3),
+                 N(2, 3)),
+               N(1, 3)))))

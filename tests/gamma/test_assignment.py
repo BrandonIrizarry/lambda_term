@@ -3,6 +3,7 @@ import unittest
 import lbd.error as err
 import lbd.evaluate as evl
 import lbd.gamma as g
+import tests.gamma.aux as aux
 from lbd.error import LambdaError
 from tests.gamma.aux import A, E, F, G, N, S
 
@@ -20,10 +21,8 @@ class TestAssignmentBasics(unittest.TestCase):
 
         assert x_index is not None
 
-        identity = F(N(0))
-
         # Check that we have the correct AST.
-        self.assertEqual(ast, identity)
+        self.assertEqual(ast, aux.IDENTITY)
 
         # Check that \x.x has been assigned to the free name 'x'.
         sym = g.sym_get(x_index)
@@ -31,7 +30,7 @@ class TestAssignmentBasics(unittest.TestCase):
         assert sym is not None
 
         self.assertEqual(sym.label, "x")
-        self.assertEqual(sym.ast, identity)
+        self.assertEqual(sym.ast, aux.IDENTITY)
 
     def test_repeated_assignment(self):
         """Test that a free name can be redefined."""
@@ -52,7 +51,7 @@ class TestAssignmentBasics(unittest.TestCase):
             ast = evl.eval_raw_term(line)
             assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(F(N(0)), ast)
+        self.assertEqual(aux.IDENTITY, ast)
 
     def test_inner_assignment(self):
         terms = [
@@ -64,13 +63,12 @@ class TestAssignmentBasics(unittest.TestCase):
         ]
 
         ast = None
-        identity = F(N(0))
 
         for t in terms:
             ast = evl.eval_raw_term(t)
             self.assertNotIsInstance(ast, err.LambdaError)
 
-        self.assertEqual(ast, identity)
+        self.assertEqual(ast, aux.IDENTITY)
 
     def test_nested_assignment(self):
         """Perform assignments that then get used later in the same
@@ -86,14 +84,7 @@ class TestAssignmentBasics(unittest.TestCase):
 
         assert second_index is not None
 
-        # Let this variable stand for the AST we _know_ to be the
-        # canonical value of second, for convenience.
-        #
-        # It hasn't been assigned yet in gamma, though, which is
-        # partly the point of this test.
-        SECOND = F(F(N(0)))
-
-        expected = F(S(G(second_index, 1), SECOND))
+        expected = F(S(G(second_index, 1), aux.SECOND))
         self.assertEqual(ast, expected)
 
     def test_delayed_assignment(self):
@@ -158,7 +149,7 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(N(0)))
+        self.assertEqual(ast, aux.IDENTITY)
 
     def test_apply(self):
         term = "def apply f a := (f a)"
@@ -166,8 +157,7 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(F(A(N(1),
-                                    N(0)))))
+        self.assertEqual(ast, aux.APPLY)
 
     def test_if(self):
         term = "def if cond e1 e2 := (cond e1 e2)"
@@ -175,9 +165,9 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(F(F(A(A(N(2),
-                                        N(1)),
-                                      N(0))))))
+        self.assertEqual(ast, F(F(F(A(A(N(2, 3),
+                                        N(1, 3)),
+                                      N(0, 3))))))
 
     def test_mixed(self):
         """Left-hand parameters and right-hand binders."""
@@ -186,4 +176,4 @@ class TestAssignmentParameters(unittest.TestCase):
         ast = evl.eval_raw_term(term)
         assert not isinstance(ast, LambdaError)
 
-        self.assertEqual(ast, F(F(N(1))))
+        self.assertEqual(ast, F(F(N(1, 2))))
