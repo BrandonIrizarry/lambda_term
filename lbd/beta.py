@@ -131,7 +131,10 @@ def beta_reduce(ast: term.AST) -> term.AST:
             elif sym.ast is None:
                 raise ValueError(f"Unassigned free symbol '{sym.label}'")
 
-            return beta_reduce(sym.ast)
+            result = beta_reduce(sym.ast)
+            g.sym_set(sym.label, result)
+
+            return result
 
         case term.Abstraction():
             return ast
