@@ -139,12 +139,12 @@ def beta_reduce(ast: term.AST) -> term.AST:
         case term.Abstraction():
             return ast
 
-        case term.Application():
+        case term.Application() as application:
             beta_left = beta_reduce(ast.left)
 
             match beta_left:
                 case term.Abstraction() as fn:
-                    arg = ast.right
+                    arg = application.right
 
                     # Actual beta redux algorithm.
                     new_arg = inc(arg, 0)
@@ -154,7 +154,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
                     return beta_reduce(new_replaced_body)
 
                 case _:
-                    beta_right = beta_reduce(ast.right)
+                    beta_right = beta_reduce(application.right)
 
                     return term.Application(beta_left, beta_right)
 
