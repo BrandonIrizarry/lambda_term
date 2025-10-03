@@ -77,7 +77,7 @@ def prettify_rec(ast: term.AST,
                                 env,
                                 indent)
 
-            indent += len(f"<{name}:=")
+            indent += len(f"def {name}:=")
 
             value = prettify_rec(ast.value,
                                  env,
