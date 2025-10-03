@@ -1,5 +1,9 @@
 # Boolean-related definitions.#
 
+# Basic, helpful definitions. #
+def identity x := x;
+def apply f a := (f a);
+
 def first x y := x; def true := first;
 def second x y := y; def false := second;
 def if cond e1 e2 := (cond e1 e2);
