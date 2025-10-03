@@ -103,6 +103,9 @@ A = Application
 IDENTITY = F(N(0))
 
 # Y combinator.
+#
+# Note that, for 'inner', the N(1) will refer to the outer 'F' in the
+# definition of RECURSIVE.
 
 inner = F(A(N(1),
             A(N(0),
