@@ -56,5 +56,6 @@ def repl():
         if isinstance(err, LambdaError):
             raise ValueError(f"Fatal: '_' feature broken: {err}")
 
+        print(ast)
         print(pretty)
         print()

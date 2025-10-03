@@ -176,12 +176,12 @@ def parse_name(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.Na
         index += 1
 
     if is_local:
-        return term.Name(index), i + 1
+        return term.Name(index, len(env)), i + 1
 
     # Treat the token as referring to a free name.
     free_index = gamma.sym_declare(value)
 
-    return term.Name(free_index + len(env)), i + 1
+    return term.Name(free_index + len(env), len(env)), i + 1
 
 
 def scan_assignment_params(tokens: list[tkz.Token], k: int) -> tuple[list[tkz.Token], int] | err.LambdaError:
@@ -258,7 +258,7 @@ def parse_assignment(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[t
     # this assignment expression is parsed. This, in and of itself,
     # enables recursive definitions!
     idx = gamma.sym_declare(value)
-    name = term.Name(idx + len(env))
+    name = term.Name(idx + len(env), len(env))
 
     # Skip the name manually, since we didn't (nor couldn't) use
     # 'parse_name' to obtain it.
@@ -488,8 +488,10 @@ def parse_letrec(tokens: list[tkz.Token], i: int, env: list[str]) -> tuple[term.
 
     body_bound = term.bind(let_name.value, raw_body)
 
+    # FIXME: the + 1 for len(env) is being added manually here, 'bind'
+    # should do this automatically.
     body1 = term.Application(body_bound, term.Application(
-        term.RECURSIVE, term.Name(idx)))
+        term.RECURSIVE, term.Name(idx, len(env) + 1)))
 
     body = term.bind(let_name.value, body1)
 

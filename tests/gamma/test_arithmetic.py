@@ -47,7 +47,7 @@ class TestNaturalNumbers(unittest.TestCase):
 
         """
 
-        expected = F(F(N(0)))
+        expected = F(F(N(0, 2)))
 
         for _ in range(100):
             term = "(one first)"

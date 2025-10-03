@@ -17,13 +17,19 @@ class Empty(AST):
 @dataclass
 class Name(AST):
     index: int
+    aux: int
 
     def __post_init__(self):
         if self.index < 0:
             raise ValueError(f"Negative index: {self.index}")
 
     def __str__(self):
-        return f"N({self.index})"
+        global_idx = self.index - self.aux
+
+        if global_idx < 0:
+            return f"N({self.index}, {self.aux})"
+
+        return f"G({self.index},{self.aux}: {global_idx})"
 
 
 @dataclass
@@ -69,6 +75,7 @@ def bind(global_name: str, term: AST) -> Abstraction:
                 # abstraction, and so need to preserve the invariant
                 # INDEX - DEPTH == GAMMA.
                 idx = term.index - depth
+                term.aux += 1
 
                 if idx == target_index:
                     term.index = depth
@@ -100,15 +107,15 @@ F = Abstraction
 A = Application
 
 # Keep this around for now, since some tests use it.
-IDENTITY = F(N(0))
+IDENTITY = F(N(0, 1))
 
 # Y combinator.
 #
-# Note that, for 'inner', the N(1) will refer to the outer 'F' in the
-# definition of RECURSIVE.
+# Note that, for 'inner', the N(1, 2) will refer to the outer 'F' in the
+# definition of RECURSIVE. In general, the depth here is 2.
 
-inner = F(A(N(1),
-            A(N(0),
-              N(0))))
+inner = F(A(N(1, 2),
+            A(N(0, 2),
+              N(0, 2))))
 
 RECURSIVE = F(A(inner, inner))

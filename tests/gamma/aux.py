@@ -9,8 +9,8 @@ def F(body: term.AST) -> term.Abstraction:
     return term.Abstraction(body)
 
 
-def N(index: int) -> term.Name:
-    return term.Name(index)
+def N(index: int, aux: int) -> term.Name:
+    return term.Name(index, aux)
 
 
 def G(index: int, depth: int) -> term.Name:
@@ -20,7 +20,7 @@ def G(index: int, depth: int) -> term.Name:
 
     """
 
-    return term.Name(index + depth)
+    return term.Name(index + depth, depth)
 
 
 def S(name: term.Name, value: term.AST) -> term.Assignment:

@@ -13,7 +13,7 @@ def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
     match ast:
         case term.Name() as name:
             if ast.index >= minimum:
-                return term.Name(name.index + amount)
+                return term.Name(name.index + amount, name.aux + amount)
 
             return ast
 

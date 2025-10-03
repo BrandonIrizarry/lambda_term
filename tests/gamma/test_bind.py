@@ -69,7 +69,7 @@ class TestBind(unittest.TestCase):
         idx_two = g.gamma("two")
         assert idx_two is not None
 
-        applyfn_unbound = A(N(idx_one), N(idx_two))
+        applyfn_unbound = A(N(idx_one, 0), N(idx_two, 0))
         assert not isinstance(applyfn_unbound, LambdaError)
 
         inner = bind("two", applyfn_unbound)
