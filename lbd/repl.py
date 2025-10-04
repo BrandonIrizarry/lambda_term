@@ -3,8 +3,8 @@ import os
 import readline
 
 import lbd.evaluate as evl
-import lbd.prettify as prettify
 from lbd.error import LambdaError
+from lbd.prettify import prettify
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -46,7 +46,7 @@ def repl():
 
         print()
 
-        pretty = prettify.prettify(ast)
+        pretty = prettify(ast)
 
         # Save the last evaluation result in '_', similar to how
         # Python does. Note that we can use Lambda Term itself to
