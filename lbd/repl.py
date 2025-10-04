@@ -3,7 +3,7 @@ import os
 import readline
 
 import lbd.evaluate as evl
-import lbd.prettify as prettify
+from lbd.prettify import prettify
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -45,7 +45,7 @@ def repl():
 
         print()
 
-        pretty = prettify.prettify(ast)
+        pretty = prettify(ast)
 
         print(pretty)
         print()
