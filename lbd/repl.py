@@ -4,7 +4,6 @@ import readline
 
 import lbd.evaluate as evl
 import lbd.prettify as prettify
-from lbd.error import LambdaError
 
 histfile = os.path.join(os.getcwd(), ".repl_history")
 
@@ -47,14 +46,6 @@ def repl():
         print()
 
         pretty = prettify.prettify(ast)
-
-        # Save the last evaluation result in '_', similar to how
-        # Python does. Note that we can use Lambda Term itself to
-        # achieve this, via an assignment expression.
-        err = evl.eval_raw_term(f"def _ := {pretty.lower()}")
-
-        if isinstance(err, LambdaError):
-            raise ValueError(f"Fatal: '_' feature broken: {err}")
 
         print(pretty)
         print()
