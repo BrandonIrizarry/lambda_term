@@ -28,4 +28,7 @@ def eval_tokens(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
     if num_tokens < len(tokens):
         return err.error(tokens, num_tokens, err.Err.TRAILING_GARBAGE)
 
-    return beta.beta_reduce(ast)
+    result = beta.beta_reduce(ast)
+    unwrapped = beta.unwrap_cached_refs(result)
+
+    return result

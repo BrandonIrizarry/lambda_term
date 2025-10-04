@@ -199,3 +199,51 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
         case _:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
+
+
+def unwrap_cached_refs(ast: term.AST) -> term.AST:
+    """Unwrap all cached refs inside TERM."""
+
+    match ast:
+        case term.Name() as name:
+            global_idx = name.index - name.aux
+
+            if global_idx >= 0:
+                sym = g.sym_get(global_idx)
+
+                if sym is None:
+                    raise ValueError(f"Fatal: invalid name: {name}")
+
+                if sym.label.startswith("__"):
+                    print("AST: ", sym)
+                    unwrapped_name = unwrap_cached_refs(sym.ast)
+
+                    return unwrapped_name
+
+                # Name is global, but not a "thunked" reference.
+                return name
+            else:
+                # Name is local.
+                return name
+
+        case term.Abstraction() as abstr:
+            unwrapped_body = unwrap_cached_refs(abstr.body)
+
+            return term.Abstraction(unwrapped_body)
+
+        case term.Application() as app:
+            unwrapped_left = unwrap_cached_refs(app.left)
+            unwrapped_right = unwrap_cached_refs(app.right)
+
+            return term.Application(unwrapped_left, unwrapped_right)
+
+        case term.Assignment() as assign:
+            unwrapped_value = unwrap_cached_refs(assign.value)
+
+            return term.Assignment(assign.name, unwrapped_value)
+
+        case term.Empty() as empty:
+            return empty
+
+        case _:
+            raise ValueError(f"Invalid AST: {ast}")
