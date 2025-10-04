@@ -23,6 +23,42 @@ class Name(AST):
         if self.index < 0:
             raise ValueError(f"Negative index: {self.index}")
 
+    def _is_local(self) -> bool:
+        return self.index - self.aux < 0
+
+    def _is_global(self) -> bool:
+        return not self._is_local()
+
+    def __eq__(self, other):
+        """Compare two Names for equality.
+
+        If two names are local, then equality is defined in terms of
+        their 'index' fields only. This is because beta reduction can
+        change the value of a local's 'aux' field, since it preserves
+        'index - aux' as a constant for a given name. However, this
+        preservation is only useful in the context of global
+        names. Because of this, equality for _global_ names checks for
+        equality between the 'index - aux' values.
+
+        """
+        if self is other:
+            return True
+
+        if not isinstance(other, Name):
+            return False
+
+        if self._is_local() and other._is_local():
+            return self.index == other.index
+
+        elif self._is_global() and other._is_global():
+            self_global_idx = self.index - self.aux
+            other_global_idx = other.index - other.aux
+
+            return self_global_idx == other_global_idx
+
+        else:
+            return False
+
     def __str__(self):
         global_idx = self.index - self.aux
 
