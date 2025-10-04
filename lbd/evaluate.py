@@ -31,4 +31,4 @@ def eval_tokens(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
     result = beta.beta_reduce(ast)
     unwrapped = beta.unwrap_cached_refs(result)
 
-    return result
+    return unwrapped
