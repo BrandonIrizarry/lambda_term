@@ -4,6 +4,7 @@ import lbd.parse as parse
 import lbd.term as term
 import lbd.tokenize as tkz
 from lbd.error import LambdaError
+from lbd.gamma import sym_clear_thunks
 
 
 def eval_raw_term(raw_term: str) -> term.AST | LambdaError:
@@ -30,5 +31,7 @@ def eval_tokens(tokens: list[tkz.Token]) -> term.AST | err.LambdaError:
 
     result = beta.beta_reduce(ast)
     unwrapped = beta.unwrap_cached_refs(result)
+
+    sym_clear_thunks("__")
 
     return unwrapped

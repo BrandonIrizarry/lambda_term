@@ -7,7 +7,8 @@ from tests.gamma.aux import F, N
 
 
 class TestNaturalNumbers(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         prelude = [
             "def zero := \\x.x",
             "def first x y := x",
@@ -24,11 +25,14 @@ class TestNaturalNumbers(unittest.TestCase):
             "def three := (succ two)",
         ]
 
+        assert len(g._gamma) == 0
+
         for line in prelude:
             ast = evl.eval_raw_term(line)
             assert not isinstance(ast, LambdaError)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         g.clear_gamma()
 
     def test_basic_program(self):
@@ -97,6 +101,8 @@ class TestOperations(unittest.TestCase):
             "def seven := (succ six)",
             "def eight := (succ seven)",
         ]
+
+        assert len(g._gamma) == 0
 
         for line in prelude:
             ast = evl.eval_raw_term(line)

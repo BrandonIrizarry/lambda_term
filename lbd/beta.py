@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 import lbd.gamma as g
 import lbd.term as term
+from lbd.prettify import prettify
 
 _counter = 0
 
@@ -203,23 +204,6 @@ def beta_reduce(ast: term.AST) -> term.AST:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
 
-def cleanup(unwrap_fn: Callable[[term.AST], term.AST]):
-    """Advise UNWRAP_CACHED_REFS.
-
-    All thunks should be cleared out of _gamma after unwrapping.
-
-    """
-
-    def advice(ast: term.AST) -> term.AST:
-        unwrapped = unwrap_fn(ast)
-        g.sym_clear_thunks("__")
-
-        return unwrapped
-
-    return advice
-
-
-@cleanup
 def unwrap_cached_refs(ast: term.AST) -> term.AST:
     """Unwrap all cached refs inside TERM."""
 
@@ -234,7 +218,10 @@ def unwrap_cached_refs(ast: term.AST) -> term.AST:
                     raise ValueError(f"Fatal: invalid name: {name}")
 
                 if sym.label.startswith("__") and sym.label != "__0":
+                    # print("label: ", sym.label)
+                    # print("stored AST: ", prettify(sym.ast))
                     evaled = beta_reduce(sym.ast)
+                    # print("AST evaled to: ", prettify(evaled))
                     unwrapped_name = unwrap_cached_refs(evaled)
 
                     return unwrapped_name

@@ -7,16 +7,6 @@ import lbd.term as term
 rword = RandomWord()
 
 
-def prettify_free_symbol(name: term.Name, depth: int) -> str:
-    free_idx = name.index - depth
-    free_sym = g.sym_get(free_idx)
-
-    if free_sym is None:
-        raise ValueError(f"Fatal: sym_get({free_idx}) failed")
-
-    return free_sym.label.upper()
-
-
 def prettify_rec(ast: term.AST,
                  env: list[str],
                  indent: int) -> str:
@@ -28,15 +18,23 @@ def prettify_rec(ast: term.AST,
 
     match ast:
         case term.Name() as name:
-            # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
-            # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-            idx = name.index
-            env_depth = -(idx + 1)
+            global_idx = name.index - name.aux
 
-            if abs(env_depth) <= len(env):
+            if global_idx < 0:
+                # NAME is local.
+                #
+                # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
+                # Ex: index = 0 -> -1, index = 1 -> -2, etc.
+                env_depth = -(name.index + 1)
+                assert abs(env_depth) <= len(env)
+
                 return env[env_depth]
 
-            return prettify_free_symbol(name, len(env))
+            # NAME is global.
+            sym = g.sym_get(global_idx)
+            assert sym is not None
+
+            return sym.label.upper()
 
         case term.Abstraction() as abstr:
             # Generate a random word to use as the function parameter.
