@@ -81,20 +81,34 @@ def sym_find(sym_name: str) -> term.AST | None:
 
 
 def sym_clear_thunks(prefix: str) -> None:
-    """Delete all Symbols that start with the given PREFIX.
+    """Clear all Symbols that start with the given PREFIX.
 
     This is intended to be used to clear out thunked refs after
     unwrapping them, so that the next evaluation can start afresh at,
     say, __0.
 
-    The idea is that such thunks should be marked with a prefix such
-    as '__', or else '$'.
+    The idea is that such thunks are detectable because they're marked
+    with a prefix such as '__', or else '$'.
 
     """
 
     for i, sym in enumerate(_gamma):
         if sym.label.startswith(prefix):
-            del _gamma[i]
+            sym_clear(i)
+
+
+def sym_clear(index: int) -> None:
+    """Clear the definition in _gamma at INDEX.
+
+    This sets the definition to term.Empty().
+
+    Such a symbol can be later reset to a different, non-empty AST.
+
+    INDEX is expected to be a valid index into _gamma.
+
+    """
+
+    _gamma[index].ast = term.Empty()
 
 
 def clear_gamma() -> None:
