@@ -80,6 +80,20 @@ def sym_find(sym_name: str) -> "term.AST | None":
     return _gamma[idx].ast
 
 
+def sym_clear(index: int) -> None:
+    """Clear the definition in _gamma at INDEX.
+
+    This sets the definition to term.Empty().
+
+    Such a symbol can be later reset to a different, non-empty AST.
+
+    INDEX is expected to be a valid index into _gamma.
+
+    """
+
+    _gamma[index].ast = term.Empty()
+
+
 def clear_gamma() -> None:
     """Reset gamma to an empty list."""
 
