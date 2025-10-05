@@ -234,7 +234,6 @@ def unwrap_cached_refs(ast: term.AST) -> term.AST:
                     raise ValueError(f"Fatal: invalid name: {name}")
 
                 if sym.label.startswith("__") and sym.label != "__0":
-                    print("AST: ", sym.label, sym.ast)
                     evaled = beta_reduce(sym.ast)
                     unwrapped_name = unwrap_cached_refs(evaled)
 
