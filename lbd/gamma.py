@@ -7,7 +7,7 @@ import lbd.term as term
 class Symbol():
     """Associate a symbol name with its definition."""
     label: str
-    ast: term.AST = field(default_factory=lambda: term.Empty())
+    ast: "term.AST" = field(default_factory=lambda: term.Empty())
 
 
 _gamma: list[Symbol] = []
@@ -52,7 +52,7 @@ def sym_declare(free_name: str) -> int:
     return len(_gamma) - 1
 
 
-def sym_set(sym_name: str, ast: term.AST) -> bool:
+def sym_set(sym_name: str, ast: "term.AST") -> bool:
     """Set the definition of SYM_NAME to AST.
 
     Return whether the symbol was found.
@@ -69,7 +69,7 @@ def sym_set(sym_name: str, ast: term.AST) -> bool:
     return True
 
 
-def sym_find(sym_name: str) -> term.AST | None:
+def sym_find(sym_name: str) -> "term.AST | None":
     """Find the AST value associated with SYM_NAME."""
 
     idx = gamma(sym_name)
