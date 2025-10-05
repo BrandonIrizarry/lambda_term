@@ -27,19 +27,18 @@ def prettify_rec(ast: term.AST,
     """
 
     match ast:
-        case term.Name():
+        case term.Name() as name:
             # An env_depth of -1 corresponds to TOS, -2 t one underneath, etc.
             # Ex: index = 0 -> -1, index = 1 -> -2, etc.
-            idx = ast.index
+            idx = name.index
             env_depth = -(idx + 1)
 
             if abs(env_depth) <= len(env):
-                name = env[env_depth]
-                return name
+                return env[env_depth]
 
-            return prettify_free_symbol(ast, len(env))
+            return prettify_free_symbol(name, len(env))
 
-        case term.Abstraction():
+        case term.Abstraction() as abstr:
             # Generate a random word to use as the function parameter.
             param: str = rword.word(regex=r"[a-z]+")
 
@@ -50,21 +49,21 @@ def prettify_rec(ast: term.AST,
 
             indent += len(param) + 2
 
-            body = prettify_rec(ast.body,
+            body = prettify_rec(abstr.body,
                                 [*env, param],
                                 indent)
 
             return f"\\{param}.{body}"
 
-        case term.Application():
+        case term.Application() as app:
             # ( adds a space of indentation
             indent += 1
 
-            left = prettify_rec(ast.left,
+            left = prettify_rec(app.left,
                                 env,
                                 indent)
 
-            right = prettify_rec(ast.right,
+            right = prettify_rec(app.right,
                                  env,
                                  indent)
 
@@ -72,21 +71,21 @@ def prettify_rec(ast: term.AST,
 
             return f"({left}\n{padding}{right})"
 
-        case term.Assignment():
-            name = prettify_rec(ast.name,
+        case term.Assignment() as assign:
+            name = prettify_rec(assign.name,
                                 env,
                                 indent)
 
             indent += len(f"def {name}:=")
 
-            value = prettify_rec(ast.value,
+            value = prettify_rec(assign.value,
                                  env,
                                  indent)
 
             return f"def {name}:={value}"
 
-        case term.Empty():
-            return f"{ast}"
+        case term.Empty() as empty:
+            return f"{empty}"
 
         case _:
             raise ValueError("Fatal: wrong AST 'kind' field")
