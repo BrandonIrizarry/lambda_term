@@ -4,6 +4,7 @@ import lbd.error as err
 import lbd.parse as parse
 import lbd.term as term
 import lbd.tokenize as tkz
+from lbd.gamma import clear_gamma
 from tests.core.aux import A, F, N
 
 
@@ -27,6 +28,14 @@ def parse_raw(raw_term: str) -> tuple[term.AST, int] | err.LambdaError:
 
 
 class TestLegalTerms(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        # FIXME: Parsing itself modifies _gamma, even though nothing
+        # is being evaluated in this context. While harmless in
+        # ordinary usage, this can occasionally cause bewildering
+        # failures in unrelated test suites.
+        clear_gamma()
+
     def test_2_2_a(self):
         raw_term = "   ((\\input.\\func.(  func input  ) \\first.\\second.first) \\sole.sole)"
         _parsed = parse_raw(raw_term)
@@ -89,6 +98,11 @@ class TestLegalTerms(unittest.TestCase):
 
 
 class TestIllegalTerms(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        # See FIXME remarks above.
+        clear_gamma()
+
     def test_term_incomplete(self):
         raw_term = "\\xy"
 
@@ -148,6 +162,11 @@ class TestIllegalTerms(unittest.TestCase):
 
 
 class TestSugaredApplications(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        # See FIXME remarks above.
+        clear_gamma()
+
     def test_xyz(self):
         raw_term = "\\x.\\y.\\z.(x y z)"
 
