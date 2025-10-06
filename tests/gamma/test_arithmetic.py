@@ -152,7 +152,6 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.false, check)
 
-    @unittest.skip("Takes too long.")
     def test_mult(self):
         "Multiply two small numbers."
 
