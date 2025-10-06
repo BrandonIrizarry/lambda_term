@@ -168,7 +168,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.false, check)
 
-    @unittest.skip("Takes too long.")
+    @unittest.skip("Crashes because of an infinite recursion.")
     def test_div(self):
         "Divide two numbers."
 
@@ -177,7 +177,7 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.true, check)
 
-    @unittest.skip("Takes too long.")
+    @unittest.skip("Crashes because of an infinite recursion.")
     def test_false_div(self):
         "No false flags when dividing two small numbers."
 
