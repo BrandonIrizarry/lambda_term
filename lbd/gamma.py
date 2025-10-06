@@ -80,6 +80,18 @@ def sym_find(sym_name: str) -> "term.AST | None":
     return _gamma[idx].ast
 
 
+_counter = 0
+
+
+def new_refname():
+    global _counter
+
+    name = f"__{_counter}"
+    _counter += 1
+
+    return name
+
+
 def sym_clear_thunks(prefix: str) -> None:
     """Clear all Symbols that start with the given PREFIX.
 

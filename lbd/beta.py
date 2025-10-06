@@ -4,17 +4,6 @@ import lbd.gamma as g
 import lbd.term as term
 from lbd.prettify import prettify
 
-_counter = 0
-
-
-def new_refname():
-    global _counter
-
-    name = f"__{_counter}"
-    _counter += 1
-
-    return name
-
 
 def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
     """Shift names of at least MINIMUM value inside AST by AMOUNT.
@@ -161,7 +150,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
                     arg = app.right
 
                     if isinstance(arg, term.Application):
-                        refname = new_refname()
+                        refname = g.new_refname()
                         idx = g.sym_declare(refname)
                         thunk = term.Assignment(term.Name(idx, 0), arg)
                         beta_reduce(thunk)
