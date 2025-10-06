@@ -1,8 +1,5 @@
-from collections.abc import Callable
-
 import lbd.gamma as g
 import lbd.term as term
-from lbd.prettify import prettify
 
 
 def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
