@@ -103,6 +103,13 @@ def sym_clear_thunks(prefix: str) -> None:
     with a prefix such as '__', or else '$'.
 
     """
+    global _counter
+
+    # Don't forget to reset the counter!
+    #
+    # As of yet, we have two pieces of persistent state to watch
+    # whenever a reduction is performed: _gamma, and _counter.
+    _counter = 0
 
     for i, sym in enumerate(_gamma):
         if sym.label.startswith(prefix):
@@ -125,5 +132,8 @@ def sym_clear(index: int) -> None:
 
 def clear_gamma() -> None:
     """Reset gamma to an empty list."""
+
+    if _counter != 0:
+        raise ValueError(f"Fatal: non-zero counter: {_counter}")
 
     _gamma.clear()
