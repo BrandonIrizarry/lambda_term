@@ -160,7 +160,6 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.true, check)
 
-    @unittest.skip("Takes too long.")
     def test_false_mult(self):
         "No false flags when multiplying two small numbers."
 
