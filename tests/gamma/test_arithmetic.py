@@ -153,7 +153,7 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(self.false, check)
 
     def test_mult(self):
-        "Multiply two small numbers."
+        """Multiply two small numbers."""
 
         check = evl.eval_raw_term("(equal (mult three two) six)")
         assert not isinstance(check, LambdaError)
@@ -161,7 +161,7 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(self.true, check)
 
     def test_false_mult(self):
-        "No false flags when multiplying two small numbers."
+        """No false flags when multiplying two small numbers."""
 
         check = evl.eval_raw_term("(equal (mult three two) five)")
         assert not isinstance(check, LambdaError)
@@ -170,7 +170,7 @@ class TestOperations(unittest.TestCase):
 
     @unittest.skip("Crashes because of an infinite recursion.")
     def test_div(self):
-        "Divide two numbers."
+        """Divide two numbers."""
 
         check = evl.eval_raw_term("(equal (div eight four) two)")
         assert not isinstance(check, LambdaError)
@@ -179,7 +179,7 @@ class TestOperations(unittest.TestCase):
 
     @unittest.skip("Crashes because of an infinite recursion.")
     def test_false_div(self):
-        "No false flags when dividing two small numbers."
+        """No false flags when dividing two small numbers."""
 
         check = evl.eval_raw_term("(equal (div eight four) three)")
         assert not isinstance(check, LambdaError)
