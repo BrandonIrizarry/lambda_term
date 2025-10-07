@@ -26,6 +26,7 @@ class TestNaturalNumbers(unittest.TestCase):
         ]
 
         assert len(g._gamma) == 0
+        assert g._counter == 0
 
         for line in prelude:
             ast = evl.eval_raw_term(line)
@@ -77,6 +78,7 @@ class TestOperations(unittest.TestCase):
             "def true := first",
             "def second x y := y",
             "def false := second",
+            "def not x := (x false true)",
             "def iszero n := (n first)",
             "def succ n := \\s.(s false n)",
             "def if cond e1 e2 := (cond e1 e2)",
@@ -90,7 +92,8 @@ class TestOperations(unittest.TestCase):
             "def greater_or_equal x y := (iszero (sub y x))",
             "def less x y := (not (greater_or_equal x y))",
             "def less_or_equal x y := (not (greater x y))",
-            "letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y))) in def div x y := (if (iszero y) zero (div1 x y))",
+            "def div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)))",
+            "def div x y := (if (iszero y) zero (div1 x y))",
             "def summation n := (if (iszero n) zero (add n (summation (pred n))))",
             "def one := (succ zero)",
             "def two := (succ one)",
@@ -168,7 +171,6 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.false, check)
 
-    @unittest.skip("Crashes because of an infinite recursion.")
     def test_div(self):
         """Divide two numbers."""
 
@@ -177,7 +179,6 @@ class TestOperations(unittest.TestCase):
 
         self.assertEqual(self.true, check)
 
-    @unittest.skip("Crashes because of an infinite recursion.")
     def test_false_div(self):
         """No false flags when dividing two small numbers."""
 

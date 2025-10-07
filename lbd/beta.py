@@ -1,6 +1,8 @@
 import lbd.gamma as g
 import lbd.term as term
 
+# from lbd.prettify import prettify
+
 
 def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
     """Shift names of at least MINIMUM value inside AST by AMOUNT.
@@ -133,6 +135,9 @@ def beta_reduce(ast: term.AST) -> term.AST:
 
             result = beta_reduce(sym.ast)
             g.sym_set(sym.label, result)
+
+            # if result == term.Empty():
+            #    print(f"empty: {sym.label}")
 
             return result
 
