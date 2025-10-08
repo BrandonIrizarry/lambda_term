@@ -78,9 +78,6 @@ representation of 'first', e.g. '\eggcream.\cherry.eggcream'.
 
 #
 
-# letrec div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)))
-in def div x y := (if (iszero y) zero (div1 x y)); #
-
 def div1 x y := (if (greater y x) zero (succ (div1 (sub x y) y)));
 def div x y := (if (iszero y) zero (div1 x y));
 
@@ -91,3 +88,7 @@ def sq x := (mult x x);
 
 # Apply fn to the numbers between n and zero inclusive, then sum the result. #
 def fun_sum fun n := (if (iszero n) (fun n) (add (fun n) (fun_sum fun (pred n))));
+
+letrec _div x y := (if (greater y x) zero (succ (_div (sub x y) y)))
+in def rdiv x y := (if (iszero y) zero (_div x y));
+
