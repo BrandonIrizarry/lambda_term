@@ -1,7 +1,6 @@
 import lbd.gamma as g
 import lbd.term as term
-
-# from lbd.prettify import prettify
+from lbd.prettify import prettify
 
 
 def _shift(ast: term.AST, amount: int, minimum: int) -> term.AST:
@@ -133,11 +132,14 @@ def beta_reduce(ast: term.AST) -> term.AST:
             elif sym.ast is None:
                 raise ValueError(f"Unassigned free symbol '{sym.label}'")
 
+            # if sym.label.startswith("__"):
+            #     print(f"REF: {sym.label}; AST: {prettify(sym.ast)}")
+
             result = beta_reduce(sym.ast)
             g.sym_set(sym.label, result)
 
-            # if result == term.Empty():
-            #    print(f"empty: {sym.label}")
+            if result == term.Empty():
+                print(f"empty: {sym.label}")
 
             return result
 
@@ -195,7 +197,7 @@ def beta_reduce(ast: term.AST) -> term.AST:
             raise ValueError(f"Fatal: invalid ast-kind: {ast}")
 
 
-def unwrap_cached_refs(ast: term.AST) -> term.AST:
+def unwrap_cached_refs(ast: term.AST) -> None:
     """Unwrap all cached refs inside TERM."""
 
     match ast:
@@ -204,43 +206,24 @@ def unwrap_cached_refs(ast: term.AST) -> term.AST:
 
             if global_idx >= 0:
                 sym = g.sym_get(global_idx)
+                assert sym is not None
 
-                if sym is None:
-                    raise ValueError(f"Fatal: invalid name: {name}")
-
-                if sym.label.startswith("__") and sym.label != "__0":
-                    # print("label: ", sym.label)
-                    # print("stored AST: ", prettify(sym.ast))
-                    evaled = beta_reduce(sym.ast)
-                    # print("AST evaled to: ", prettify(evaled))
-                    unwrapped_name = unwrap_cached_refs(evaled)
-
-                    return unwrapped_name
-
-                # Name is global, but not a "thunked" reference.
-                return name
-            else:
-                # Name is local.
-                return name
+                if sym.label.startswith("__"):
+                    print("REF: ", sym.label)
+                    # print("AST: ", prettify(sym.ast))
 
         case term.Abstraction() as abstr:
-            unwrapped_body = unwrap_cached_refs(abstr.body)
-
-            return term.Abstraction(unwrapped_body)
+            unwrap_cached_refs(abstr.body)
 
         case term.Application() as app:
-            unwrapped_left = unwrap_cached_refs(app.left)
-            unwrapped_right = unwrap_cached_refs(app.right)
-
-            return term.Application(unwrapped_left, unwrapped_right)
+            unwrap_cached_refs(app.left)
+            unwrap_cached_refs(app.right)
 
         case term.Assignment() as assign:
-            unwrapped_value = unwrap_cached_refs(assign.value)
-
-            return term.Assignment(assign.name, unwrapped_value)
+            unwrap_cached_refs(assign.value)
 
         case term.Empty() as empty:
-            return empty
+            print(empty)
 
         case _:
-            raise ValueError(f"Invalid AST: {ast}")
+            raise ValueError(f"Fatal: invalid AST: {ast}")
