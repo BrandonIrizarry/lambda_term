@@ -1,0 +1,30 @@
+# This file focuses on definitions necessary for testing letrec. #
+
+def identity := \x.x;
+def zero := identity;
+def first := \x.\y.x;
+def second := \x.\y.y;
+def true := first;
+def false := second;
+def succ n s := (s false n);
+def pred n := (n second);
+
+def one := (succ zero);
+def two := (succ one);
+def three := (succ two);
+
+def iszero n := (n first);
+def if c e1 e2 := (c e1 e2);
+def not x := (x false true);
+
+letrec mz x := (if (iszero x) zero (mz (pred x))) in def make_zero := mz;
+letrec _add x y := (if (iszero y) x (_add (succ x) (pred y))) in def add := _add;
+letrec _sub x y := (if (iszero y) x (_sub (pred x) (pred y))) in def sub := _sub;
+
+let abs_diff x y := (add (sub x y) (sub y x))
+    in def equal x y := (iszero (abs_diff x y));
+
+def greater x y := (not (iszero (sub x y)));
+
+letrec _div x y := (if (greater y x) zero (succ (_div (sub x y) y)))
+in def div x y := (if (iszero y) zero (_div x y));
