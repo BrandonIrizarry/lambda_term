@@ -1,0 +1,17 @@
+[project]
+name = "lbd"
+version = "0.0.1"
+description = "An interpreter for a lambda-like language."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+
+[build-system]
+requires = ["uv_build>=0.9.2,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "wonderwords>=2.2.0",
+]

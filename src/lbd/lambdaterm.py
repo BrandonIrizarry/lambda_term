@@ -2,7 +2,7 @@
 
 import argparse
 
-import lbd.repl as repl
+import lambda_term.repl as repl
 from load import load
 
 ap = argparse.ArgumentParser(
